@@ -1,4 +1,4 @@
-export const API_BASE_URL = "http://localhost:8000/api";
+export const API_BASE_URL = "https://landguard-1-a465.onrender.com/api";
 
 export async function uploadDocumentApi(file) {
   const formData = new FormData();
