@@ -1,0 +1,36 @@
+
+# Secrets and environment variables
+.env
+.env.*
+!.env.example
+
+# Node.js
+node_modules/
+dist/
+build/
+
+# Python
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+
+# Local configuration and logs
+*.log
+.DS_Store
+Thumbs.db
+
+# IDE settings
+.vscode/
+.idea/
+
+# Uploaded documents
+uploads/*
+!uploads/.gitkeep
+
+# Secrets
+.env
+landguard.env
+
+# Local Python cache
+.pytest_cache/

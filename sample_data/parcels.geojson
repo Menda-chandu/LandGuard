@@ -1,0 +1,228 @@
+{
+  "type": "FeatureCollection",
+  "name": "LandGuard_Sample_Parcels",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "id": "PARCEL-101A",
+      "properties": {
+        "survey_number": "101/A",
+        "owner_name": "Anil Kumar Rao",
+        "land_area_acres": 2.50,
+        "village": "Greenvalley",
+        "mandal": "Serilingampally",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [78.3480, 17.4410],
+            [78.3495, 17.4415],
+            [78.3500, 17.4395],
+            [78.3485, 17.4390],
+            [78.3480, 17.4410]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "PARCEL-102B",
+      "properties": {
+        "survey_number": "102/B",
+        "owner_name": "Bhavana Sharma",
+        "land_area_acres": 1.80,
+        "village": "Greenvalley",
+        "mandal": "Serilingampally",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [78.3495, 17.4415],
+            [78.3510, 17.4420],
+            [78.3515, 17.4400],
+            [78.3500, 17.4395],
+            [78.3495, 17.4415]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "PARCEL-103C",
+      "properties": {
+        "survey_number": "103/C",
+        "owner_name": "Chandra Shekhar Verma",
+        "land_area_acres": 4.20,
+        "village": "Sunnyside",
+        "mandal": "Rajendranagar",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [78.3600, 17.4300],
+            [78.3625, 17.4310],
+            [78.3630, 17.4280],
+            [78.3605, 17.4275],
+            [78.3600, 17.4300]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "PARCEL-201A",
+      "properties": {
+        "survey_number": "201/A",
+        "owner_name": "Farhan Ahmed",
+        "land_area_acres": 5.00,
+        "village": "Hilltop",
+        "mandal": "Maheshwaram",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "HIGH",
+        "conflict_status": "Owner Identity Mismatch"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [78.4100, 17.3800],
+            [78.4130, 17.3815],
+            [78.4140, 17.3780],
+            [78.4110, 17.3765],
+            [78.4100, 17.3800]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "PARCEL-401A",
+      "properties": {
+        "survey_number": "401/A",
+        "owner_name": "Jayant Joshi",
+        "land_area_acres": 1.80,
+        "village": "Riverside",
+        "mandal": "Ibrahimpatnam",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "MEDIUM",
+        "conflict_status": "Land Area Discrepancy"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [78.4800, 17.3500],
+            [78.4820, 17.3510],
+            [78.4825, 17.3485],
+            [78.4805, 17.3480],
+            [78.4800, 17.3500]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "PARCEL-402B",
+      "properties": {
+        "survey_number": "402/B",
+        "owner_name": "Kiran Mazumdar",
+        "land_area_acres": 2.00,
+        "village": "Riverside",
+        "mandal": "Ibrahimpatnam",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "HIGH",
+        "conflict_status": "0.65 Acre Overlap Anomaly"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [78.4820, 17.3510],
+            [78.4845, 17.3525],
+            [78.4850, 17.3495],
+            [78.4825, 17.3485],
+            [78.4820, 17.3510]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "PARCEL-501A",
+      "properties": {
+        "survey_number": "501/A",
+        "owner_name": "Lokesh Gupta",
+        "land_area_acres": 4.00,
+        "village": "Forest Edge",
+        "mandal": "Moinabad",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "CRITICAL",
+        "conflict_status": "Double Selling Duplicate Registration"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [78.2900, 17.3200],
+            [78.2930, 17.3215],
+            [78.2935, 17.3180],
+            [78.2905, 17.3170],
+            [78.2900, 17.3200]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "PARCEL-601A",
+      "properties": {
+        "survey_number": "601/A",
+        "owner_name": "Nitin Saxena",
+        "land_area_acres": 2.75,
+        "village": "Highland",
+        "mandal": "Chevella",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "HIGH",
+        "conflict_status": "Suspicious Rapid Flipping"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [78.1500, 17.3000],
+            [78.1520, 17.3015],
+            [78.1530, 17.2985],
+            [78.1510, 17.2975],
+            [78.1500, 17.3000]
+          ]
+        ]
+      }
+    }
+  ]
+}

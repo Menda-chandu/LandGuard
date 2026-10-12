@@ -1,0 +1,101 @@
+record_id,owner_name,survey_number,land_area_acres,village,mandal,district,state,registration_number,registration_date,document_type
+SYN-REC-001,Kalyan Varma Dantuluri,SYN-101/A,2.20,Narsingi,Gandipet,Ranga Reddy,Telangana,SYN-REG-2016-1001,2017-02-02,Gift Deed
+SYN-REC-002,Sunitha Devi Mallampati,SYN-102/A,3.90,Kokapet,Gandipet,Ranga Reddy,Telangana,SYN-REG-2017-1002,2018-03-03,Partition Deed
+SYN-REC-003,Venkatesh Prasad Alapati,SYN-103/A,5.60,Tellapur,Ramachandrapuram,Sangareddy,Telangana,SYN-REG-2018-1003,2019-04-04,Settlement Deed
+SYN-REC-004,Anil Kumar Penmetsa,SYN-104/A,7.30,Mokila,Shankarpally,Ranga Reddy,Telangana,SYN-REG-2019-1004,2020-05-05,Inheritance Mutation
+SYN-REC-005,Madhavi Latha Kanumuri,SYN-105/A,9.00,Shankarpally,Shankarpally,Ranga Reddy,Telangana,SYN-REG-2020-1005,2021-06-06,Sale Deed
+SYN-REC-006,Ravi Shankar Namburi,SYN-106/A,10.70,Manikonda,Gandipet,Ranga Reddy,Telangana,SYN-REG-2021-1006,2022-07-07,Gift Deed
+SYN-REC-007,Srinivas Rao Gokaraju,SYN-107/A,0.90,Puppalguda,Gandipet,Ranga Reddy,Telangana,SYN-REG-2022-1007,2023-08-08,Partition Deed
+SYN-REC-008,Sita Mahalakshmi Alluri,SYN-108/A,2.60,Kollur,Ramachandrapuram,Sangareddy,Telangana,SYN-REG-2023-1008,2016-09-09,Settlement Deed
+SYN-REC-009,Prabhakar Raju Sagi,SYN-109/A,4.30,Vattinagulapally,Gandipet,Ranga Reddy,Telangana,SYN-REG-2015-1009,2017-10-10,Inheritance Mutation
+SYN-REC-010,Radhika Rani Vegesna,SYN-110/A,6.00,Khanapur,Gandipet,Ranga Reddy,Telangana,SYN-REG-2016-1010,2018-11-11,Sale Deed
+SYN-REC-011,Rajesh Babu Mudunuri,SYN-111/A,7.70,Janwada,Shankarpally,Ranga Reddy,Telangana,SYN-REG-2017-1011,2019-12-12,Gift Deed
+SYN-REC-012,Padmavathi Byrraju,SYN-112/A,9.40,Aziznagar,Moinabad,Ranga Reddy,Telangana,SYN-REG-2018-1012,2020-01-13,Partition Deed
+SYN-REC-013,Venu Gopal Indukuri,SYN-113/A,11.10,Appa Junction,Rajendranagar,Ranga Reddy,Telangana,SYN-REG-2019-1013,2021-02-14,Settlement Deed
+SYN-REC-014,Lakshmi Prasanna Dandu,SYN-114/A,1.30,Peeramcheruvu,Rajendranagar,Ranga Reddy,Telangana,SYN-REG-2020-1014,2022-03-15,Inheritance Mutation
+SYN-REC-015,Nagaraju Rudraraju,SYN-115/A,3.00,Narsingi,Gandipet,Ranga Reddy,Telangana,SYN-REG-2021-1015,2023-04-16,Sale Deed
+SYN-REC-016,Swapna Kumari Datla,SYN-116/A,4.70,Kokapet,Gandipet,Ranga Reddy,Telangana,SYN-REG-2022-1016,2016-05-17,Gift Deed
+SYN-REC-017,Mahesh Chandra Kalidindi,SYN-117/A,6.40,Tellapur,Ramachandrapuram,Sangareddy,Telangana,SYN-REG-2023-1017,2017-06-18,Partition Deed
+SYN-REC-018,Bhavani Shankar Chintalapati,SYN-118/A,8.10,Mokila,Shankarpally,Ranga Reddy,Telangana,SYN-REG-2015-1018,2018-07-19,Settlement Deed
+SYN-REC-019,Geetha Madhuri Kothapalli,SYN-119/A,9.80,Shankarpally,Shankarpally,Ranga Reddy,Telangana,SYN-REG-2016-1019,2019-08-20,Inheritance Mutation
+SYN-REC-020,Satish Varma Bhupathiraju,SYN-120/A,11.50,Manikonda,Gandipet,Ranga Reddy,Telangana,SYN-REG-2017-1020,2020-09-21,Sale Deed
+SYN-REC-021,Mohan Krishna Jampana,SYN-121/A,1.70,Puppalguda,Gandipet,Ranga Reddy,Telangana,SYN-REG-2018-1021,2021-10-22,Gift Deed
+SYN-REC-022,Sireesha Devi Uppalapati,SYN-122/A,3.40,Kollur,Ramachandrapuram,Sangareddy,Telangana,SYN-REG-2019-1022,2022-11-23,Partition Deed
+SYN-REC-023,Ramesh Babu Vatsavai,SYN-123/A,5.10,Vattinagulapally,Gandipet,Ranga Reddy,Telangana,SYN-REG-2020-1023,2023-12-24,Settlement Deed
+SYN-REC-024,Usha Rani Gadiraju,SYN-124/A,6.80,Khanapur,Gandipet,Ranga Reddy,Telangana,SYN-REG-2021-1024,2016-01-25,Inheritance Mutation
+SYN-REC-025,Kishore Kumar Singireddy,SYN-125/A,8.50,Janwada,Shankarpally,Ranga Reddy,Telangana,SYN-REG-2022-1025,2017-02-01,Sale Deed
+SYN-REC-026,Aparna Rao Marri,SYN-126/A,10.20,Aziznagar,Moinabad,Ranga Reddy,Telangana,SYN-REG-2023-1026,2018-03-02,Gift Deed
+SYN-REC-027,Sudhir Varma Challa,SYN-127/A,11.90,Appa Junction,Rajendranagar,Ranga Reddy,Telangana,SYN-REG-2015-1027,2019-04-03,Partition Deed
+SYN-REC-028,Kavitha Reddy Boppana,SYN-128/A,2.10,Peeramcheruvu,Rajendranagar,Ranga Reddy,Telangana,SYN-REG-2016-1028,2020-05-04,Settlement Deed
+SYN-REC-029,Praveen Kumar Kommineni,SYN-129/A,3.80,Narsingi,Gandipet,Ranga Reddy,Telangana,SYN-REG-2017-1029,2021-06-05,Inheritance Mutation
+SYN-REC-030,Saritha Devi Yalamanchili,SYN-130/A,5.50,Kokapet,Gandipet,Ranga Reddy,Telangana,SYN-REG-2018-1030,2022-07-06,Sale Deed
+SYN-REC-031,Vijay Bhaskar Devineni,SYN-131/A,7.20,Tellapur,Ramachandrapuram,Sangareddy,Telangana,SYN-REG-2019-1031,2023-08-07,Gift Deed
+SYN-REC-032,Deepika Rani Velagapudi,SYN-132/A,8.90,Mokila,Shankarpally,Ranga Reddy,Telangana,SYN-REG-2020-1032,2016-09-08,Partition Deed
+SYN-REC-033,Harish Chandra Kosaraju,SYN-133/A,10.60,Shankarpally,Shankarpally,Ranga Reddy,Telangana,SYN-REG-2021-1033,2017-10-09,Settlement Deed
+SYN-REC-034,Sravani Devi Pinnamaneni,SYN-134/A,0.80,Manikonda,Gandipet,Ranga Reddy,Telangana,SYN-REG-2022-1034,2018-11-10,Inheritance Mutation
+SYN-REC-035,Chandra Sekhar Nannapaneni,SYN-135/A,2.50,Puppalguda,Gandipet,Ranga Reddy,Telangana,SYN-REG-2023-1035,2019-12-11,Sale Deed
+SYN-REC-036,Anuradha Rao Surapaneni,SYN-136/A,4.20,Kollur,Ramachandrapuram,Sangareddy,Telangana,SYN-REG-2015-1036,2020-01-12,Gift Deed
+SYN-REC-037,Suresh Kumar Kaza,SYN-137/A,5.90,Vattinagulapally,Gandipet,Ranga Reddy,Telangana,SYN-REG-2016-1037,2021-02-13,Partition Deed
+SYN-REC-038,Lavanya Devi Nallapati,SYN-138/A,7.60,Khanapur,Gandipet,Ranga Reddy,Telangana,SYN-REG-2017-1038,2022-03-14,Settlement Deed
+SYN-REC-039,Phani Kumar Mandava,SYN-139/A,9.30,Janwada,Shankarpally,Ranga Reddy,Telangana,SYN-REG-2018-1039,2023-04-15,Inheritance Mutation
+SYN-REC-040,Madhuri Latha Chennupati,SYN-140/A,11.00,Aziznagar,Moinabad,Ranga Reddy,Telangana,SYN-REG-2019-1040,2016-05-16,Sale Deed
+SYN-REC-041,Gautam Varma Atluri,SYN-141/A,1.20,Appa Junction,Rajendranagar,Ranga Reddy,Telangana,SYN-REG-2020-1041,2017-06-17,Gift Deed
+SYN-REC-042,Sandhya Rani Rayapati,SYN-142/A,2.90,Peeramcheruvu,Rajendranagar,Ranga Reddy,Telangana,SYN-REG-2021-1042,2018-07-18,Partition Deed
+SYN-REC-043,Kiran Kumar Koneru,SYN-143/A,4.60,Narsingi,Gandipet,Ranga Reddy,Telangana,SYN-REG-2022-1043,2019-08-19,Settlement Deed
+SYN-REC-044,Divya Bharati Yaragudipati,SYN-144/A,6.30,Kokapet,Gandipet,Ranga Reddy,Telangana,SYN-REG-2023-1044,2020-09-20,Inheritance Mutation
+SYN-REC-045,Vamsi Krishna Parvataneni,SYN-145/A,8.00,Tellapur,Ramachandrapuram,Sangareddy,Telangana,SYN-REG-2015-1045,2021-10-21,Sale Deed
+SYN-REC-046,Sailaja Devi Chukkapalli,SYN-146/A,9.70,Mokila,Shankarpally,Ranga Reddy,Telangana,SYN-REG-2016-1046,2022-11-22,Gift Deed
+SYN-REC-047,Tarun Kumar Potluri,SYN-147/A,11.40,Shankarpally,Shankarpally,Ranga Reddy,Telangana,SYN-REG-2017-1047,2023-12-23,Partition Deed
+SYN-REC-048,Swathi Rani Guntupalli,SYN-148/A,1.60,Manikonda,Gandipet,Ranga Reddy,Telangana,SYN-REG-2018-1048,2016-01-24,Settlement Deed
+SYN-REC-049,Naresh Babu Nanduri,SYN-149/A,3.30,Puppalguda,Gandipet,Ranga Reddy,Telangana,SYN-REG-2019-1049,2017-02-25,Inheritance Mutation
+SYN-REC-050,Manjula Devi Kakarla,SYN-150/A,5.00,Kollur,Ramachandrapuram,Sangareddy,Telangana,SYN-REG-2020-1050,2018-03-01,Sale Deed
+SYN-REC-051,Sanjay Varma Katragadda,SYN-151/A,6.70,Vattinagulapally,Gandipet,Ranga Reddy,Telangana,SYN-REG-2021-1051,2019-04-02,Gift Deed
+SYN-REC-052,Prasanna Kumar Anne,SYN-152/A,8.40,Khanapur,Gandipet,Ranga Reddy,Telangana,SYN-REG-2022-1052,2020-05-03,Partition Deed
+SYN-REC-053,Hema Malini Dasari,SYN-153/A,10.10,Janwada,Shankarpally,Ranga Reddy,Telangana,SYN-REG-2023-1053,2021-06-04,Settlement Deed
+SYN-REC-054,Bhupathi Raju Maganti,SYN-154/A,11.80,Aziznagar,Moinabad,Ranga Reddy,Telangana,SYN-REG-2015-1054,2022-07-05,Inheritance Mutation
+SYN-REC-055,Sirisha Rani Vallabhaneni,SYN-155/A,2.00,Appa Junction,Rajendranagar,Ranga Reddy,Telangana,SYN-REG-2016-1055,2023-08-06,Sale Deed
+SYN-REC-056,Jagadish Chandra Jasti,SYN-156/A,3.70,Peeramcheruvu,Rajendranagar,Ranga Reddy,Telangana,SYN-REG-2017-1056,2016-09-07,Gift Deed
+SYN-REC-057,Roopa Devi Motaparti,SYN-157/A,5.40,Narsingi,Gandipet,Ranga Reddy,Telangana,SYN-REG-2018-1057,2017-10-08,Partition Deed
+SYN-REC-058,Naveen Kumar Lingamaneni,SYN-158/A,7.10,Kokapet,Gandipet,Ranga Reddy,Telangana,SYN-REG-2019-1058,2018-11-09,Settlement Deed
+SYN-REC-059,Shobha Rani Koganti,SYN-159/A,8.80,Tellapur,Ramachandrapuram,Sangareddy,Telangana,SYN-REG-2020-1059,2019-12-10,Inheritance Mutation
+SYN-REC-060,Purna Chandra Movva,SYN-160/A,10.50,Mokila,Shankarpally,Ranga Reddy,Telangana,SYN-REG-2021-1060,2020-01-11,Sale Deed
+SYN-REC-061,Krishna Mohan Adusumilli,SYN-161/A,0.70,Shankarpally,Shankarpally,Ranga Reddy,Telangana,SYN-REG-2022-1061,2021-02-12,Gift Deed
+SYN-REC-062,Vandana Devi Mullapudi,SYN-162/A,2.40,Manikonda,Gandipet,Ranga Reddy,Telangana,SYN-REG-2023-1062,2022-03-13,Partition Deed
+SYN-REC-063,Sekhar Babu Pendyala,SYN-163/A,4.10,Puppalguda,Gandipet,Ranga Reddy,Telangana,SYN-REG-2015-1063,2023-04-14,Settlement Deed
+SYN-REC-064,Tejaswi Rani Chitturi,SYN-164/A,5.80,Kollur,Ramachandrapuram,Sangareddy,Telangana,SYN-REG-2016-1064,2016-05-15,Inheritance Mutation
+SYN-REC-065,Vinod Kumar Thota,SYN-165/A,7.50,Vattinagulapally,Gandipet,Ranga Reddy,Telangana,SYN-REG-2017-1065,2017-06-16,Sale Deed
+SYN-REC-066,Priyanka Devi Dantuluri,SYN-166/A,9.20,Khanapur,Gandipet,Ranga Reddy,Telangana,SYN-REG-2018-1066,2018-07-17,Gift Deed
+SYN-REC-067,Arun Kumar Mallampati,SYN-167/A,10.90,Janwada,Shankarpally,Ranga Reddy,Telangana,SYN-REG-2019-1067,2019-08-18,Partition Deed
+SYN-REC-068,Mamatha Rani Alapati,SYN-168/A,1.10,Aziznagar,Moinabad,Ranga Reddy,Telangana,SYN-REG-2020-1068,2020-09-19,Settlement Deed
+SYN-REC-069,Ranganath Varma Penmetsa,SYN-169/A,2.80,Appa Junction,Rajendranagar,Ranga Reddy,Telangana,SYN-REG-2021-1069,2021-10-20,Inheritance Mutation
+SYN-REC-070,Haritha Devi Kanumuri,SYN-170/A,4.50,Peeramcheruvu,Rajendranagar,Ranga Reddy,Telangana,SYN-REG-2022-1070,2022-11-21,Sale Deed
+SYN-REC-071,Ravi Kiran Nanduri,SYN-501/A,4.00,Mokila,Shankarpally,Ranga Reddy,Telangana,SYN-REG-2021-1071,2021-03-10,Sale Deed
+SYN-REC-072,Sudhakar Rao Guntupalli,SYN-501/A,4.00,Mokila,Shankarpally,Ranga Reddy,Telangana,SYN-REG-2023-1072,2023-08-22,Duplicate Sale Deed
+SYN-REC-073,Hema Malini Kakarla,SYN-502/B,2.50,Kokapet,Gandipet,Ranga Reddy,Telangana,SYN-REG-2022-1073,2022-01-15,Sale Deed
+SYN-REC-074,Bhupathi Raju Varma,SYN-502/B,2.50,Kokapet,Gandipet,Ranga Reddy,Telangana,SYN-REG-2022-1074,2022-02-10,Conflicting Sale Deed
+SYN-REC-075,Jagadish Chandra Anne,SYN-503/C,3.20,Tellapur,Ramachandrapuram,Sangareddy,Telangana,SYN-REG-DUP-001,2020-06-18,Sale Deed
+SYN-REC-076,Roopa Devi Dasari,SYN-503/C,3.20,Tellapur,Ramachandrapuram,Sangareddy,Telangana,SYN-REG-DUP-001,2020-07-25,Duplicate Registration
+SYN-REC-077,Naveen Kumar Maganti,SYN-504/D,5.00,Janwada,Shankarpally,Ranga Reddy,Telangana,SYN-REG-2019-1077,2019-11-04,Partition Deed
+SYN-REC-078,Shobha Rani Vallabhaneni,SYN-504/D,5.00,Janwada,Shankarpally,Ranga Reddy,Telangana,SYN-REG-2023-1078,2023-04-12,Overlapping Sale Deed
+SYN-REC-079,Purna Chandra Jasti,SYN-505/E,1.75,Narsingi,Gandipet,Ranga Reddy,Telangana,SYN-REG-2021-1079,2021-09-30,Sale Deed
+SYN-REC-080,Krishna Mohan Motaparti,SYN-505/E,1.75,Narsingi,Gandipet,Ranga Reddy,Telangana,SYN-REG-2023-1080,2023-10-14,Unauthorized Resale
+SYN-REC-081,Bhaskar Raju Kanumuri,SYN-701/A,3.20,Mokila,Shankarpally,Ranga Reddy,Telangana,SYN-REG-2020-1081,2020-05-14,Sale Deed
+SYN-REC-082,Nagendra Rao Potluri,SYN-702/B,2.10,Kokapet,Gandipet,Ranga Reddy,Telangana,SYN-REG-2021-1082,2021-08-11,Sale Deed
+SYN-REC-083,Sita Devi Byrraju,SYN-703/C,4.50,Tellapur,Ramachandrapuram,Sangareddy,Telangana,SYN-REG-2019-1083,2019-12-04,Gift Deed
+SYN-REC-084,Chandrasekhar Sagi,SYN-704/D,1.65,Narsingi,Gandipet,Ranga Reddy,Telangana,SYN-REG-2022-1084,2022-03-29,Sale Deed
+SYN-REC-085,Padma Rani Vegesna,SYN-705/E,5.25,Janwada,Shankarpally,Ranga Reddy,Telangana,SYN-REG-2023-1085,2023-06-17,Partition Deed
+SYN-REC-086,Dharma Rao Chitturi,SYN-801/A,2.50,Shankarpally,Shankarpally,Ranga Reddy,Telangana,SYN-REG-2021-1086,2021-09-18,Sale Deed
+SYN-REC-087,Anasuya Devi Kaza,SYN-802/B,1.20,Kokapet,Gandipet,Ranga Reddy,Telangana,SYN-REG-2022-1087,2022-11-05,Sale Deed
+SYN-REC-088,Somashekar Rao Movva,SYN-803/C,4.50,Mokila,Shankarpally,Ranga Reddy,Telangana,SYN-REG-2020-1088,2020-04-14,Gift Deed
+SYN-REC-089,Radha Kumari Nallapati,SYN-804/D,3.00,Narsingi,Gandipet,Ranga Reddy,Telangana,SYN-REG-2023-1089,2023-05-20,Sale Deed
+SYN-REC-090,Girish Varma Sagi,SYN-805/A,3.40,Tellapur,Ramachandrapuram,Sangareddy,Telangana,SYN-REG-2021-1090,2021-02-12,Sale Deed
+SYN-REC-091,Vijayalakshmi Rao,SYN-806/B,2.80,Puppalguda,Gandipet,Ranga Reddy,Telangana,SYN-REG-2022-1091,2022-06-25,Sale Deed
+SYN-REC-092,Madhusudhan Raju,SYN-807/C,4.10,Manikonda,Gandipet,Ranga Reddy,Telangana,SYN-REG-2020-1092,2020-10-19,Partition Deed
+SYN-REC-093,Nitin Varma Sagi,SYN-601/A,2.75,Highland Fictional,Chevella,Ranga Reddy,Telangana,SYN-REG-2024-1093,2024-02-02,Rapid Resale
+SYN-REC-094,Kishore Varma Datla,SYN-602/B,3.50,Forest View Fictional,Moinabad,Ranga Reddy,Telangana,SYN-REG-2023-1094,2023-12-08,Rapid Resale
+SYN-REC-095,Vijay Bhaskar Alluri,SYN-603/C,1.90,Green Acres Fictional,Shankarpally,Ranga Reddy,Telangana,SYN-REG-2024-1095,2024-02-28,Rapid Resale
+SYN-REC-096,,SYN-901/A,1.75,Narsingi,Gandipet,Ranga Reddy,Telangana,SYN-REG-2022-1096,,Sale Deed
+SYN-REC-097,Sarath Chandra Datla,SYN-902/B,2.40,Kokapet,Gandipet,Ranga Reddy,Telangana,SYN-REG-2021-1097,,Patta Passbook
+SYN-REC-098,Subba Rao Penmetsa,SYN-903/C,0.00,Mokila,Shankarpally,Ranga Reddy,Telangana,SYN-REG-2023-1098,2023-01-11,Sale Deed
+SYN-REC-099,Dharma Teja Indukuri,SYN-904/D,3.50,Shankarpally,Shankarpally,Ranga Reddy,Telangana,SYN-REG-2022-1099,2022-04-18,Sale Deed
+SYN-REC-100,Suryanarayana Raju Penmetsa,SYN-905/E,4.80,Mokila,Shankarpally,Ranga Reddy,Telangana,SYN-REG-2023-1100,2023-07-22,Gift Deed

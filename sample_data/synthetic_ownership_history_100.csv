@@ -1,0 +1,199 @@
+history_id,survey_number,owner_name,transfer_date,transfer_type
+SYN-HIST-001,SYN-101/A,Dantuluri Narayana Rao,1996-02-02,Ancestral Partition
+SYN-HIST-002,SYN-101/A,Kalyan Varma Dantuluri,2017-02-02,Gift Deed
+SYN-HIST-003,SYN-102/A,Mallampati Ramaswamy,1997-03-03,Original Grant
+SYN-HIST-004,SYN-102/A,Sunitha Devi Mallampati,2018-03-03,Partition Deed
+SYN-HIST-005,SYN-103/A,Alapati Narayana Rao,1998-04-04,Ancestral Partition
+SYN-HIST-006,SYN-103/A,Alapati Subba Rao,2006-05-12,Inheritance Mutation
+SYN-HIST-007,SYN-103/A,Venkatesh Prasad Alapati,2019-04-04,Settlement Deed
+SYN-HIST-008,SYN-104/A,Penmetsa Ramaswamy,1999-05-05,Original Grant
+SYN-HIST-009,SYN-104/A,Anil Kumar Penmetsa,2020-05-05,Inheritance Mutation
+SYN-HIST-010,SYN-105/A,Kanumuri Narayana Rao,2000-06-06,Ancestral Partition
+SYN-HIST-011,SYN-105/A,Madhavi Latha Kanumuri,2021-06-06,Sale Deed
+SYN-HIST-012,SYN-106/A,Namburi Ramaswamy,2001-07-07,Original Grant
+SYN-HIST-013,SYN-106/A,Namburi Subba Rao,2009-05-12,Inheritance Mutation
+SYN-HIST-014,SYN-106/A,Ravi Shankar Namburi,2022-07-07,Gift Deed
+SYN-HIST-015,SYN-107/A,Gokaraju Narayana Rao,2002-08-08,Ancestral Partition
+SYN-HIST-016,SYN-107/A,Srinivas Rao Gokaraju,2023-08-08,Partition Deed
+SYN-HIST-017,SYN-108/A,Alluri Ramaswamy,2003-09-09,Original Grant
+SYN-HIST-018,SYN-108/A,Sita Mahalakshmi Alluri,2016-09-09,Settlement Deed
+SYN-HIST-019,SYN-109/A,Sagi Narayana Rao,2004-10-10,Ancestral Partition
+SYN-HIST-020,SYN-109/A,Sagi Subba Rao,2012-05-12,Inheritance Mutation
+SYN-HIST-021,SYN-109/A,Prabhakar Raju Sagi,2017-10-10,Inheritance Mutation
+SYN-HIST-022,SYN-110/A,Vegesna Ramaswamy,2005-11-11,Original Grant
+SYN-HIST-023,SYN-110/A,Radhika Rani Vegesna,2018-11-11,Sale Deed
+SYN-HIST-024,SYN-111/A,Mudunuri Narayana Rao,2006-01-12,Ancestral Partition
+SYN-HIST-025,SYN-111/A,Rajesh Babu Mudunuri,2019-12-12,Gift Deed
+SYN-HIST-026,SYN-112/A,Byrraju Ramaswamy,2007-02-13,Original Grant
+SYN-HIST-027,SYN-112/A,Byrraju Subba Rao,2015-05-12,Inheritance Mutation
+SYN-HIST-028,SYN-112/A,Padmavathi Byrraju,2020-01-13,Partition Deed
+SYN-HIST-029,SYN-113/A,Indukuri Narayana Rao,2008-03-14,Ancestral Partition
+SYN-HIST-030,SYN-113/A,Venu Gopal Indukuri,2021-02-14,Settlement Deed
+SYN-HIST-031,SYN-114/A,Dandu Ramaswamy,1995-04-15,Original Grant
+SYN-HIST-032,SYN-114/A,Lakshmi Prasanna Dandu,2022-03-15,Inheritance Mutation
+SYN-HIST-033,SYN-115/A,Rudraraju Narayana Rao,1996-05-16,Ancestral Partition
+SYN-HIST-034,SYN-115/A,Rudraraju Subba Rao,2004-05-12,Inheritance Mutation
+SYN-HIST-035,SYN-115/A,Nagaraju Rudraraju,2023-04-16,Sale Deed
+SYN-HIST-036,SYN-116/A,Datla Ramaswamy,1997-06-17,Original Grant
+SYN-HIST-037,SYN-116/A,Swapna Kumari Datla,2016-05-17,Gift Deed
+SYN-HIST-038,SYN-117/A,Kalidindi Narayana Rao,1998-07-18,Ancestral Partition
+SYN-HIST-039,SYN-117/A,Mahesh Chandra Kalidindi,2017-06-18,Partition Deed
+SYN-HIST-040,SYN-118/A,Chintalapati Ramaswamy,1999-08-19,Original Grant
+SYN-HIST-041,SYN-118/A,Chintalapati Subba Rao,2007-05-12,Inheritance Mutation
+SYN-HIST-042,SYN-118/A,Bhavani Shankar Chintalapati,2018-07-19,Settlement Deed
+SYN-HIST-043,SYN-119/A,Kothapalli Narayana Rao,2000-09-20,Ancestral Partition
+SYN-HIST-044,SYN-119/A,Geetha Madhuri Kothapalli,2019-08-20,Inheritance Mutation
+SYN-HIST-045,SYN-120/A,Bhupathiraju Ramaswamy,2001-10-21,Original Grant
+SYN-HIST-046,SYN-120/A,Satish Varma Bhupathiraju,2020-09-21,Sale Deed
+SYN-HIST-047,SYN-121/A,Jampana Narayana Rao,2002-11-22,Ancestral Partition
+SYN-HIST-048,SYN-121/A,Jampana Subba Rao,2010-05-12,Inheritance Mutation
+SYN-HIST-049,SYN-121/A,Mohan Krishna Jampana,2021-10-22,Gift Deed
+SYN-HIST-050,SYN-122/A,Uppalapati Ramaswamy,2003-01-23,Original Grant
+SYN-HIST-051,SYN-122/A,Sireesha Devi Uppalapati,2022-11-23,Partition Deed
+SYN-HIST-052,SYN-123/A,Vatsavai Narayana Rao,2004-02-24,Ancestral Partition
+SYN-HIST-053,SYN-123/A,Ramesh Babu Vatsavai,2023-12-24,Settlement Deed
+SYN-HIST-054,SYN-124/A,Gadiraju Ramaswamy,2005-03-25,Original Grant
+SYN-HIST-055,SYN-124/A,Gadiraju Subba Rao,2013-05-12,Inheritance Mutation
+SYN-HIST-056,SYN-124/A,Usha Rani Gadiraju,2016-01-25,Inheritance Mutation
+SYN-HIST-057,SYN-125/A,Singireddy Narayana Rao,2006-04-26,Ancestral Partition
+SYN-HIST-058,SYN-125/A,Kishore Kumar Singireddy,2017-02-01,Sale Deed
+SYN-HIST-059,SYN-126/A,Marri Ramaswamy,2007-05-27,Original Grant
+SYN-HIST-060,SYN-126/A,Aparna Rao Marri,2018-03-02,Gift Deed
+SYN-HIST-061,SYN-127/A,Challa Narayana Rao,2008-06-01,Ancestral Partition
+SYN-HIST-062,SYN-127/A,Challa Subba Rao,2016-05-12,Inheritance Mutation
+SYN-HIST-063,SYN-127/A,Sudhir Varma Challa,2019-04-03,Partition Deed
+SYN-HIST-064,SYN-128/A,Boppana Ramaswamy,1995-07-02,Original Grant
+SYN-HIST-065,SYN-128/A,Kavitha Reddy Boppana,2020-05-04,Settlement Deed
+SYN-HIST-066,SYN-129/A,Kommineni Narayana Rao,1996-08-03,Ancestral Partition
+SYN-HIST-067,SYN-129/A,Praveen Kumar Kommineni,2021-06-05,Inheritance Mutation
+SYN-HIST-068,SYN-130/A,Yalamanchili Ramaswamy,1997-09-04,Original Grant
+SYN-HIST-069,SYN-130/A,Yalamanchili Subba Rao,2005-05-12,Inheritance Mutation
+SYN-HIST-070,SYN-130/A,Saritha Devi Yalamanchili,2022-07-06,Sale Deed
+SYN-HIST-071,SYN-131/A,Devineni Narayana Rao,1998-10-05,Ancestral Partition
+SYN-HIST-072,SYN-131/A,Vijay Bhaskar Devineni,2023-08-07,Gift Deed
+SYN-HIST-073,SYN-132/A,Velagapudi Ramaswamy,1999-11-06,Original Grant
+SYN-HIST-074,SYN-132/A,Deepika Rani Velagapudi,2016-09-08,Partition Deed
+SYN-HIST-075,SYN-133/A,Kosaraju Narayana Rao,2000-01-07,Ancestral Partition
+SYN-HIST-076,SYN-133/A,Kosaraju Subba Rao,2008-05-12,Inheritance Mutation
+SYN-HIST-077,SYN-133/A,Harish Chandra Kosaraju,2017-10-09,Settlement Deed
+SYN-HIST-078,SYN-134/A,Pinnamaneni Ramaswamy,2001-02-08,Original Grant
+SYN-HIST-079,SYN-134/A,Sravani Devi Pinnamaneni,2018-11-10,Inheritance Mutation
+SYN-HIST-080,SYN-135/A,Nannapaneni Narayana Rao,2002-03-09,Ancestral Partition
+SYN-HIST-081,SYN-135/A,Chandra Sekhar Nannapaneni,2019-12-11,Sale Deed
+SYN-HIST-082,SYN-136/A,Surapaneni Ramaswamy,2003-04-10,Original Grant
+SYN-HIST-083,SYN-136/A,Surapaneni Subba Rao,2011-05-12,Inheritance Mutation
+SYN-HIST-084,SYN-136/A,Anuradha Rao Surapaneni,2020-01-12,Gift Deed
+SYN-HIST-085,SYN-137/A,Kaza Narayana Rao,2004-05-11,Ancestral Partition
+SYN-HIST-086,SYN-137/A,Suresh Kumar Kaza,2021-02-13,Partition Deed
+SYN-HIST-087,SYN-138/A,Nallapati Ramaswamy,2005-06-12,Original Grant
+SYN-HIST-088,SYN-138/A,Lavanya Devi Nallapati,2022-03-14,Settlement Deed
+SYN-HIST-089,SYN-139/A,Mandava Narayana Rao,2006-07-13,Ancestral Partition
+SYN-HIST-090,SYN-139/A,Mandava Subba Rao,2014-05-12,Inheritance Mutation
+SYN-HIST-091,SYN-139/A,Phani Kumar Mandava,2023-04-15,Inheritance Mutation
+SYN-HIST-092,SYN-140/A,Chennupati Ramaswamy,2007-08-14,Original Grant
+SYN-HIST-093,SYN-140/A,Madhuri Latha Chennupati,2016-05-16,Sale Deed
+SYN-HIST-094,SYN-141/A,Atluri Narayana Rao,2008-09-15,Ancestral Partition
+SYN-HIST-095,SYN-141/A,Gautam Varma Atluri,2017-06-17,Gift Deed
+SYN-HIST-096,SYN-142/A,Rayapati Ramaswamy,1995-10-16,Original Grant
+SYN-HIST-097,SYN-142/A,Rayapati Subba Rao,2003-05-12,Inheritance Mutation
+SYN-HIST-098,SYN-142/A,Sandhya Rani Rayapati,2018-07-18,Partition Deed
+SYN-HIST-099,SYN-143/A,Koneru Narayana Rao,1996-11-17,Ancestral Partition
+SYN-HIST-100,SYN-143/A,Kiran Kumar Koneru,2019-08-19,Settlement Deed
+SYN-HIST-101,SYN-144/A,Yaragudipati Ramaswamy,1997-01-18,Original Grant
+SYN-HIST-102,SYN-144/A,Divya Bharati Yaragudipati,2020-09-20,Inheritance Mutation
+SYN-HIST-103,SYN-145/A,Parvataneni Narayana Rao,1998-02-19,Ancestral Partition
+SYN-HIST-104,SYN-145/A,Parvataneni Subba Rao,2006-05-12,Inheritance Mutation
+SYN-HIST-105,SYN-145/A,Vamsi Krishna Parvataneni,2021-10-21,Sale Deed
+SYN-HIST-106,SYN-146/A,Chukkapalli Ramaswamy,1999-03-20,Original Grant
+SYN-HIST-107,SYN-146/A,Sailaja Devi Chukkapalli,2022-11-22,Gift Deed
+SYN-HIST-108,SYN-147/A,Potluri Narayana Rao,2000-04-21,Ancestral Partition
+SYN-HIST-109,SYN-147/A,Tarun Kumar Potluri,2023-12-23,Partition Deed
+SYN-HIST-110,SYN-148/A,Guntupalli Ramaswamy,2001-05-22,Original Grant
+SYN-HIST-111,SYN-148/A,Guntupalli Subba Rao,2009-05-12,Inheritance Mutation
+SYN-HIST-112,SYN-148/A,Swathi Rani Guntupalli,2016-01-24,Settlement Deed
+SYN-HIST-113,SYN-149/A,Nanduri Narayana Rao,2002-06-23,Ancestral Partition
+SYN-HIST-114,SYN-149/A,Naresh Babu Nanduri,2017-02-25,Inheritance Mutation
+SYN-HIST-115,SYN-150/A,Kakarla Ramaswamy,2003-07-24,Original Grant
+SYN-HIST-116,SYN-150/A,Manjula Devi Kakarla,2018-03-01,Sale Deed
+SYN-HIST-117,SYN-151/A,Katragadda Narayana Rao,2004-08-25,Ancestral Partition
+SYN-HIST-118,SYN-151/A,Katragadda Subba Rao,2012-05-12,Inheritance Mutation
+SYN-HIST-119,SYN-151/A,Sanjay Varma Katragadda,2019-04-02,Gift Deed
+SYN-HIST-120,SYN-152/A,Anne Ramaswamy,2005-09-26,Original Grant
+SYN-HIST-121,SYN-152/A,Prasanna Kumar Anne,2020-05-03,Partition Deed
+SYN-HIST-122,SYN-153/A,Dasari Narayana Rao,2006-10-27,Ancestral Partition
+SYN-HIST-123,SYN-153/A,Hema Malini Dasari,2021-06-04,Settlement Deed
+SYN-HIST-124,SYN-154/A,Maganti Ramaswamy,2007-11-01,Original Grant
+SYN-HIST-125,SYN-154/A,Maganti Subba Rao,2015-05-12,Inheritance Mutation
+SYN-HIST-126,SYN-154/A,Bhupathi Raju Maganti,2022-07-05,Inheritance Mutation
+SYN-HIST-127,SYN-155/A,Vallabhaneni Narayana Rao,2008-01-02,Ancestral Partition
+SYN-HIST-128,SYN-155/A,Sirisha Rani Vallabhaneni,2023-08-06,Sale Deed
+SYN-HIST-129,SYN-156/A,Jasti Ramaswamy,1995-02-03,Original Grant
+SYN-HIST-130,SYN-156/A,Jagadish Chandra Jasti,2016-09-07,Gift Deed
+SYN-HIST-131,SYN-157/A,Motaparti Narayana Rao,1996-03-04,Ancestral Partition
+SYN-HIST-132,SYN-157/A,Motaparti Subba Rao,2004-05-12,Inheritance Mutation
+SYN-HIST-133,SYN-157/A,Roopa Devi Motaparti,2017-10-08,Partition Deed
+SYN-HIST-134,SYN-158/A,Lingamaneni Ramaswamy,1997-04-05,Original Grant
+SYN-HIST-135,SYN-158/A,Naveen Kumar Lingamaneni,2018-11-09,Settlement Deed
+SYN-HIST-136,SYN-159/A,Koganti Narayana Rao,1998-05-06,Ancestral Partition
+SYN-HIST-137,SYN-159/A,Shobha Rani Koganti,2019-12-10,Inheritance Mutation
+SYN-HIST-138,SYN-160/A,Movva Ramaswamy,1999-06-07,Original Grant
+SYN-HIST-139,SYN-160/A,Movva Subba Rao,2007-05-12,Inheritance Mutation
+SYN-HIST-140,SYN-160/A,Purna Chandra Movva,2020-01-11,Sale Deed
+SYN-HIST-141,SYN-161/A,Adusumilli Narayana Rao,2000-07-08,Ancestral Partition
+SYN-HIST-142,SYN-161/A,Krishna Mohan Adusumilli,2021-02-12,Gift Deed
+SYN-HIST-143,SYN-162/A,Mullapudi Ramaswamy,2001-08-09,Original Grant
+SYN-HIST-144,SYN-162/A,Vandana Devi Mullapudi,2022-03-13,Partition Deed
+SYN-HIST-145,SYN-163/A,Pendyala Narayana Rao,2002-09-10,Ancestral Partition
+SYN-HIST-146,SYN-163/A,Pendyala Subba Rao,2010-05-12,Inheritance Mutation
+SYN-HIST-147,SYN-163/A,Sekhar Babu Pendyala,2023-04-14,Settlement Deed
+SYN-HIST-148,SYN-164/A,Chitturi Ramaswamy,2003-10-11,Original Grant
+SYN-HIST-149,SYN-164/A,Tejaswi Rani Chitturi,2016-05-15,Inheritance Mutation
+SYN-HIST-150,SYN-165/A,Thota Narayana Rao,2004-11-12,Ancestral Partition
+SYN-HIST-151,SYN-165/A,Vinod Kumar Thota,2017-06-16,Sale Deed
+SYN-HIST-152,SYN-166/A,Dantuluri Ramaswamy,2005-01-13,Original Grant
+SYN-HIST-153,SYN-166/A,Dantuluri Subba Rao,2013-05-12,Inheritance Mutation
+SYN-HIST-154,SYN-166/A,Priyanka Devi Dantuluri,2018-07-17,Gift Deed
+SYN-HIST-155,SYN-167/A,Mallampati Narayana Rao,2006-02-14,Ancestral Partition
+SYN-HIST-156,SYN-167/A,Arun Kumar Mallampati,2019-08-18,Partition Deed
+SYN-HIST-157,SYN-168/A,Alapati Ramaswamy,2007-03-15,Original Grant
+SYN-HIST-158,SYN-168/A,Mamatha Rani Alapati,2020-09-19,Settlement Deed
+SYN-HIST-159,SYN-169/A,Penmetsa Narayana Rao,2008-04-16,Ancestral Partition
+SYN-HIST-160,SYN-169/A,Penmetsa Subba Rao,2016-05-12,Inheritance Mutation
+SYN-HIST-161,SYN-169/A,Ranganath Varma Penmetsa,2021-10-20,Inheritance Mutation
+SYN-HIST-162,SYN-170/A,Kanumuri Ramaswamy,1995-05-17,Original Grant
+SYN-HIST-163,SYN-170/A,Haritha Devi Kanumuri,2022-11-21,Sale Deed
+SYN-HIST-164,SYN-501/A,Ravi Kiran Nanduri,2021-03-10,Sale Deed
+SYN-HIST-165,SYN-501/A,Sudhakar Rao Guntupalli,2023-08-22,Duplicate Sale Deed
+SYN-HIST-166,SYN-502/B,Hema Malini Kakarla,2022-01-15,Sale Deed
+SYN-HIST-167,SYN-502/B,Bhupathi Raju Varma,2022-02-10,Conflicting Sale Deed
+SYN-HIST-168,SYN-503/C,Jagadish Chandra Anne,2020-06-18,Sale Deed
+SYN-HIST-169,SYN-503/C,Roopa Devi Dasari,2020-07-25,Duplicate Registration
+SYN-HIST-170,SYN-504/D,Naveen Kumar Maganti,2019-11-04,Partition Deed
+SYN-HIST-171,SYN-504/D,Shobha Rani Vallabhaneni,2023-04-12,Overlapping Sale Deed
+SYN-HIST-172,SYN-505/E,Purna Chandra Jasti,2021-09-30,Sale Deed
+SYN-HIST-173,SYN-505/E,Krishna Mohan Motaparti,2023-10-14,Unauthorized Resale
+SYN-HIST-174,SYN-701/A,Bhaskar Raju Kanumuri,2020-05-14,Sale Deed
+SYN-HIST-175,SYN-702/B,Nagendra Rao Potluri,2021-08-11,Sale Deed
+SYN-HIST-176,SYN-703/C,Sita Devi Byrraju,2019-12-04,Gift Deed
+SYN-HIST-177,SYN-704/D,Chandrasekhar Sagi,2022-03-29,Sale Deed
+SYN-HIST-178,SYN-705/E,Padma Rani Vegesna,2023-06-17,Partition Deed
+SYN-HIST-179,SYN-801/A,Dharma Rao Chitturi,2021-09-18,Sale Deed
+SYN-HIST-180,SYN-802/B,Anasuya Devi Kaza,2022-11-05,Sale Deed
+SYN-HIST-181,SYN-803/C,Somashekar Rao Movva,2020-04-14,Gift Deed
+SYN-HIST-182,SYN-804/D,Radha Kumari Nallapati,2023-05-20,Sale Deed
+SYN-HIST-183,SYN-805/A,Girish Varma Sagi,2021-02-12,Sale Deed
+SYN-HIST-184,SYN-806/B,Vijayalakshmi Rao,2022-06-25,Sale Deed
+SYN-HIST-185,SYN-807/C,Madhusudhan Raju,2020-10-19,Partition Deed
+SYN-HIST-186,SYN-601/A,Prasad Varma Sagi,2024-01-05,Original Sale
+SYN-HIST-187,SYN-601/A,Naresh Varma Sagi,2024-01-18,Rapid Resale
+SYN-HIST-188,SYN-601/A,Nitin Varma Sagi,2024-02-02,Rapid Resale
+SYN-HIST-189,SYN-602/B,Ramu Datla,2023-11-10,Original Sale
+SYN-HIST-190,SYN-602/B,Soma Raju Datla,2023-11-25,Rapid Resale
+SYN-HIST-191,SYN-602/B,Kishore Varma Datla,2023-12-08,Rapid Resale
+SYN-HIST-192,SYN-603/C,Anil Alluri,2024-02-01,Original Sale
+SYN-HIST-193,SYN-603/C,Chiranjeevi Alluri,2024-02-14,Rapid Resale
+SYN-HIST-194,SYN-603/C,Vijay Bhaskar Alluri,2024-02-28,Rapid Resale
+SYN-HIST-195,SYN-902/B,Sarath Chandra Datla,2023-01-11,Patta Passbook
+SYN-HIST-196,SYN-903/C,Subba Rao Penmetsa,2023-01-11,Sale Deed
+SYN-HIST-197,SYN-904/D,Raja Rao Mantena,2005-06-12,Original Grant
+SYN-HIST-198,SYN-904/D,Suresh Rao Mantena,2018-09-20,Inheritance Mutation
