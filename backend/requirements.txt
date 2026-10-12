@@ -7,7 +7,7 @@ python-multipart>=0.0.6
 # Database & ORM
 sqlalchemy>=2.0.0
 psycopg2-binary>=2.9.6
-
+psycopg[binary]>=3.2.0
 # OCR & Image Processing
 pytesseract>=0.3.10
 Pillow>=10.0.0
