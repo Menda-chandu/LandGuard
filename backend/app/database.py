@@ -34,6 +34,14 @@ def check_db_connection() -> dict:
     try:
         with engine.connect() as connection:
             connection.execute(text("SELECT 1"))
-        return {"status": "connected", "database": settings.POSTGRES_DB}
+            try:
+                if engine.dialect.name == "postgresql":
+                    res = connection.execute(text("SELECT table_name FROM information_schema.tables WHERE table_schema='public'"))
+                else:
+                    res = connection.execute(text("SELECT name FROM sqlite_master WHERE type='table'"))
+                tables = [r[0] for r in res.fetchall()]
+            except Exception:
+                tables = []
+        return {"status": "connected", "database": settings.POSTGRES_DB, "tables": tables}
     except Exception as e:
         return {"status": "disconnected", "error": str(e)}

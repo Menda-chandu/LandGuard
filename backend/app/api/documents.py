@@ -123,32 +123,6 @@ async def upload_document(
     }
 
 
-@router.get("/{document_id}")
-def get_document_details(document_id: str, db: Session = Depends(get_db)):
-    """
-    Fetch document record and extracted OCR details by document_id.
-    """
-    record = db.query(DocumentRecord).filter(DocumentRecord.document_id == document_id).first()
-    if not record:
-        raise HTTPException(status_code=404, detail=f"Document with ID '{document_id}' not found.")
-
-    return {
-        "document_id": record.document_id,
-        "filename": record.filename,
-        "file_path": record.file_path,
-        "file_type": record.file_type,
-        "file_size_bytes": record.file_size_bytes,
-        "upload_timestamp": record.upload_timestamp,
-        "ocr_status": record.ocr_status,
-        "ocr_confidence_score": record.ocr_confidence_score,
-        "extracted_owner_name": record.extracted_owner_name,
-        "extracted_survey_number": record.extracted_survey_number,
-        "extracted_land_area": record.extracted_land_area,
-        "extracted_location": record.extracted_location,
-        "extracted_text": record.extracted_text
-    }
-
-
 @router.get("/search")
 def search_records(
     q: Optional[str] = None,
@@ -231,6 +205,63 @@ def search_records(
     }
 
 
+@router.get("/{document_id}")
+def get_document_details(document_id: str, db: Session = Depends(get_db)):
+    """
+    Fetch document record and extracted OCR details by document_id.
+    """
+    record = None
+    try:
+        record = db.query(DocumentRecord).filter(DocumentRecord.document_id == document_id).first()
+    except Exception as e:
+        logger.warning(f"Notice: Database query for document '{document_id}': {e}")
+        try:
+            db.rollback()
+        except Exception:
+            pass
+
+    if not record:
+        matching_files = [f for f in os.listdir(UPLOADS_DIR) if f.startswith(document_id)] if os.path.exists(UPLOADS_DIR) else []
+        if matching_files:
+            file_path = os.path.join(UPLOADS_DIR, matching_files[0])
+            ocr_res = process_document_ocr(file_path)
+            ocr_text = ocr_res.get("text", "")
+            nlp_res = nlp_engine.extract_information(ocr_text)
+            fields = nlp_res.get("extracted_fields", {})
+            return {
+                "document_id": document_id,
+                "filename": matching_files[0],
+                "file_path": os.path.relpath(file_path, PROJECT_ROOT),
+                "file_type": os.path.splitext(matching_files[0])[1].replace(".", "").upper(),
+                "file_size_bytes": os.path.getsize(file_path),
+                "upload_timestamp": datetime.now().isoformat(),
+                "ocr_status": ocr_res.get("status", "COMPLETED"),
+                "ocr_confidence_score": float(ocr_res.get("confidence", 0.0)),
+                "extracted_owner_name": fields.get("owner_name"),
+                "extracted_survey_number": fields.get("survey_number"),
+                "extracted_land_area": fields.get("land_area_acres"),
+                "extracted_location": nlp_res.get("location_summary"),
+                "extracted_text": ocr_text
+            }
+        raise HTTPException(status_code=404, detail=f"Document with ID '{document_id}' not found.")
+
+    return {
+        "document_id": record.document_id,
+        "filename": record.filename,
+        "file_path": record.file_path,
+        "file_type": record.file_type,
+        "file_size_bytes": record.file_size_bytes,
+        "upload_timestamp": record.upload_timestamp,
+        "ocr_status": record.ocr_status,
+        "ocr_confidence_score": float(record.ocr_confidence_score) if record.ocr_confidence_score else 0.0,
+        "extracted_owner_name": record.extracted_owner_name,
+        "extracted_survey_number": record.extracted_survey_number,
+        "extracted_land_area": float(record.extracted_land_area) if record.extracted_land_area else 0.0,
+        "extracted_location": record.extracted_location,
+        "extracted_text": record.extracted_text
+    }
+
+
 @router.get("/{document_id}/nlp")
 @router.post("/{document_id}/extract-nlp")
 def extract_document_nlp(document_id: str, db: Session = Depends(get_db)):
@@ -239,17 +270,29 @@ def extract_document_nlp(document_id: str, db: Session = Depends(get_db)):
     Accepts document_id, parses stored OCR text, updates database fields,
     and returns structured JSON (owner, survey_no, land_area, location, registration, boundaries).
     """
-    record = db.query(DocumentRecord).filter(DocumentRecord.document_id == document_id).first()
+    record = None
+    try:
+        record = db.query(DocumentRecord).filter(DocumentRecord.document_id == document_id).first()
+    except Exception as e:
+        logger.warning(f"Notice: Database query for document '{document_id}': {e}")
+        try:
+            db.rollback()
+        except Exception:
+            pass
+
     ocr_text = ""
+    ocr_confidence = 0.0
 
     if record and record.extracted_text:
         ocr_text = record.extracted_text
+        ocr_confidence = float(record.ocr_confidence_score) if record.ocr_confidence_score else 0.0
     else:
         matching_files = [f for f in os.listdir(UPLOADS_DIR) if f.startswith(document_id)] if os.path.exists(UPLOADS_DIR) else []
         if matching_files:
             file_path = os.path.join(UPLOADS_DIR, matching_files[0])
             ocr_res = process_document_ocr(file_path)
             ocr_text = ocr_res.get("text", "")
+            ocr_confidence = float(ocr_res.get("confidence", 0.0))
         else:
             raise HTTPException(
                 status_code=404,
@@ -267,15 +310,18 @@ def extract_document_nlp(document_id: str, db: Session = Depends(get_db)):
         try:
             db.commit()
         except Exception:
-            db.rollback()
+            try:
+                db.rollback()
+            except Exception:
+                pass
 
     return {
         "status": "SUCCESS",
         "document_id": document_id,
-        "ocr_confidence_score": float(record.ocr_confidence_score) if record and record.ocr_confidence_score else (ocr_res.get("confidence") if 'ocr_res' in locals() else 0.0),
+        "ocr_confidence_score": ocr_confidence,
         "extracted_text": ocr_text,
-        "nlp_confidence_score": nlp_result.get("nlp_confidence_score"),
-        "fields_extracted_count": nlp_result.get("fields_extracted_count"),
+        "nlp_confidence_score": nlp_result.get("nlp_confidence_score", 0.0),
+        "fields_extracted_count": nlp_result.get("fields_extracted_count", 0),
         "location_summary": nlp_result.get("location_summary"),
         "extracted_attributes": fields
     }
@@ -286,18 +332,38 @@ def get_document_ownership_history(document_id: str, db: Session = Depends(get_d
     """
     Fetch ownership transfer chain timeline matching document's survey number.
     """
-    doc = db.query(DocumentRecord).filter(DocumentRecord.document_id == document_id).first()
+    doc = None
+    try:
+        doc = db.query(DocumentRecord).filter(DocumentRecord.document_id == document_id).first()
+    except Exception as e:
+        logger.warning(f"Notice: Database query for document history '{document_id}': {e}")
+        try:
+            db.rollback()
+        except Exception:
+            pass
+
     survey_no = doc.extracted_survey_number if doc else None
 
     if not survey_no and doc and doc.extracted_text:
         nlp_res = nlp_engine.extract_information(doc.extracted_text)
         survey_no = nlp_res.get("extracted_fields", {}).get("survey_number")
 
+    if not survey_no:
+        matching_files = [f for f in os.listdir(UPLOADS_DIR) if f.startswith(document_id)] if os.path.exists(UPLOADS_DIR) else []
+        if matching_files:
+            file_path = os.path.join(UPLOADS_DIR, matching_files[0])
+            ocr_res = process_document_ocr(file_path)
+            nlp_res = nlp_engine.extract_information(ocr_res.get("text", ""))
+            survey_no = nlp_res.get("extracted_fields", {}).get("survey_number")
+
     history_records = []
     if survey_no:
-        history_records = db.query(OwnershipHistory).filter(
-            OwnershipHistory.survey_number == survey_no
-        ).order_by(OwnershipHistory.transfer_date.asc()).all()
+        try:
+            history_records = db.query(OwnershipHistory).filter(
+                OwnershipHistory.survey_number == survey_no
+            ).order_by(OwnershipHistory.transfer_date.asc()).all()
+        except Exception as e:
+            logger.warning(f"Notice: Ownership history query note: {e}")
 
     items = []
     for h in history_records:

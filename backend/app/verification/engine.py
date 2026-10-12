@@ -27,9 +27,42 @@ class LandVerificationEngine:
         land_records, ownership_history, and GIS spatial engine, computes anomalies,
         and persists result.
         """
-        doc_record = db.query(DocumentRecord).filter(DocumentRecord.document_id == document_id).first()
+        doc_record = None
+        try:
+            doc_record = db.query(DocumentRecord).filter(DocumentRecord.document_id == document_id).first()
+        except Exception:
+            try:
+                db.rollback()
+            except Exception:
+                pass
 
         if not doc_record:
+            import os
+            from app.api.documents import UPLOADS_DIR
+            from app.ocr.processor import process_document_ocr
+            matching_files = [f for f in os.listdir(UPLOADS_DIR) if f.startswith(document_id)] if os.path.exists(UPLOADS_DIR) else []
+            if matching_files:
+                file_path = os.path.join(UPLOADS_DIR, matching_files[0])
+                ocr_res = process_document_ocr(file_path)
+                extracted_text = ocr_res.get("text", "")
+                nlp_res = nlp_engine.extract_information(extracted_text)
+                extracted_fields = nlp_res.get("extracted_fields", {})
+                owner_name = extracted_fields.get("owner_name")
+                survey_number = extracted_fields.get("survey_number")
+                land_area = float(extracted_fields.get("land_area_acres") or 0.0)
+                village = extracted_fields.get("village")
+                mandal = extracted_fields.get("mandal")
+                district = extracted_fields.get("district")
+                return self.verify_extracted_attributes(
+                    owner_name=owner_name,
+                    survey_number=survey_number,
+                    land_area=land_area,
+                    doc_village=village,
+                    doc_mandal=mandal,
+                    doc_district=district,
+                    document_id=document_id,
+                    db=db
+                )
             return self._build_not_found_response(document_id)
 
         # 1. Gather Extracted Attributes

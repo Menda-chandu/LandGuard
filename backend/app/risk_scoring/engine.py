@@ -89,7 +89,10 @@ class ExplainableRiskScoringEngine:
             db.add(risk_db)
             db.commit()
         except Exception as err:
-            db.rollback()
+            try:
+                db.rollback()
+            except Exception:
+                pass
             print(f"Notice: Risk assessment DB persistence note: {err}")
 
         return {

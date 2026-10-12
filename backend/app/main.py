@@ -1,16 +1,34 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+import logging
 from app.api.health import router as health_router
 from app.api.documents import router as documents_router
 from app.api.verification import router as verification_router
 from app.api.risk import router as risk_router
 from app.api.gis import router as gis_router
+from app.database import engine, Base
+import app.models  # noqa: F401
+
+logger = logging.getLogger("landguard.main")
 
 app = FastAPI(
     title="AI-Powered Land Record Validation and Fraud Detection System API",
     description="Backend service providing OCR document ingestion, NLP parsing, land record verification, anomaly detection, explainable risk scoring, and GIS spatial mapping.",
     version="1.0.0",
 )
+
+@app.on_event("startup")
+def init_db_tables():
+    """
+    Ensure all application tables (document_records, verification_results,
+    risk_assessments, land_records, ownership_history) exist in PostgreSQL.
+    Leaves existing data and schemas fully intact.
+    """
+    try:
+        Base.metadata.create_all(bind=engine)
+        logger.info("Database tables initialized successfully.")
+    except Exception as e:
+        logger.warning(f"Notice: Database metadata create_all warning: {e}")
 
 # Enable CORS for local frontend development
 app.add_middleware(
