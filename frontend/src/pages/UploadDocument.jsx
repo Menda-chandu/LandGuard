@@ -9,9 +9,9 @@ export default function UploadDocument({ onUploadSuccess }) {
   const [errorMessage, setErrorMessage] = useState(null);
 
   const sampleDeeds = [
+    { name: "LandGuard_Synthetic_Test_Land_Record.pdf", size: "28 KB", type: "Sale Deed", status: "Synthetic Test PDF" },
     { name: "Sale_Deed_Plot_402B.pdf", size: "2.4 MB", type: "Sale Deed", status: "Suspicious Sample" },
-    { name: "7_12_Extract_Survey_118.pdf", size: "1.8 MB", type: "7/12 Extract", status: "Verified Sample" },
-    { name: "Patta_Passbook_Ext_55.png", size: "3.1 MB", type: "Patta Passbook", status: "Review Needed" }
+    { name: "7_12_Extract_Survey_118.pdf", size: "1.8 MB", type: "7/12 Extract", status: "Verified Sample" }
   ];
 
   const handleFileDrop = (e) => {
@@ -32,8 +32,10 @@ export default function UploadDocument({ onUploadSuccess }) {
 
   const handleSelectSample = (sample) => {
     setErrorMessage(null);
-    // Create a mock File object for sample
-    const sampleBlob = new Blob(["GOVERNMENT OF TELANGANA\nDEED TITLE: REGISTERED SALE DEED\nEXECUTANT / OWNER NAME: Rajesh Kumar Sharma\nCLAIMED SURVEY NO: 402/B\nCLAIMED EXTENT: 2.45 Acres\nVILLAGE: Gachibowli\nMANDAL: Serilingampally\nDISTRICT: Ranga Reddy"], { type: "application/pdf" });
+    const textContent = sample.name.includes("LandGuard_Synthetic_Test")
+      ? "SYNTHETIC SAMPLE — LAND RECORD TEST DOCUMENT\nRecord ID: LG-TEST-0001\nOwner name: Arun Kumar\nSurvey number: SY-TEST-104/2\nLand area: 240 square yards\nVillage / locality: Green Valley\nDistrict: Demo District\nDocument number: DOC-TEST-2026-001\nDocument date: 15 September 2026\nBoundary - North: Demo Plot SY-TEST-103\nBoundary - South: Demo Road\nBoundary - East: Demo Plot SY-TEST-105\nBoundary - West: Demo Drain"
+      : "GOVERNMENT OF TELANGANA\nREGISTRATION AND STAMPS DEPARTMENT\n\nDEED TITLE: REGISTERED SALE DEED FOR AGRICULTURAL LAND\nEXECUTANT / OWNER NAME: Rajesh Kumar Sharma\nCLAIMED SURVEY NO: 402/B\nCLAIMED EXTENT: 2.45 Acres\nLOCATION: Village Gachibowli, Mandal Serilingampally, District Ranga Reddy\nREGISTRATION DATE: 14-May-2023";
+    const sampleBlob = new Blob([textContent], { type: "application/pdf" });
     const file = new File([sampleBlob], sample.name, { type: "application/pdf" });
     setSelectedFile(file);
     setDocumentType(sample.type);
@@ -50,29 +52,10 @@ export default function UploadDocument({ onUploadSuccess }) {
       onUploadSuccess(data);
     } catch (err) {
       setIsUploading(false);
-      console.warn("Backend API notice:", err.message);
-      // Fallback mock payload if backend server is offline
-      onUploadSuccess({
-        document_id: "DOC-20260905-8901",
-        filename: selectedFile.name,
-        file_path: `uploads/${selectedFile.name}`,
-        file_type: "PDF",
-        file_size_bytes: selectedFile.size || 2450000,
-        ocr_status: "COMPLETED",
-        ocr_confidence_score: 95.5,
-        extracted_text: "GOVERNMENT OF TELANGANA\nREGISTRATION AND STAMPS DEPARTMENT\n\nEXECUTANT / OWNER NAME: Rajesh Kumar Sharma\nCLAIMED SURVEY NO: 402/B\nCLAIMED EXTENT: 2.45 Acres\nVILLAGE: Gachibowli\nMANDAL: Serilingampally\nDISTRICT: Ranga Reddy\nDOCUMENT ID: DOC-2026-8901",
-        extracted_nlp_fields: {
-          document_type: documentType,
-          owner_name: "Rajesh Kumar Sharma",
-          survey_number: "402/B",
-          land_area_acres: 2.45,
-          village: "Gachibowli",
-          mandal: "Serilingampally",
-          district: "Ranga Reddy",
-          registration_number: "DOC-2026-8901",
-          registration_date: "14-May-2023"
-        }
-      });
+      console.error("Backend OCR upload error:", err.message);
+      setErrorMessage(
+        err.message || "Failed to process document upload and OCR extraction. Please ensure the backend server is running and the file is a valid PDF or image."
+      );
     }
   };
 

@@ -21,9 +21,10 @@ export default function OwnershipHistory({ activeDocument }) {
       });
   }, [activeDocument]);
 
-  const surveyNo = historyData?.survey_number || activeDocument?.extracted_nlp_fields?.survey_number || "402/B";
+  const surveyNo = historyData?.survey_number || activeDocument?.extracted_nlp_fields?.survey_number || "Unspecified";
 
-  const timelineItems = (historyData?.history_timeline && historyData.history_timeline.length > 0)
+  const hasLoadedHistory = historyData && Array.isArray(historyData.history_timeline);
+  const timelineItems = hasLoadedHistory
     ? historyData.history_timeline.map((h, idx) => ({
         year: h.transfer_date ? h.transfer_date.split('-')[0] : "2023",
         date: h.transfer_date || "2023-04-10",
@@ -34,6 +35,8 @@ export default function OwnershipHistory({ activeDocument }) {
         documentRef: h.history_id,
         status: h.transfer_type.includes("Duplicate") || h.transfer_type.includes("Rapid") ? "Flagged Suspicious" : "Verified"
       }))
+    : activeDocument
+    ? []
     : mockOwnershipTimeline;
 
   return (
@@ -54,6 +57,16 @@ export default function OwnershipHistory({ activeDocument }) {
       {isLoading ? (
         <div className="p-12 bg-slate-900 border border-slate-800 rounded-xl text-center text-slate-400 text-sm animate-pulse">
           Fetching historical title chain records...
+        </div>
+      ) : timelineItems.length === 0 ? (
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-10 text-center space-y-3">
+          <div className="w-12 h-12 mx-auto rounded-full bg-slate-800 text-slate-400 flex items-center justify-center text-xl">
+            📋
+          </div>
+          <h3 className="text-base font-bold text-white">No Historical Title Chain Records Found</h3>
+          <p className="text-xs text-slate-400 max-w-md mx-auto">
+            No prior transfer or mutation records were registered in the revenue history database for Survey <span className="font-mono text-blue-300 font-bold">{surveyNo}</span>.
+          </p>
         </div>
       ) : (
         /* Timeline View */

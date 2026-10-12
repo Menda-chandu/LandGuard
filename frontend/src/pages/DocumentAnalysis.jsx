@@ -20,22 +20,13 @@ export default function DocumentAnalysis({ activeDocument, onProceedToResults })
     }
   }, [activeDocument]);
 
-  const docId = activeDocument?.document_id || "DOC-2026-8901";
-  const ocrText = activeDocument?.extracted_text || nlpData?.extracted_text || "GOVERNMENT OF TELANGANA\nREGISTRATION AND STAMPS DEPARTMENT\n\nDEED TITLE: REGISTERED SALE DEED FOR AGRICULTURAL LAND\nDOCUMENT ID: DOC-2026-8901\nEXECUTANT (SELLER): Rajesh Kumar Sharma\nCLAIMED SURVEY NO: 402/B\nCLAIMED EXTENT: 2.45 Acres\nLOCATION: Village Gachibowli, Mandal Serilingampally, District Ranga Reddy\nREGISTRATION DATE: 14-May-2023";
-  const ocrConfidence = activeDocument?.ocr_confidence_score || 96.4;
+  const docId = activeDocument?.document_id || "DOC-UNASSIGNED";
+  const ocrText = activeDocument?.extracted_text || nlpData?.extracted_text || "[No OCR text available. Please upload a document to run extraction.]";
+  const ocrConfidence = activeDocument?.ocr_confidence_score ?? 0.0;
 
-  const fields = nlpData?.extracted_attributes || activeDocument?.extracted_nlp_fields || {
-    owner_name: "Rajesh Kumar Sharma",
-    survey_number: "402/B",
-    land_area_acres: 2.45,
-    village: "Gachibowli",
-    mandal: "Serilingampally",
-    district: "Ranga Reddy",
-    state: "Telangana",
-    registration_number: "DOC-2026-8901",
-    registration_date: "14-May-2023",
-    document_type: "Sale Deed"
-  };
+  const fields = nlpData?.extracted_attributes || activeDocument?.extracted_nlp_fields || {};
+  const nlpConfidence = nlpData?.nlp_confidence_score ?? activeDocument?.nlp_confidence_score ?? (fields.owner_name ? 85.0 : 0.0);
+  const locationText = nlpData?.location_summary || activeDocument?.location_summary || ([fields.village, fields.mandal, fields.district, fields.state].filter(Boolean).join(", ") || "Not detected in document");
 
   return (
     <div className="space-y-6">
@@ -78,7 +69,7 @@ export default function DocumentAnalysis({ activeDocument, onProceedToResults })
               OCR Confidence: {ocrConfidence}%
             </div>
 
-            <div className="whitespace-pre-wrap leading-relaxed text-[11px] text-slate-300 font-mono pt-4">
+            <div className="whitespace-pre-wrap leading-relaxed text-[11px] text-slate-300 font-mono pt-4 max-h-[500px] overflow-y-auto">
               {ocrText}
             </div>
           </div>
@@ -89,7 +80,7 @@ export default function DocumentAnalysis({ activeDocument, onProceedToResults })
           <div className="flex items-center justify-between border-b border-slate-800 pb-3">
             <h3 className="text-sm font-bold text-white">Extracted Text Entities (Rule-Based NLP Engine)</h3>
             <span className="text-xs text-blue-400 font-semibold">
-              NLP Confidence: {nlpData?.nlp_confidence_score || 92.5}%
+              NLP Confidence: {nlpConfidence}%
             </span>
           </div>
 
@@ -102,50 +93,70 @@ export default function DocumentAnalysis({ activeDocument, onProceedToResults })
               <div className="p-3 bg-slate-950 rounded-lg border border-slate-800 flex justify-between items-center">
                 <div>
                   <span className="text-[11px] font-semibold text-slate-500 uppercase block">Extracted Owner Name</span>
-                  <span className="text-sm font-bold text-white">{fields.owner_name || "Unspecified"}</span>
+                  <span className="text-sm font-bold text-white">{fields.owner_name || "Not detected in document"}</span>
                 </div>
-                <span className="text-xs font-semibold px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800">
-                  Extracted
+                <span className={`text-xs font-semibold px-2 py-0.5 rounded ${
+                  fields.owner_name 
+                    ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' 
+                    : 'bg-slate-800 text-slate-400 border border-slate-700'
+                }`}>
+                  {fields.owner_name ? 'Extracted' : 'Not Detected'}
                 </span>
               </div>
 
               <div className="p-3 bg-slate-950 rounded-lg border border-slate-800 flex justify-between items-center">
                 <div>
                   <span className="text-[11px] font-semibold text-slate-500 uppercase block">Survey / Sub-division No.</span>
-                  <span className="text-sm font-bold text-white font-mono">{fields.survey_number || "402/B"}</span>
+                  <span className="text-sm font-bold text-white font-mono">{fields.survey_number || "Not detected in document"}</span>
                 </div>
-                <span className="text-xs font-semibold px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800">
-                  Extracted
+                <span className={`text-xs font-semibold px-2 py-0.5 rounded ${
+                  fields.survey_number 
+                    ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' 
+                    : 'bg-slate-800 text-slate-400 border border-slate-700'
+                }`}>
+                  {fields.survey_number ? 'Extracted' : 'Not Detected'}
                 </span>
               </div>
 
               <div className="p-3 bg-slate-950 rounded-lg border border-slate-800 flex justify-between items-center">
                 <div>
                   <span className="text-[11px] font-semibold text-slate-500 uppercase block">Claimed Land Extent</span>
-                  <span className="text-sm font-bold text-white">{fields.land_area_acres ? `${fields.land_area_acres} Acres` : "2.45 Acres"}</span>
+                  <span className="text-sm font-bold text-white">
+                    {fields.land_area_raw || (fields.land_area_acres ? `${fields.land_area_acres} Acres` : "Not detected in document")}
+                  </span>
                 </div>
-                <span className="text-xs font-semibold px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800">
-                  Extracted
+                <span className={`text-xs font-semibold px-2 py-0.5 rounded ${
+                  fields.land_area_raw || fields.land_area_acres 
+                    ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' 
+                    : 'bg-slate-800 text-slate-400 border border-slate-700'
+                }`}>
+                  {fields.land_area_raw || fields.land_area_acres ? 'Extracted' : 'Not Detected'}
                 </span>
               </div>
 
               <div className="p-3 bg-slate-950 rounded-lg border border-slate-800 flex justify-between items-center">
                 <div>
                   <span className="text-[11px] font-semibold text-slate-500 uppercase block">Jurisdiction & Location</span>
-                  <span className="text-sm font-bold text-white">{nlpData?.location_summary || `${fields.village || 'Gachibowli'}, ${fields.district || 'Ranga Reddy'}`}</span>
+                  <span className="text-sm font-bold text-white">{locationText}</span>
                 </div>
-                <span className="text-xs font-semibold px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800">
-                  Extracted
+                <span className={`text-xs font-semibold px-2 py-0.5 rounded ${
+                  locationText !== "Not detected in document"
+                    ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' 
+                    : 'bg-slate-800 text-slate-400 border border-slate-700'
+                }`}>
+                  {locationText !== "Not detected in document" ? 'Extracted' : 'Not Detected'}
                 </span>
               </div>
 
               <div className="p-3 bg-slate-950 rounded-lg border border-slate-800 flex justify-between items-center">
                 <div>
                   <span className="text-[11px] font-semibold text-slate-500 uppercase block">Document Type & Reg. Date</span>
-                  <span className="text-sm font-bold text-slate-300">{fields.document_type || "Sale Deed"} ({fields.registration_date || "14-May-2023"})</span>
+                  <span className="text-sm font-bold text-slate-300">
+                    {fields.document_type || "Instrument"} {fields.registration_date ? `(${fields.registration_date})` : ""}
+                  </span>
                 </div>
                 <span className="text-xs font-semibold px-2 py-0.5 rounded bg-blue-950 text-blue-400 border border-blue-800">
-                  Instrument Verified
+                  {fields.registration_number ? fields.registration_number : 'Instrument Recorded'}
                 </span>
               </div>
             </div>

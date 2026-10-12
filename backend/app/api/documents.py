@@ -272,6 +272,8 @@ def extract_document_nlp(document_id: str, db: Session = Depends(get_db)):
     return {
         "status": "SUCCESS",
         "document_id": document_id,
+        "ocr_confidence_score": float(record.ocr_confidence_score) if record and record.ocr_confidence_score else (ocr_res.get("confidence") if 'ocr_res' in locals() else 0.0),
+        "extracted_text": ocr_text,
         "nlp_confidence_score": nlp_result.get("nlp_confidence_score"),
         "fields_extracted_count": nlp_result.get("fields_extracted_count"),
         "location_summary": nlp_result.get("location_summary"),
@@ -285,15 +287,17 @@ def get_document_ownership_history(document_id: str, db: Session = Depends(get_d
     Fetch ownership transfer chain timeline matching document's survey number.
     """
     doc = db.query(DocumentRecord).filter(DocumentRecord.document_id == document_id).first()
-    survey_no = doc.extracted_survey_number if doc else "402/B"
+    survey_no = doc.extracted_survey_number if doc else None
 
     if not survey_no and doc and doc.extracted_text:
         nlp_res = nlp_engine.extract_information(doc.extracted_text)
-        survey_no = nlp_res.get("extracted_fields", {}).get("survey_number") or "402/B"
+        survey_no = nlp_res.get("extracted_fields", {}).get("survey_number")
 
-    history_records = db.query(OwnershipHistory).filter(
-        OwnershipHistory.survey_number == survey_no
-    ).order_by(OwnershipHistory.transfer_date.asc()).all()
+    history_records = []
+    if survey_no:
+        history_records = db.query(OwnershipHistory).filter(
+            OwnershipHistory.survey_number == survey_no
+        ).order_by(OwnershipHistory.transfer_date.asc()).all()
 
     items = []
     for h in history_records:

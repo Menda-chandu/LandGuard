@@ -30,38 +30,38 @@ export default function VerificationResults({ activeDocument, verificationResult
       });
   }, [activeDocument, verificationResult, onVerificationComplete]);
 
-  const docId = activeDocument?.document_id || verData?.document_id || "DOC-2026-8901";
-  const verStatus = verData?.verification_status || mockSelectedRecord.status;
+  const docId = activeDocument?.document_id || verData?.document_id || "DOC-UNASSIGNED";
+  const verStatus = verData?.verification_status || (activeDocument ? "PENDING" : mockSelectedRecord.status);
   const matchedRec = verData?.matched_land_record || {
-    owner_name: mockSelectedRecord.extractedFields.govtOwnerName,
-    survey_number: mockSelectedRecord.extractedFields.govtSurveyNumber,
-    land_area_acres: mockSelectedRecord.extractedFields.govtRecordArea,
-    village: "Gachibowli",
-    district: "Ranga Reddy"
+    owner_name: activeDocument ? "Checking registry..." : mockSelectedRecord.extractedFields.govtOwnerName,
+    survey_number: activeDocument?.extracted_nlp_fields?.survey_number || (activeDocument ? "N/A" : mockSelectedRecord.extractedFields.govtSurveyNumber),
+    land_area_acres: activeDocument?.extracted_nlp_fields?.land_area_acres || (activeDocument ? 0.0 : mockSelectedRecord.extractedFields.govtRecordArea),
+    village: activeDocument?.extracted_nlp_fields?.village || (activeDocument ? "N/A" : "Gachibowli"),
+    district: activeDocument?.extracted_nlp_fields?.district || (activeDocument ? "N/A" : "Ranga Reddy")
   };
 
   const fieldMatches = verData?.field_matches || {
     owner_match: false,
-    survey_number_match: true,
+    survey_number_match: false,
     land_area_match: false
   };
 
-  const detectedAnomalies = verData?.detected_anomalies || [
+  const detectedAnomalies = verData?.detected_anomalies || (activeDocument ? [] : [
     {
       title: "Ownership Identity Mismatch",
       severity: "High",
-      expected: "Registered Owner: Kiran Mazumdar",
-      found: "Document Executant: Rajesh Kumar Sharma",
-      description: "Document claims ownership under Rajesh Kumar Sharma, but Revenue Registry lists Kiran Mazumdar."
+      expected: "Registered Owner (Revenue Registry)",
+      found: "Document Executant",
+      description: "Document claims ownership under an executant that does not match the official Revenue Registry."
     },
     {
       title: "Land Area Inflation Anomaly",
       severity: "High",
-      expected: "Registered Parcel Area: 2.00 Acres",
-      found: "Claimed Document Extent: 2.45 Acres",
-      description: "Document claims 2.45 Acres, exceeding the official Cadastral map parcel boundary of 2.00 Acres."
+      expected: "Registered Parcel Boundary",
+      found: "Claimed Document Extent",
+      description: "Document claims land area exceeding the official Cadastral map parcel boundary."
     }
-  ];
+  ]);
 
   return (
     <div className="space-y-6">

@@ -20,53 +20,54 @@ class NLPInformationExtractor:
             (r"\bPATTA\s+PASSBOOK\b", "Patta Passbook"),
             (r"\bINHERITANCE\s+MUTATION\b", "Inheritance Mutation"),
             (r"\bTITLE\s+DEED\b", "Title Deed"),
-            (r"\bMORTGAGE\s+DEED\b", "Mortgage Deed")
+            (r"\bMORTGAGE\s+DEED\b", "Mortgage Deed"),
+            (r"\bSALE[\s\-]RECORD\b", "Sale Deed"),
         ]
 
         # 2. Key Attribute Regex Rules
         self.rules = {
             "owner_name": [
-                r"(?:[\(\[])?\s*(?:EXECUTANT\s*(?:\/\s*OWNER\s*NAME)?|SELLER|OWNER|CLAIMED\s+OWNER|TITLE\s+HOLDER|NAME\s+OF\s+OWNER)\s*(?:[\(\[][^\)\n\!]*[\)\]\!])?\s*[\:\-\.]?\s+([A-Za-z\s\.\']{3,40}?)(?=\n|\,|\s+CLAIMED|\s+SURVEY|\s+VILLAGE|\s+SON|\s+WIFE|\s+DAUGHTER|$)",
+                r"(?:OWNER\s+NAME|NAME\s+OF\s+OWNER)\s*[\:\-\.]*\s*(?:\n\s*)?([A-Za-z\s\.\']{2,40}?)(?=\s*\(|\n|\,|\s+CLAIMED|\s+SURVEY|$)",
+                r"(?:[\(\[])?\s*(?:EXECUTANT\s*(?:\/\s*OWNER\s*NAME)?|SELLER|OWNER|CLAIMED\s+OWNER|TITLE\s+HOLDER)\s*(?:[\(\[][^\)\n\!]*[\)\]\!])?\s*[\:\-\.]?\s+([A-Za-z\s\.\']{3,40}?)(?=\n|\,|\s+CLAIMED|\s+SURVEY|\s+VILLAGE|\s+SON|\s+WIFE|\s+DAUGHTER|$)",
                 r"(?:IN FAVOUR OF|PROPERTIES OF)\s*[\:\-\.]?\s*([A-Za-z\s\.\']{3,40}?)(?=\n|\,|\s+CLAIMED|\s+SURVEY|$)",
-                r"OWNER\s+NAME\s*[\:\-\.]?\s*([A-Za-z\s\.\']{3,40}?)(?=\n|\,|\s+CLAIMED|\s+SURVEY|$)"
             ],
             "survey_number": [
-                r"(?:CLAIMED\s+SURVEY[A-Z]*|SURVEY\s*NO\.?|SURVEY\s+NUMBER|SY\s*NO\.?|PLOT\s*NO\.?)\s*[\:\-\.]?\s*([A-Za-z0-9\-]+\/[0-9A-Za-z]+|[0-9]{1,4}\/[0-9A-Z]+|[0-9]{1,4})",
-                r"(?:SURVEY|PLOT)\s*[\:\-\.]?\s*([A-Za-z0-9\-]+\/[0-9A-Za-z]+|[0-9]{1,4}\/[0-9A-Z]+|[0-9]{1,4})"
+                r"(?:CLAIMED\s+SURVEY[A-Z]*|SURVEY\s*(?:NO\.?|NUMBER)?|SY\s*NO\.?|PLOT\s*NO\.?)\s*[\:\-\.]*\s*(?:\n\s*)?([A-Za-z0-9\-]+\/[0-9A-Za-z]+|[0-9]{1,4}\/[0-9A-Z]+|[0-9]{1,4})",
+                r"(?:SURVEY|PLOT)\s*[\:\-\.]*\s*(?:\n\s*)?([A-Za-z0-9\-]+\/[0-9A-Za-z]+|[0-9]{1,4}\/[0-9A-Z]+|[0-9]{1,4})"
             ],
-            "land_area_acres": [
-                r"(?:CLAIMED\s+EXTENT|LAND\s+AREA|TOTAL\s+AREA|EXTENT)\s*[\:\-\.]?\s*([0-9]+(?:\.[0-9]+)?)\s*(?:ACRES|ACRE|AC|HA|RERES)?",
-                r"([0-9]+(?:\.[0-9]+)?)\s*(?:ACRES|ACRE|AC)"
+            "land_area": [
+                r"(?:CLAIMED\s+EXTENT|LAND\s+AREA|TOTAL\s+AREA|EXTENT)\s*[\:\-\.]*\s*(?:\n\s*)?([0-9]+(?:\.[0-9]+)?)\s*([A-Za-z\s\.]+)?(?=\n|$)",
+                r"([0-9]+(?:\.[0-9]+)?)\s*(ACRES|ACRE|AC|SQUARE\s+YARDS|SQ\s+YARDS|SQ\.\s+YARDS|SQ\s+YDS|HECTARES|HA|GUNTAS)"
             ],
             "village": [
-                r"(?:VILLAGE)\s*[\:\-\.]?\s*([A-Za-z\s]{3,30}?)(?=\,|\s+MANDAL|\s+DISTRICT|\n|$)",
+                r"(?:VILLAGE\s*(?:\/\s*LOCALITY)?|LOCALITY)\s*[\:\-\.]*\s*(?:\n\s*)?([A-Za-z0-9\s]{2,40}?)(?=\s*\(|\,|\s+MANDAL|\s+DISTRICT|\n|$)",
                 r"VILLAGE\s+([A-Za-z\s]{3,30}?)(?=\,|\s+MANDAL|\s+DISTRICT|\n|$)"
             ],
             "mandal": [
-                r"(?:MANDAL|TALUK)\s*[\:\-\.]?\s*([A-Za-z\s]{3,30}?)(?=\,|\s+DISTRICT|\n|$)",
+                r"(?:MANDAL|TALUK)\s*[\:\-\.]*\s*(?:\n\s*)?([A-Za-z0-9\s]{2,40}?)(?=\s*\(|\,|\s+DISTRICT|\n|$)",
                 r"MANDAL\s+([A-Za-z\s]{3,30}?)(?=\,|\s+DISTRICT|\n|$)"
             ],
             "district": [
-                r"(?:DISTRICT|DISTROCT|DIST)\s*[\:\-\.]?\s*([A-Za-z\s]{3,30}?)(?=\,|\s+STATE|\n|$)",
+                r"(?:DISTRICT|DISTROCT|DIST)\s*[\:\-\.]*\s*(?:\n\s*)?([A-Za-z0-9\s]{2,40}?)(?=\s*\(|\,|\s+STATE|\n|$)",
                 r"([A-Za-z\s]{3,30}?)\s+DISTRICT(?!\s+OFFICE)"
             ],
             "state": [
-                r"(?:STATE)\s*[\:\-\.]?\s*([A-Za-z\s]{3,30}?)(?=\,|\n|$)"
+                r"(?:STATE)\s*[\:\-\.]*\s*(?:\n\s*)?([A-Za-z0-9\s]{2,40}?)(?=\s*\(|\,|\n|$)"
             ],
             "registration_number": [
-                r"(?:DOCUMENT\s*(?:ID|IO)|REGISTRATION\s+NO|REG\s+NO|DEED\s+NO)\s*[\:\-\.]?\s*([A-Z0-9\-\/]{5,30})"
+                r"(?:DOCUMENT\s*(?:NUMBER|NO\.?|ID|IO)|REGISTRATION\s+NO|REG\s+NO|DEED\s+NO)\s*[\:\-\.]*\s*(?:\n\s*)?([A-Z0-9\-\/]{4,40})"
             ],
             "registration_date": [
-                r"(?:REGISTRATION\s+DATE|EXECUTION\s+DATE|DATE)\s*[\:\-\.]?\s*([0-9]{1,2}[\/\-\.][0-9]{1,2}[\/\-\.][0-9]{2,4}|[0-9]{1,2}\-[A-Za-z]{3}\-[0-9]{4}|[0-9]{4}\-[0-9]{2}\-[0-9]{2})"
+                r"(?:DOCUMENT\s+DATE|REGISTRATION\s+DATE|EXECUTION\s+DATE|DATE)\s*[\:\-\.]*\s*(?:\n\s*)?([0-9]{1,2}\s+[A-Za-z]{3,10}\s+[0-9]{4}|[0-9]{1,2}[\/\-\.][0-9]{1,2}[\/\-\.][0-9]{2,4}|[0-9]{1,2}\-[A-Za-z]{3}\-[0-9]{4}|[0-9]{4}\-[0-9]{2}\-[0-9]{2})"
             ]
         }
 
         # 3. Boundary Regex Patterns
         self.boundary_patterns = {
-            "north": r"(?:NORTH|NORTHERN\s+BOUNDARY)\s*[\:\-]\s*([^\n\.\;]+)",
-            "south": r"(?:SOUTH|SOUTHERN\s+BOUNDARY)\s*[\:\-]\s*([^\n\.\;]+)",
-            "east": r"(?:EAST|EASTERN\s+BOUNDARY)\s*[\:\-]\s*([^\n\.\;]+)",
-            "west": r"(?:WEST|WESTERN\s+BOUNDARY)\s*[\:\-]\s*([^\n\.\;]+)"
+            "north": r"(?:BOUNDARY\s*[\:\-]?\s*NORTH|NORTH(?:ERN\s+BOUNDARY)?)\s*[\:\-]*\s*(?:\n\s*)?([^\n\.\;]+)",
+            "south": r"(?:BOUNDARY\s*[\:\-]?\s*SOUTH|SOUTH(?:ERN\s+BOUNDARY)?)\s*[\:\-]*\s*(?:\n\s*)?([^\n\.\;]+)",
+            "east": r"(?:BOUNDARY\s*[\:\-]?\s*EAST|EAST(?:ERN\s+BOUNDARY)?)\s*[\:\-]*\s*(?:\n\s*)?([^\n\.\;]+)",
+            "west": r"(?:BOUNDARY\s*[\:\-]?\s*WEST|WEST(?:ERN\s+BOUNDARY)?)\s*[\:\-]*\s*(?:\n\s*)?([^\n\.\;]+)"
         }
 
     def extract_information(self, ocr_text: str) -> dict:
@@ -92,6 +93,8 @@ class NLPInformationExtractor:
             "owner_name": None,
             "survey_number": None,
             "land_area_acres": None,
+            "land_area_raw": None,
+            "land_area_unit": None,
             "village": None,
             "mandal": None,
             "district": None,
@@ -106,32 +109,45 @@ class NLPInformationExtractor:
             for pattern in pattern_list:
                 match = re.search(pattern, clean_text, re.IGNORECASE)
                 if match:
-                    val = match.group(1).strip()
-                    # Field-specific formatting & cleanup
-                    if field_name == "land_area_acres":
+                    if field_name == "land_area":
+                        num_str = match.group(1).strip()
+                        raw_unit = (match.group(2) if len(match.groups()) > 1 and match.group(2) else "Acres").strip()
+                        raw_unit_clean = re.sub(r"[,\.]+$", "", raw_unit).strip() or "Acres"
                         try:
-                            val = float(val)
+                            num_val = float(num_str)
+                            extracted_data["land_area_acres"] = num_val
+                            extracted_data["land_area_raw"] = f"{num_str} {raw_unit_clean}"
+                            extracted_data["land_area_unit"] = raw_unit_clean
+                            fields_found_count += 1
                         except ValueError:
                             continue
-                    elif field_name == "owner_name":
-                        val = re.sub(r"\s+", " ", val).title()
-                        val = re.sub(r"\bRajosh\b", "Rajesh", val)
-                    elif field_name == "survey_number":
-                        val = val.upper()
-                        val = re.sub(r"/8$", "/B", val)
-                    elif field_name in ["village", "mandal", "district", "state"]:
-                        val = val.strip(",. ").title()
+                        break
+                    else:
+                        val = match.group(1).strip()
+                        # Clean up parentheticals
+                        val = re.sub(r"\(.*?\)", "", val).strip()
 
-                    extracted_data[field_name] = val
-                    fields_found_count += 1
-                    break
+                        if field_name == "owner_name":
+                            val = re.sub(r"\s+", " ", val).title()
+                            val = re.sub(r"\bRajosh\b", "Rajesh", val)
+                        elif field_name == "survey_number":
+                            val = val.upper()
+                            val = re.sub(r"/8$", "/B", val)
+                        elif field_name in ["village", "mandal", "district", "state"]:
+                            val = val.strip(",. ").title()
+
+                        extracted_data[field_name] = val
+                        fields_found_count += 1
+                        break
 
         # 3. Extract Parcel Boundary Details (North, South, East, West)
         boundaries = {}
         for direction, b_pattern in self.boundary_patterns.items():
             b_match = re.search(b_pattern, clean_text, re.IGNORECASE)
             if b_match:
-                boundaries[direction] = b_match.group(1).strip()
+                b_val = b_match.group(1).strip()
+                b_val = re.sub(r"\(.*?\)", "", b_val).strip()
+                boundaries[direction] = b_val
             else:
                 boundaries[direction] = "Not Specified"
 
@@ -174,6 +190,8 @@ class NLPInformationExtractor:
                 "owner_name": None,
                 "survey_number": None,
                 "land_area_acres": 0.0,
+                "land_area_raw": None,
+                "land_area_unit": None,
                 "village": None,
                 "mandal": None,
                 "district": None,

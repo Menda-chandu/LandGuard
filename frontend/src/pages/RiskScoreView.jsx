@@ -24,14 +24,14 @@ const DEFAULT_FALLBACK_ANOMALIES = [
     title: "Ownership Identity Mismatch",
     severity: "High",
     points_added: 25,
-    description: "Document claims ownership under Rajesh Kumar Sharma, but Revenue Registry lists Kiran Mazumdar."
+    description: "Document claims ownership under an executant differing from official Revenue Registry."
   },
   {
     anomaly_type: "LAND_AREA_MISMATCH",
     title: "Land Area Inflation Anomaly",
     severity: "High",
     points_added: 20,
-    description: "Document claims 2.45 Acres, exceeding the official Cadastral map parcel boundary of 2.00 Acres."
+    description: "Document claims land extent exceeding the official Cadastral map parcel boundary."
   }
 ];
 
@@ -53,7 +53,7 @@ export default function RiskScoreView({ activeDocument, verificationResult }) {
       });
   }, [activeDocument]);
 
-  const docId = activeDocument?.document_id || riskData?.document_id || "DOC-2026-8901";
+  const docId = activeDocument?.document_id || riskData?.document_id || "DOC-UNASSIGNED";
 
   // Derive breakdown from live risk data, shared verification result, or aligned fallback
   const breakdown = (riskData?.scoring_breakdown && riskData.scoring_breakdown.length > 0)
@@ -66,6 +66,8 @@ export default function RiskScoreView({ activeDocument, verificationResult }) {
         points_added: ANOMALY_WEIGHTS[a.type] || (a.severity === "Critical" ? 30 : a.severity === "High" ? 25 : 15),
         description: a.description || ""
       }))
+    : activeDocument
+    ? []
     : DEFAULT_FALLBACK_ANOMALIES;
 
   // Calculate score dynamically from breakdown weights instead of a disconnected static number
