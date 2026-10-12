@@ -7,9 +7,13 @@ from sqlalchemy.orm import Session
 from typing import Optional
 
 from app.database import get_db
-from app.models import DocumentRecord, OwnershipHistory
+from app.models import DocumentRecord, OwnershipHistory, LandRecord
 from app.ocr.processor import process_document_ocr
 from app.nlp.extractor import nlp_engine
+from sqlalchemy import or_
+import logging
+
+logger = logging.getLogger("landguard.documents")
 
 router = APIRouter()
 
@@ -142,6 +146,88 @@ def get_document_details(document_id: str, db: Session = Depends(get_db)):
         "extracted_land_area": record.extracted_land_area,
         "extracted_location": record.extracted_location,
         "extracted_text": record.extracted_text
+    }
+
+
+@router.get("/search")
+def search_records(
+    q: Optional[str] = None,
+    limit: int = 15,
+    db: Session = Depends(get_db)
+):
+    """
+    Global search endpoint across LandRecords and DocumentRecords.
+    Supports search by survey_number, owner_name, record_id/document_id, and location.
+    """
+    if not q or not q.strip():
+        return {"query": "", "count": 0, "results": []}
+
+    query_str = f"%{q.strip().lower()}%"
+    results = []
+
+    try:
+        # 1. Search LandRecords
+        land_recs = db.query(LandRecord).filter(
+            or_(
+                LandRecord.survey_number.ilike(query_str),
+                LandRecord.owner_name.ilike(query_str),
+                LandRecord.record_id.ilike(query_str),
+                LandRecord.village.ilike(query_str),
+                LandRecord.mandal.ilike(query_str),
+                LandRecord.district.ilike(query_str),
+                LandRecord.registration_number.ilike(query_str)
+            )
+        ).limit(limit).all()
+
+        for rec in land_recs:
+            results.append({
+                "type": "land_record",
+                "id": rec.record_id,
+                "record_id": rec.record_id,
+                "survey_number": rec.survey_number,
+                "owner_name": rec.owner_name or "Unspecified",
+                "land_area_acres": float(rec.land_area_acres) if rec.land_area_acres else 0.0,
+                "village": rec.village,
+                "mandal": rec.mandal,
+                "district": rec.district,
+                "state": rec.state,
+                "registration_number": rec.registration_number,
+                "registration_date": rec.registration_date.strftime("%Y-%m-%d") if rec.registration_date else None,
+                "document_type": rec.document_type
+            })
+
+        # 2. Search DocumentRecords
+        doc_recs = db.query(DocumentRecord).filter(
+            or_(
+                DocumentRecord.document_id.ilike(query_str),
+                DocumentRecord.filename.ilike(query_str),
+                DocumentRecord.extracted_owner_name.ilike(query_str),
+                DocumentRecord.extracted_survey_number.ilike(query_str),
+                DocumentRecord.extracted_location.ilike(query_str)
+            )
+        ).limit(limit).all()
+
+        for doc in doc_recs:
+            results.append({
+                "type": "document_record",
+                "id": doc.document_id,
+                "document_id": doc.document_id,
+                "filename": doc.filename,
+                "survey_number": doc.extracted_survey_number or "N/A",
+                "owner_name": doc.extracted_owner_name or "Unspecified",
+                "land_area_acres": float(doc.extracted_land_area) if doc.extracted_land_area else 0.0,
+                "location": doc.extracted_location,
+                "ocr_status": doc.ocr_status,
+                "ocr_confidence_score": float(doc.ocr_confidence_score) if doc.ocr_confidence_score else 0.0,
+                "extracted_text": doc.extracted_text
+            })
+    except Exception as e:
+        logger.warning(f"Error querying search records in DB: {e}")
+
+    return {
+        "query": q,
+        "count": len(results),
+        "results": results
     }
 
 

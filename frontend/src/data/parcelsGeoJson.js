@@ -1,0 +1,4333 @@
+// Auto-generated bundled synthetic parcel GeoJSON data for offline resilience
+export const fallbackGeoJson = {
+  "type": "FeatureCollection",
+  "name": "LandGuard_Synthetic_Parcels",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "PARCEL-101A",
+      "properties": {
+        "survey_number": "101/A",
+        "owner_name": "Anil Kumar Rao",
+        "land_area_acres": 2.5,
+        "village": "Greenvalley",
+        "mandal": "Serilingampally",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.348,
+              17.441
+            ],
+            [
+              78.3495,
+              17.4415
+            ],
+            [
+              78.35,
+              17.4395
+            ],
+            [
+              78.3485,
+              17.439
+            ],
+            [
+              78.348,
+              17.441
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "PARCEL-102B",
+      "properties": {
+        "survey_number": "102/B",
+        "owner_name": "Bhavana Sharma",
+        "land_area_acres": 1.8,
+        "village": "Greenvalley",
+        "mandal": "Serilingampally",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.3495,
+              17.4415
+            ],
+            [
+              78.351,
+              17.442
+            ],
+            [
+              78.3515,
+              17.44
+            ],
+            [
+              78.35,
+              17.4395
+            ],
+            [
+              78.3495,
+              17.4415
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "PARCEL-103C",
+      "properties": {
+        "survey_number": "103/C",
+        "owner_name": "Chandra Shekhar Verma",
+        "land_area_acres": 4.2,
+        "village": "Sunnyside",
+        "mandal": "Rajendranagar",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.36,
+              17.43
+            ],
+            [
+              78.3625,
+              17.431
+            ],
+            [
+              78.363,
+              17.428
+            ],
+            [
+              78.3605,
+              17.4275
+            ],
+            [
+              78.36,
+              17.43
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "PARCEL-201A",
+      "properties": {
+        "survey_number": "201/A",
+        "owner_name": "Farhan Ahmed",
+        "land_area_acres": 5.0,
+        "village": "Hilltop",
+        "mandal": "Maheshwaram",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "HIGH",
+        "conflict_status": "Owner Identity Mismatch"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.41,
+              17.38
+            ],
+            [
+              78.413,
+              17.3815
+            ],
+            [
+              78.414,
+              17.378
+            ],
+            [
+              78.411,
+              17.3765
+            ],
+            [
+              78.41,
+              17.38
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "PARCEL-401A",
+      "properties": {
+        "survey_number": "401/A",
+        "owner_name": "Jayant Joshi",
+        "land_area_acres": 1.8,
+        "village": "Riverside",
+        "mandal": "Ibrahimpatnam",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "MEDIUM",
+        "conflict_status": "Land Area Discrepancy"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.48,
+              17.35
+            ],
+            [
+              78.482,
+              17.351
+            ],
+            [
+              78.4825,
+              17.3485
+            ],
+            [
+              78.4805,
+              17.348
+            ],
+            [
+              78.48,
+              17.35
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "PARCEL-402B",
+      "properties": {
+        "survey_number": "402/B",
+        "owner_name": "Kiran Mazumdar",
+        "land_area_acres": 2.0,
+        "village": "Riverside",
+        "mandal": "Ibrahimpatnam",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "HIGH",
+        "conflict_status": "0.65 Acre Overlap Anomaly"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.482,
+              17.351
+            ],
+            [
+              78.4845,
+              17.3525
+            ],
+            [
+              78.485,
+              17.3495
+            ],
+            [
+              78.4825,
+              17.3485
+            ],
+            [
+              78.482,
+              17.351
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "PARCEL-501A",
+      "properties": {
+        "survey_number": "501/A",
+        "owner_name": "Lokesh Gupta",
+        "land_area_acres": 4.0,
+        "village": "Forest Edge",
+        "mandal": "Moinabad",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "CRITICAL",
+        "conflict_status": "Double Selling Duplicate Registration"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.29,
+              17.32
+            ],
+            [
+              78.293,
+              17.3215
+            ],
+            [
+              78.2935,
+              17.318
+            ],
+            [
+              78.2905,
+              17.317
+            ],
+            [
+              78.29,
+              17.32
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "PARCEL-601A",
+      "properties": {
+        "survey_number": "601/A",
+        "owner_name": "Nitin Saxena",
+        "land_area_acres": 2.75,
+        "village": "Highland",
+        "mandal": "Chevella",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "HIGH",
+        "conflict_status": "Suspicious Rapid Flipping"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.15,
+              17.3
+            ],
+            [
+              78.152,
+              17.3015
+            ],
+            [
+              78.153,
+              17.2985
+            ],
+            [
+              78.151,
+              17.2975
+            ],
+            [
+              78.15,
+              17.3
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-001",
+      "properties": {
+        "survey_number": "SYN-101/A",
+        "owner_name": "Kalyan Varma Dantuluri",
+        "land_area_acres": 2.2,
+        "village": "Narsingi",
+        "mandal": "Gandipet",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.353,
+              17.38
+            ],
+            [
+              78.355,
+              17.3805
+            ],
+            [
+              78.3555,
+              17.378
+            ],
+            [
+              78.3535,
+              17.3775
+            ],
+            [
+              78.353,
+              17.38
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-002",
+      "properties": {
+        "survey_number": "SYN-102/A",
+        "owner_name": "Sunitha Devi Mallampati",
+        "land_area_acres": 3.9,
+        "village": "Kokapet",
+        "mandal": "Gandipet",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.336,
+              17.39
+            ],
+            [
+              78.338,
+              17.3905
+            ],
+            [
+              78.3385,
+              17.388
+            ],
+            [
+              78.3365,
+              17.3875
+            ],
+            [
+              78.336,
+              17.39
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-003",
+      "properties": {
+        "survey_number": "SYN-103/A",
+        "owner_name": "Venkatesh Prasad Alapati",
+        "land_area_acres": 5.6,
+        "village": "Tellapur",
+        "mandal": "Ramachandrapuram",
+        "district": "Sangareddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.289,
+              17.45
+            ],
+            [
+              78.291,
+              17.4505
+            ],
+            [
+              78.2915,
+              17.448
+            ],
+            [
+              78.2895,
+              17.4475
+            ],
+            [
+              78.289,
+              17.45
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-004",
+      "properties": {
+        "survey_number": "SYN-104/A",
+        "owner_name": "Anil Kumar Penmetsa",
+        "land_area_acres": 7.3,
+        "village": "Mokila",
+        "mandal": "Shankarpally",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.212,
+              17.4
+            ],
+            [
+              78.214,
+              17.4005
+            ],
+            [
+              78.2145,
+              17.398
+            ],
+            [
+              78.2125,
+              17.3975
+            ],
+            [
+              78.212,
+              17.4
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-005",
+      "properties": {
+        "survey_number": "SYN-105/A",
+        "owner_name": "Madhavi Latha Kanumuri",
+        "land_area_acres": 9.0,
+        "village": "Shankarpally",
+        "mandal": "Shankarpally",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.195,
+              17.43
+            ],
+            [
+              78.197,
+              17.4305
+            ],
+            [
+              78.1975,
+              17.428
+            ],
+            [
+              78.1955,
+              17.4275
+            ],
+            [
+              78.195,
+              17.43
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-006",
+      "properties": {
+        "survey_number": "SYN-106/A",
+        "owner_name": "Ravi Shankar Namburi",
+        "land_area_acres": 10.7,
+        "village": "Manikonda",
+        "mandal": "Gandipet",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.398,
+              17.4
+            ],
+            [
+              78.4,
+              17.4005
+            ],
+            [
+              78.4005,
+              17.398
+            ],
+            [
+              78.3985,
+              17.3975
+            ],
+            [
+              78.398,
+              17.4
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-007",
+      "properties": {
+        "survey_number": "SYN-107/A",
+        "owner_name": "Srinivas Rao Gokaraju",
+        "land_area_acres": 0.9,
+        "village": "Puppalguda",
+        "mandal": "Gandipet",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.391,
+              17.41
+            ],
+            [
+              78.393,
+              17.4105
+            ],
+            [
+              78.3935,
+              17.408
+            ],
+            [
+              78.3915,
+              17.4075
+            ],
+            [
+              78.391,
+              17.41
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-008",
+      "properties": {
+        "survey_number": "SYN-108/A",
+        "owner_name": "Sita Mahalakshmi Alluri",
+        "land_area_acres": 2.6,
+        "village": "Kollur",
+        "mandal": "Ramachandrapuram",
+        "district": "Sangareddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.274,
+              17.48
+            ],
+            [
+              78.276,
+              17.4805
+            ],
+            [
+              78.2765,
+              17.478
+            ],
+            [
+              78.2745,
+              17.4775
+            ],
+            [
+              78.274,
+              17.48
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-009",
+      "properties": {
+        "survey_number": "SYN-109/A",
+        "owner_name": "Prabhakar Raju Sagi",
+        "land_area_acres": 4.3,
+        "village": "Vattinagulapally",
+        "mandal": "Gandipet",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.327,
+              17.41
+            ],
+            [
+              78.329,
+              17.4105
+            ],
+            [
+              78.3295,
+              17.408
+            ],
+            [
+              78.3275,
+              17.4075
+            ],
+            [
+              78.327,
+              17.41
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-010",
+      "properties": {
+        "survey_number": "SYN-110/A",
+        "owner_name": "Radhika Rani Vegesna",
+        "land_area_acres": 6.0,
+        "village": "Khanapur",
+        "mandal": "Gandipet",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.31,
+              17.363
+            ],
+            [
+              78.312,
+              17.3635
+            ],
+            [
+              78.3125,
+              17.361
+            ],
+            [
+              78.3105,
+              17.3605
+            ],
+            [
+              78.31,
+              17.363
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-011",
+      "properties": {
+        "survey_number": "SYN-111/A",
+        "owner_name": "Rajesh Babu Mudunuri",
+        "land_area_acres": 7.7,
+        "village": "Janwada",
+        "mandal": "Shankarpally",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.243,
+              17.373
+            ],
+            [
+              78.245,
+              17.3735
+            ],
+            [
+              78.2455,
+              17.371
+            ],
+            [
+              78.2435,
+              17.3705
+            ],
+            [
+              78.243,
+              17.373
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-012",
+      "properties": {
+        "survey_number": "SYN-112/A",
+        "owner_name": "Padmavathi Byrraju",
+        "land_area_acres": 9.4,
+        "village": "Aziznagar",
+        "mandal": "Moinabad",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.326,
+              17.333
+            ],
+            [
+              78.328,
+              17.3335
+            ],
+            [
+              78.3285,
+              17.331
+            ],
+            [
+              78.3265,
+              17.3305
+            ],
+            [
+              78.326,
+              17.333
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-013",
+      "properties": {
+        "survey_number": "SYN-113/A",
+        "owner_name": "Venu Gopal Indukuri",
+        "land_area_acres": 11.1,
+        "village": "Appa Junction",
+        "mandal": "Rajendranagar",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.369,
+              17.353
+            ],
+            [
+              78.371,
+              17.3535
+            ],
+            [
+              78.3715,
+              17.351
+            ],
+            [
+              78.3695,
+              17.3505
+            ],
+            [
+              78.369,
+              17.353
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-014",
+      "properties": {
+        "survey_number": "SYN-114/A",
+        "owner_name": "Lakshmi Prasanna Dandu",
+        "land_area_acres": 1.3,
+        "village": "Peeramcheruvu",
+        "mandal": "Rajendranagar",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.392,
+              17.363
+            ],
+            [
+              78.394,
+              17.3635
+            ],
+            [
+              78.3945,
+              17.361
+            ],
+            [
+              78.3925,
+              17.3605
+            ],
+            [
+              78.392,
+              17.363
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-015",
+      "properties": {
+        "survey_number": "SYN-115/A",
+        "owner_name": "Nagaraju Rudraraju",
+        "land_area_acres": 3.0,
+        "village": "Narsingi",
+        "mandal": "Gandipet",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.365,
+              17.383
+            ],
+            [
+              78.367,
+              17.3835
+            ],
+            [
+              78.3675,
+              17.381
+            ],
+            [
+              78.3655,
+              17.3805
+            ],
+            [
+              78.365,
+              17.383
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-016",
+      "properties": {
+        "survey_number": "SYN-116/A",
+        "owner_name": "Swapna Kumari Datla",
+        "land_area_acres": 4.7,
+        "village": "Kokapet",
+        "mandal": "Gandipet",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.348,
+              17.393
+            ],
+            [
+              78.35,
+              17.3935
+            ],
+            [
+              78.3505,
+              17.391
+            ],
+            [
+              78.3485,
+              17.3905
+            ],
+            [
+              78.348,
+              17.393
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-017",
+      "properties": {
+        "survey_number": "SYN-117/A",
+        "owner_name": "Mahesh Chandra Kalidindi",
+        "land_area_acres": 6.4,
+        "village": "Tellapur",
+        "mandal": "Ramachandrapuram",
+        "district": "Sangareddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.301,
+              17.453
+            ],
+            [
+              78.303,
+              17.4535
+            ],
+            [
+              78.3035,
+              17.451
+            ],
+            [
+              78.3015,
+              17.4505
+            ],
+            [
+              78.301,
+              17.453
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-018",
+      "properties": {
+        "survey_number": "SYN-118/A",
+        "owner_name": "Bhavani Shankar Chintalapati",
+        "land_area_acres": 8.1,
+        "village": "Mokila",
+        "mandal": "Shankarpally",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.224,
+              17.403
+            ],
+            [
+              78.226,
+              17.4035
+            ],
+            [
+              78.2265,
+              17.401
+            ],
+            [
+              78.2245,
+              17.4005
+            ],
+            [
+              78.224,
+              17.403
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-019",
+      "properties": {
+        "survey_number": "SYN-119/A",
+        "owner_name": "Geetha Madhuri Kothapalli",
+        "land_area_acres": 9.8,
+        "village": "Shankarpally",
+        "mandal": "Shankarpally",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.207,
+              17.433
+            ],
+            [
+              78.209,
+              17.4335
+            ],
+            [
+              78.2095,
+              17.431
+            ],
+            [
+              78.2075,
+              17.4305
+            ],
+            [
+              78.207,
+              17.433
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-020",
+      "properties": {
+        "survey_number": "SYN-120/A",
+        "owner_name": "Satish Varma Bhupathiraju",
+        "land_area_acres": 11.5,
+        "village": "Manikonda",
+        "mandal": "Gandipet",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.38,
+              17.406
+            ],
+            [
+              78.382,
+              17.4065
+            ],
+            [
+              78.3825,
+              17.404
+            ],
+            [
+              78.3805,
+              17.4035
+            ],
+            [
+              78.38,
+              17.406
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-021",
+      "properties": {
+        "survey_number": "SYN-121/A",
+        "owner_name": "Mohan Krishna Jampana",
+        "land_area_acres": 1.7,
+        "village": "Puppalguda",
+        "mandal": "Gandipet",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.373,
+              17.416
+            ],
+            [
+              78.375,
+              17.4165
+            ],
+            [
+              78.3755,
+              17.414
+            ],
+            [
+              78.3735,
+              17.4135
+            ],
+            [
+              78.373,
+              17.416
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-022",
+      "properties": {
+        "survey_number": "SYN-122/A",
+        "owner_name": "Sireesha Devi Uppalapati",
+        "land_area_acres": 3.4,
+        "village": "Kollur",
+        "mandal": "Ramachandrapuram",
+        "district": "Sangareddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.256,
+              17.486
+            ],
+            [
+              78.258,
+              17.4865
+            ],
+            [
+              78.2585,
+              17.484
+            ],
+            [
+              78.2565,
+              17.4835
+            ],
+            [
+              78.256,
+              17.486
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-023",
+      "properties": {
+        "survey_number": "SYN-123/A",
+        "owner_name": "Ramesh Babu Vatsavai",
+        "land_area_acres": 5.1,
+        "village": "Vattinagulapally",
+        "mandal": "Gandipet",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.309,
+              17.416
+            ],
+            [
+              78.311,
+              17.4165
+            ],
+            [
+              78.3115,
+              17.414
+            ],
+            [
+              78.3095,
+              17.4135
+            ],
+            [
+              78.309,
+              17.416
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-024",
+      "properties": {
+        "survey_number": "SYN-124/A",
+        "owner_name": "Usha Rani Gadiraju",
+        "land_area_acres": 6.8,
+        "village": "Khanapur",
+        "mandal": "Gandipet",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.322,
+              17.366
+            ],
+            [
+              78.324,
+              17.3665
+            ],
+            [
+              78.3245,
+              17.364
+            ],
+            [
+              78.3225,
+              17.3635
+            ],
+            [
+              78.322,
+              17.366
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-025",
+      "properties": {
+        "survey_number": "SYN-125/A",
+        "owner_name": "Kishore Kumar Singireddy",
+        "land_area_acres": 8.5,
+        "village": "Janwada",
+        "mandal": "Shankarpally",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.255,
+              17.376
+            ],
+            [
+              78.257,
+              17.3765
+            ],
+            [
+              78.2575,
+              17.374
+            ],
+            [
+              78.2555,
+              17.3735
+            ],
+            [
+              78.255,
+              17.376
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-026",
+      "properties": {
+        "survey_number": "SYN-126/A",
+        "owner_name": "Aparna Rao Marri",
+        "land_area_acres": 10.2,
+        "village": "Aziznagar",
+        "mandal": "Moinabad",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.338,
+              17.336
+            ],
+            [
+              78.34,
+              17.3365
+            ],
+            [
+              78.3405,
+              17.334
+            ],
+            [
+              78.3385,
+              17.3335
+            ],
+            [
+              78.338,
+              17.336
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-027",
+      "properties": {
+        "survey_number": "SYN-127/A",
+        "owner_name": "Sudhir Varma Challa",
+        "land_area_acres": 11.9,
+        "village": "Appa Junction",
+        "mandal": "Rajendranagar",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.381,
+              17.356
+            ],
+            [
+              78.383,
+              17.3565
+            ],
+            [
+              78.3835,
+              17.354
+            ],
+            [
+              78.3815,
+              17.3535
+            ],
+            [
+              78.381,
+              17.356
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-028",
+      "properties": {
+        "survey_number": "SYN-128/A",
+        "owner_name": "Kavitha Reddy Boppana",
+        "land_area_acres": 2.1,
+        "village": "Peeramcheruvu",
+        "mandal": "Rajendranagar",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.404,
+              17.366
+            ],
+            [
+              78.406,
+              17.3665
+            ],
+            [
+              78.4065,
+              17.364
+            ],
+            [
+              78.4045,
+              17.3635
+            ],
+            [
+              78.404,
+              17.366
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-029",
+      "properties": {
+        "survey_number": "SYN-129/A",
+        "owner_name": "Praveen Kumar Kommineni",
+        "land_area_acres": 3.8,
+        "village": "Narsingi",
+        "mandal": "Gandipet",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.377,
+              17.386
+            ],
+            [
+              78.379,
+              17.3865
+            ],
+            [
+              78.3795,
+              17.384
+            ],
+            [
+              78.3775,
+              17.3835
+            ],
+            [
+              78.377,
+              17.386
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-030",
+      "properties": {
+        "survey_number": "SYN-130/A",
+        "owner_name": "Saritha Devi Yalamanchili",
+        "land_area_acres": 5.5,
+        "village": "Kokapet",
+        "mandal": "Gandipet",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.33,
+              17.399
+            ],
+            [
+              78.332,
+              17.3995
+            ],
+            [
+              78.3325,
+              17.397
+            ],
+            [
+              78.3305,
+              17.3965
+            ],
+            [
+              78.33,
+              17.399
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-031",
+      "properties": {
+        "survey_number": "SYN-131/A",
+        "owner_name": "Vijay Bhaskar Devineni",
+        "land_area_acres": 7.2,
+        "village": "Tellapur",
+        "mandal": "Ramachandrapuram",
+        "district": "Sangareddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.283,
+              17.459
+            ],
+            [
+              78.285,
+              17.4595
+            ],
+            [
+              78.2855,
+              17.457
+            ],
+            [
+              78.2835,
+              17.4565
+            ],
+            [
+              78.283,
+              17.459
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-032",
+      "properties": {
+        "survey_number": "SYN-132/A",
+        "owner_name": "Deepika Rani Velagapudi",
+        "land_area_acres": 8.9,
+        "village": "Mokila",
+        "mandal": "Shankarpally",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.206,
+              17.409
+            ],
+            [
+              78.208,
+              17.4095
+            ],
+            [
+              78.2085,
+              17.407
+            ],
+            [
+              78.2065,
+              17.4065
+            ],
+            [
+              78.206,
+              17.409
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-033",
+      "properties": {
+        "survey_number": "SYN-133/A",
+        "owner_name": "Harish Chandra Kosaraju",
+        "land_area_acres": 10.6,
+        "village": "Shankarpally",
+        "mandal": "Shankarpally",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.189,
+              17.439
+            ],
+            [
+              78.191,
+              17.4395
+            ],
+            [
+              78.1915,
+              17.437
+            ],
+            [
+              78.1895,
+              17.4365
+            ],
+            [
+              78.189,
+              17.439
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-034",
+      "properties": {
+        "survey_number": "SYN-134/A",
+        "owner_name": "Sravani Devi Pinnamaneni",
+        "land_area_acres": 0.8,
+        "village": "Manikonda",
+        "mandal": "Gandipet",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.392,
+              17.409
+            ],
+            [
+              78.394,
+              17.4095
+            ],
+            [
+              78.3945,
+              17.407
+            ],
+            [
+              78.3925,
+              17.4065
+            ],
+            [
+              78.392,
+              17.409
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-035",
+      "properties": {
+        "survey_number": "SYN-135/A",
+        "owner_name": "Chandra Sekhar Nannapaneni",
+        "land_area_acres": 2.5,
+        "village": "Puppalguda",
+        "mandal": "Gandipet",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.385,
+              17.419
+            ],
+            [
+              78.387,
+              17.4195
+            ],
+            [
+              78.3875,
+              17.417
+            ],
+            [
+              78.3855,
+              17.4165
+            ],
+            [
+              78.385,
+              17.419
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-036",
+      "properties": {
+        "survey_number": "SYN-136/A",
+        "owner_name": "Anuradha Rao Surapaneni",
+        "land_area_acres": 4.2,
+        "village": "Kollur",
+        "mandal": "Ramachandrapuram",
+        "district": "Sangareddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.268,
+              17.489
+            ],
+            [
+              78.27,
+              17.4895
+            ],
+            [
+              78.2705,
+              17.487
+            ],
+            [
+              78.2685,
+              17.4865
+            ],
+            [
+              78.268,
+              17.489
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-037",
+      "properties": {
+        "survey_number": "SYN-137/A",
+        "owner_name": "Suresh Kumar Kaza",
+        "land_area_acres": 5.9,
+        "village": "Vattinagulapally",
+        "mandal": "Gandipet",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.321,
+              17.419
+            ],
+            [
+              78.323,
+              17.4195
+            ],
+            [
+              78.3235,
+              17.417
+            ],
+            [
+              78.3215,
+              17.4165
+            ],
+            [
+              78.321,
+              17.419
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-038",
+      "properties": {
+        "survey_number": "SYN-138/A",
+        "owner_name": "Lavanya Devi Nallapati",
+        "land_area_acres": 7.6,
+        "village": "Khanapur",
+        "mandal": "Gandipet",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.334,
+              17.369
+            ],
+            [
+              78.336,
+              17.3695
+            ],
+            [
+              78.3365,
+              17.367
+            ],
+            [
+              78.3345,
+              17.3665
+            ],
+            [
+              78.334,
+              17.369
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-039",
+      "properties": {
+        "survey_number": "SYN-139/A",
+        "owner_name": "Phani Kumar Mandava",
+        "land_area_acres": 9.3,
+        "village": "Janwada",
+        "mandal": "Shankarpally",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.267,
+              17.379
+            ],
+            [
+              78.269,
+              17.3795
+            ],
+            [
+              78.2695,
+              17.377
+            ],
+            [
+              78.2675,
+              17.3765
+            ],
+            [
+              78.267,
+              17.379
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-040",
+      "properties": {
+        "survey_number": "SYN-140/A",
+        "owner_name": "Madhuri Latha Chennupati",
+        "land_area_acres": 11.0,
+        "village": "Aziznagar",
+        "mandal": "Moinabad",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.32,
+              17.342
+            ],
+            [
+              78.322,
+              17.3425
+            ],
+            [
+              78.3225,
+              17.34
+            ],
+            [
+              78.3205,
+              17.3395
+            ],
+            [
+              78.32,
+              17.342
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-041",
+      "properties": {
+        "survey_number": "SYN-141/A",
+        "owner_name": "Gautam Varma Atluri",
+        "land_area_acres": 1.2,
+        "village": "Appa Junction",
+        "mandal": "Rajendranagar",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.363,
+              17.362
+            ],
+            [
+              78.365,
+              17.3625
+            ],
+            [
+              78.3655,
+              17.36
+            ],
+            [
+              78.3635,
+              17.3595
+            ],
+            [
+              78.363,
+              17.362
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-042",
+      "properties": {
+        "survey_number": "SYN-142/A",
+        "owner_name": "Sandhya Rani Rayapati",
+        "land_area_acres": 2.9,
+        "village": "Peeramcheruvu",
+        "mandal": "Rajendranagar",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.386,
+              17.372
+            ],
+            [
+              78.388,
+              17.3725
+            ],
+            [
+              78.3885,
+              17.37
+            ],
+            [
+              78.3865,
+              17.3695
+            ],
+            [
+              78.386,
+              17.372
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-043",
+      "properties": {
+        "survey_number": "SYN-143/A",
+        "owner_name": "Kiran Kumar Koneru",
+        "land_area_acres": 4.6,
+        "village": "Narsingi",
+        "mandal": "Gandipet",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.359,
+              17.392
+            ],
+            [
+              78.361,
+              17.3925
+            ],
+            [
+              78.3615,
+              17.39
+            ],
+            [
+              78.3595,
+              17.3895
+            ],
+            [
+              78.359,
+              17.392
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-044",
+      "properties": {
+        "survey_number": "SYN-144/A",
+        "owner_name": "Divya Bharati Yaragudipati",
+        "land_area_acres": 6.3,
+        "village": "Kokapet",
+        "mandal": "Gandipet",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.342,
+              17.402
+            ],
+            [
+              78.344,
+              17.4025
+            ],
+            [
+              78.3445,
+              17.4
+            ],
+            [
+              78.3425,
+              17.3995
+            ],
+            [
+              78.342,
+              17.402
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-045",
+      "properties": {
+        "survey_number": "SYN-145/A",
+        "owner_name": "Vamsi Krishna Parvataneni",
+        "land_area_acres": 8.0,
+        "village": "Tellapur",
+        "mandal": "Ramachandrapuram",
+        "district": "Sangareddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.295,
+              17.462
+            ],
+            [
+              78.297,
+              17.4625
+            ],
+            [
+              78.2975,
+              17.46
+            ],
+            [
+              78.2955,
+              17.4595
+            ],
+            [
+              78.295,
+              17.462
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-046",
+      "properties": {
+        "survey_number": "SYN-146/A",
+        "owner_name": "Sailaja Devi Chukkapalli",
+        "land_area_acres": 9.7,
+        "village": "Mokila",
+        "mandal": "Shankarpally",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.218,
+              17.412
+            ],
+            [
+              78.22,
+              17.4125
+            ],
+            [
+              78.2205,
+              17.41
+            ],
+            [
+              78.2185,
+              17.4095
+            ],
+            [
+              78.218,
+              17.412
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-047",
+      "properties": {
+        "survey_number": "SYN-147/A",
+        "owner_name": "Tarun Kumar Potluri",
+        "land_area_acres": 11.4,
+        "village": "Shankarpally",
+        "mandal": "Shankarpally",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.201,
+              17.442
+            ],
+            [
+              78.203,
+              17.4425
+            ],
+            [
+              78.2035,
+              17.44
+            ],
+            [
+              78.2015,
+              17.4395
+            ],
+            [
+              78.201,
+              17.442
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-048",
+      "properties": {
+        "survey_number": "SYN-148/A",
+        "owner_name": "Swathi Rani Guntupalli",
+        "land_area_acres": 1.6,
+        "village": "Manikonda",
+        "mandal": "Gandipet",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.404,
+              17.412
+            ],
+            [
+              78.406,
+              17.4125
+            ],
+            [
+              78.4065,
+              17.41
+            ],
+            [
+              78.4045,
+              17.4095
+            ],
+            [
+              78.404,
+              17.412
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-049",
+      "properties": {
+        "survey_number": "SYN-149/A",
+        "owner_name": "Naresh Babu Nanduri",
+        "land_area_acres": 3.3,
+        "village": "Puppalguda",
+        "mandal": "Gandipet",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.397,
+              17.422
+            ],
+            [
+              78.399,
+              17.4225
+            ],
+            [
+              78.3995,
+              17.42
+            ],
+            [
+              78.3975,
+              17.4195
+            ],
+            [
+              78.397,
+              17.422
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-050",
+      "properties": {
+        "survey_number": "SYN-150/A",
+        "owner_name": "Manjula Devi Kakarla",
+        "land_area_acres": 5.0,
+        "village": "Kollur",
+        "mandal": "Ramachandrapuram",
+        "district": "Sangareddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.25,
+              17.495
+            ],
+            [
+              78.252,
+              17.4955
+            ],
+            [
+              78.2525,
+              17.493
+            ],
+            [
+              78.2505,
+              17.4925
+            ],
+            [
+              78.25,
+              17.495
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-051",
+      "properties": {
+        "survey_number": "SYN-151/A",
+        "owner_name": "Sanjay Varma Katragadda",
+        "land_area_acres": 6.7,
+        "village": "Vattinagulapally",
+        "mandal": "Gandipet",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.303,
+              17.425
+            ],
+            [
+              78.305,
+              17.4255
+            ],
+            [
+              78.3055,
+              17.423
+            ],
+            [
+              78.3035,
+              17.4225
+            ],
+            [
+              78.303,
+              17.425
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-052",
+      "properties": {
+        "survey_number": "SYN-152/A",
+        "owner_name": "Prasanna Kumar Anne",
+        "land_area_acres": 8.4,
+        "village": "Khanapur",
+        "mandal": "Gandipet",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.316,
+              17.375
+            ],
+            [
+              78.318,
+              17.3755
+            ],
+            [
+              78.3185,
+              17.373
+            ],
+            [
+              78.3165,
+              17.3725
+            ],
+            [
+              78.316,
+              17.375
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-053",
+      "properties": {
+        "survey_number": "SYN-153/A",
+        "owner_name": "Hema Malini Dasari",
+        "land_area_acres": 10.1,
+        "village": "Janwada",
+        "mandal": "Shankarpally",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.249,
+              17.385
+            ],
+            [
+              78.251,
+              17.3855
+            ],
+            [
+              78.2515,
+              17.383
+            ],
+            [
+              78.2495,
+              17.3825
+            ],
+            [
+              78.249,
+              17.385
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-054",
+      "properties": {
+        "survey_number": "SYN-154/A",
+        "owner_name": "Bhupathi Raju Maganti",
+        "land_area_acres": 11.8,
+        "village": "Aziznagar",
+        "mandal": "Moinabad",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.332,
+              17.345
+            ],
+            [
+              78.334,
+              17.3455
+            ],
+            [
+              78.3345,
+              17.343
+            ],
+            [
+              78.3325,
+              17.3425
+            ],
+            [
+              78.332,
+              17.345
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-055",
+      "properties": {
+        "survey_number": "SYN-155/A",
+        "owner_name": "Sirisha Rani Vallabhaneni",
+        "land_area_acres": 2.0,
+        "village": "Appa Junction",
+        "mandal": "Rajendranagar",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.375,
+              17.365
+            ],
+            [
+              78.377,
+              17.3655
+            ],
+            [
+              78.3775,
+              17.363
+            ],
+            [
+              78.3755,
+              17.3625
+            ],
+            [
+              78.375,
+              17.365
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-056",
+      "properties": {
+        "survey_number": "SYN-156/A",
+        "owner_name": "Jagadish Chandra Jasti",
+        "land_area_acres": 3.7,
+        "village": "Peeramcheruvu",
+        "mandal": "Rajendranagar",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.398,
+              17.375
+            ],
+            [
+              78.4,
+              17.3755
+            ],
+            [
+              78.4005,
+              17.373
+            ],
+            [
+              78.3985,
+              17.3725
+            ],
+            [
+              78.398,
+              17.375
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-057",
+      "properties": {
+        "survey_number": "SYN-157/A",
+        "owner_name": "Roopa Devi Motaparti",
+        "land_area_acres": 5.4,
+        "village": "Narsingi",
+        "mandal": "Gandipet",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.371,
+              17.395
+            ],
+            [
+              78.373,
+              17.3955
+            ],
+            [
+              78.3735,
+              17.393
+            ],
+            [
+              78.3715,
+              17.3925
+            ],
+            [
+              78.371,
+              17.395
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-058",
+      "properties": {
+        "survey_number": "SYN-158/A",
+        "owner_name": "Naveen Kumar Lingamaneni",
+        "land_area_acres": 7.1,
+        "village": "Kokapet",
+        "mandal": "Gandipet",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.354,
+              17.405
+            ],
+            [
+              78.356,
+              17.4055
+            ],
+            [
+              78.3565,
+              17.403
+            ],
+            [
+              78.3545,
+              17.4025
+            ],
+            [
+              78.354,
+              17.405
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-059",
+      "properties": {
+        "survey_number": "SYN-159/A",
+        "owner_name": "Shobha Rani Koganti",
+        "land_area_acres": 8.8,
+        "village": "Tellapur",
+        "mandal": "Ramachandrapuram",
+        "district": "Sangareddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.307,
+              17.465
+            ],
+            [
+              78.309,
+              17.4655
+            ],
+            [
+              78.3095,
+              17.463
+            ],
+            [
+              78.3075,
+              17.4625
+            ],
+            [
+              78.307,
+              17.465
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-060",
+      "properties": {
+        "survey_number": "SYN-160/A",
+        "owner_name": "Purna Chandra Movva",
+        "land_area_acres": 10.5,
+        "village": "Mokila",
+        "mandal": "Shankarpally",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.2,
+              17.418
+            ],
+            [
+              78.202,
+              17.4185
+            ],
+            [
+              78.2025,
+              17.416
+            ],
+            [
+              78.2005,
+              17.4155
+            ],
+            [
+              78.2,
+              17.418
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-061",
+      "properties": {
+        "survey_number": "SYN-161/A",
+        "owner_name": "Krishna Mohan Adusumilli",
+        "land_area_acres": 0.7,
+        "village": "Shankarpally",
+        "mandal": "Shankarpally",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.183,
+              17.448
+            ],
+            [
+              78.185,
+              17.4485
+            ],
+            [
+              78.1855,
+              17.446
+            ],
+            [
+              78.1835,
+              17.4455
+            ],
+            [
+              78.183,
+              17.448
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-062",
+      "properties": {
+        "survey_number": "SYN-162/A",
+        "owner_name": "Vandana Devi Mullapudi",
+        "land_area_acres": 2.4,
+        "village": "Manikonda",
+        "mandal": "Gandipet",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.386,
+              17.418
+            ],
+            [
+              78.388,
+              17.4185
+            ],
+            [
+              78.3885,
+              17.416
+            ],
+            [
+              78.3865,
+              17.4155
+            ],
+            [
+              78.386,
+              17.418
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-063",
+      "properties": {
+        "survey_number": "SYN-163/A",
+        "owner_name": "Sekhar Babu Pendyala",
+        "land_area_acres": 4.1,
+        "village": "Puppalguda",
+        "mandal": "Gandipet",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.379,
+              17.428
+            ],
+            [
+              78.381,
+              17.4285
+            ],
+            [
+              78.3815,
+              17.426
+            ],
+            [
+              78.3795,
+              17.4255
+            ],
+            [
+              78.379,
+              17.428
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-064",
+      "properties": {
+        "survey_number": "SYN-164/A",
+        "owner_name": "Tejaswi Rani Chitturi",
+        "land_area_acres": 5.8,
+        "village": "Kollur",
+        "mandal": "Ramachandrapuram",
+        "district": "Sangareddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.262,
+              17.498
+            ],
+            [
+              78.264,
+              17.4985
+            ],
+            [
+              78.2645,
+              17.496
+            ],
+            [
+              78.2625,
+              17.4955
+            ],
+            [
+              78.262,
+              17.498
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-065",
+      "properties": {
+        "survey_number": "SYN-165/A",
+        "owner_name": "Vinod Kumar Thota",
+        "land_area_acres": 7.5,
+        "village": "Vattinagulapally",
+        "mandal": "Gandipet",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.315,
+              17.428
+            ],
+            [
+              78.317,
+              17.4285
+            ],
+            [
+              78.3175,
+              17.426
+            ],
+            [
+              78.3155,
+              17.4255
+            ],
+            [
+              78.315,
+              17.428
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-066",
+      "properties": {
+        "survey_number": "SYN-166/A",
+        "owner_name": "Priyanka Devi Dantuluri",
+        "land_area_acres": 9.2,
+        "village": "Khanapur",
+        "mandal": "Gandipet",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.328,
+              17.378
+            ],
+            [
+              78.33,
+              17.3785
+            ],
+            [
+              78.3305,
+              17.376
+            ],
+            [
+              78.3285,
+              17.3755
+            ],
+            [
+              78.328,
+              17.378
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-067",
+      "properties": {
+        "survey_number": "SYN-167/A",
+        "owner_name": "Arun Kumar Mallampati",
+        "land_area_acres": 10.9,
+        "village": "Janwada",
+        "mandal": "Shankarpally",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.261,
+              17.388
+            ],
+            [
+              78.263,
+              17.3885
+            ],
+            [
+              78.2635,
+              17.386
+            ],
+            [
+              78.2615,
+              17.3855
+            ],
+            [
+              78.261,
+              17.388
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-068",
+      "properties": {
+        "survey_number": "SYN-168/A",
+        "owner_name": "Mamatha Rani Alapati",
+        "land_area_acres": 1.1,
+        "village": "Aziznagar",
+        "mandal": "Moinabad",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.344,
+              17.348
+            ],
+            [
+              78.346,
+              17.3485
+            ],
+            [
+              78.3465,
+              17.346
+            ],
+            [
+              78.3445,
+              17.3455
+            ],
+            [
+              78.344,
+              17.348
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-069",
+      "properties": {
+        "survey_number": "SYN-169/A",
+        "owner_name": "Ranganath Varma Penmetsa",
+        "land_area_acres": 2.8,
+        "village": "Appa Junction",
+        "mandal": "Rajendranagar",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.387,
+              17.368
+            ],
+            [
+              78.389,
+              17.3685
+            ],
+            [
+              78.3895,
+              17.366
+            ],
+            [
+              78.3875,
+              17.3655
+            ],
+            [
+              78.387,
+              17.368
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-070",
+      "properties": {
+        "survey_number": "SYN-170/A",
+        "owner_name": "Haritha Devi Kanumuri",
+        "land_area_acres": 4.5,
+        "village": "Peeramcheruvu",
+        "mandal": "Rajendranagar",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "LOW",
+        "conflict_status": "Clean Synthetic Title"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.38,
+              17.381
+            ],
+            [
+              78.382,
+              17.3815
+            ],
+            [
+              78.3825,
+              17.379
+            ],
+            [
+              78.3805,
+              17.3785
+            ],
+            [
+              78.38,
+              17.381
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-DUP-1",
+      "properties": {
+        "survey_number": "SYN-501/A",
+        "owner_name": "Ravi Kiran Nanduri",
+        "land_area_acres": 4.0,
+        "village": "Mokila",
+        "mandal": "Shankarpally",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "CRITICAL",
+        "conflict_status": "Double Selling Duplicate Registration"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.2,
+              17.38
+            ],
+            [
+              78.203,
+              17.381
+            ],
+            [
+              78.203,
+              17.378
+            ],
+            [
+              78.2,
+              17.378
+            ],
+            [
+              78.2,
+              17.38
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-DUP-2",
+      "properties": {
+        "survey_number": "SYN-502/B",
+        "owner_name": "Hema Malini Kakarla",
+        "land_area_acres": 2.5,
+        "village": "Kokapet",
+        "mandal": "Gandipet",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "CRITICAL",
+        "conflict_status": "Double Selling Duplicate Registration"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.22,
+              17.38
+            ],
+            [
+              78.223,
+              17.381
+            ],
+            [
+              78.223,
+              17.378
+            ],
+            [
+              78.22,
+              17.378
+            ],
+            [
+              78.22,
+              17.38
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-DUP-3",
+      "properties": {
+        "survey_number": "SYN-503/C",
+        "owner_name": "Jagadish Chandra Anne",
+        "land_area_acres": 3.2,
+        "village": "Tellapur",
+        "mandal": "Ramachandrapuram",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "CRITICAL",
+        "conflict_status": "Double Selling Duplicate Registration"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.24000000000001,
+              17.38
+            ],
+            [
+              78.24300000000001,
+              17.381
+            ],
+            [
+              78.24300000000001,
+              17.378
+            ],
+            [
+              78.24000000000001,
+              17.378
+            ],
+            [
+              78.24000000000001,
+              17.38
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-DUP-4",
+      "properties": {
+        "survey_number": "SYN-504/D",
+        "owner_name": "Naveen Kumar Maganti",
+        "land_area_acres": 5.0,
+        "village": "Janwada",
+        "mandal": "Shankarpally",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "CRITICAL",
+        "conflict_status": "Double Selling Duplicate Registration"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.26,
+              17.38
+            ],
+            [
+              78.263,
+              17.381
+            ],
+            [
+              78.263,
+              17.378
+            ],
+            [
+              78.26,
+              17.378
+            ],
+            [
+              78.26,
+              17.38
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-DUP-5",
+      "properties": {
+        "survey_number": "SYN-505/E",
+        "owner_name": "Purna Chandra Jasti",
+        "land_area_acres": 1.75,
+        "village": "Narsingi",
+        "mandal": "Gandipet",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "CRITICAL",
+        "conflict_status": "Double Selling Duplicate Registration"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.28,
+              17.38
+            ],
+            [
+              78.283,
+              17.381
+            ],
+            [
+              78.283,
+              17.378
+            ],
+            [
+              78.28,
+              17.378
+            ],
+            [
+              78.28,
+              17.38
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-SYN-REC-081",
+      "properties": {
+        "survey_number": "SYN-701/A",
+        "owner_name": "Bhaskar Raju Kanumuri",
+        "land_area_acres": 3.2,
+        "village": "Mokila",
+        "mandal": "Shankarpally",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "HIGH",
+        "conflict_status": "Owner Identity Mismatch"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.22,
+              17.39
+            ],
+            [
+              78.223,
+              17.391
+            ],
+            [
+              78.224,
+              17.388
+            ],
+            [
+              78.22,
+              17.388
+            ],
+            [
+              78.22,
+              17.39
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-SYN-REC-082",
+      "properties": {
+        "survey_number": "SYN-702/B",
+        "owner_name": "Nagendra Rao Potluri",
+        "land_area_acres": 2.1,
+        "village": "Kokapet",
+        "mandal": "Gandipet",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "HIGH",
+        "conflict_status": "Owner Identity Mismatch"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.22,
+              17.39
+            ],
+            [
+              78.223,
+              17.391
+            ],
+            [
+              78.224,
+              17.388
+            ],
+            [
+              78.22,
+              17.388
+            ],
+            [
+              78.22,
+              17.39
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-SYN-REC-083",
+      "properties": {
+        "survey_number": "SYN-703/C",
+        "owner_name": "Sita Devi Byrraju",
+        "land_area_acres": 4.5,
+        "village": "Tellapur",
+        "mandal": "Ramachandrapuram",
+        "district": "Sangareddy",
+        "state": "Telangana",
+        "risk_level": "HIGH",
+        "conflict_status": "Owner Identity Mismatch"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.22,
+              17.39
+            ],
+            [
+              78.223,
+              17.391
+            ],
+            [
+              78.224,
+              17.388
+            ],
+            [
+              78.22,
+              17.388
+            ],
+            [
+              78.22,
+              17.39
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-SYN-REC-084",
+      "properties": {
+        "survey_number": "SYN-704/D",
+        "owner_name": "Chandrasekhar Sagi",
+        "land_area_acres": 1.65,
+        "village": "Narsingi",
+        "mandal": "Gandipet",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "HIGH",
+        "conflict_status": "Owner Identity Mismatch"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.22,
+              17.39
+            ],
+            [
+              78.223,
+              17.391
+            ],
+            [
+              78.224,
+              17.388
+            ],
+            [
+              78.22,
+              17.388
+            ],
+            [
+              78.22,
+              17.39
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-SYN-REC-085",
+      "properties": {
+        "survey_number": "SYN-705/E",
+        "owner_name": "Padma Rani Vegesna",
+        "land_area_acres": 5.25,
+        "village": "Janwada",
+        "mandal": "Shankarpally",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "HIGH",
+        "conflict_status": "Owner Identity Mismatch"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.22,
+              17.39
+            ],
+            [
+              78.223,
+              17.391
+            ],
+            [
+              78.224,
+              17.388
+            ],
+            [
+              78.22,
+              17.388
+            ],
+            [
+              78.22,
+              17.39
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-SYN-REC-086",
+      "properties": {
+        "survey_number": "SYN-801/A",
+        "owner_name": "Dharma Rao Chitturi",
+        "land_area_acres": 2.5,
+        "village": "Shankarpally",
+        "mandal": "Shankarpally",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "MEDIUM",
+        "conflict_status": "Land Area Discrepancy"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.26,
+              17.41
+            ],
+            [
+              78.263,
+              17.412
+            ],
+            [
+              78.264,
+              17.409
+            ],
+            [
+              78.26,
+              17.409
+            ],
+            [
+              78.26,
+              17.41
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-SYN-REC-087",
+      "properties": {
+        "survey_number": "SYN-802/B",
+        "owner_name": "Anasuya Devi Kaza",
+        "land_area_acres": 1.2,
+        "village": "Kokapet",
+        "mandal": "Gandipet",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "MEDIUM",
+        "conflict_status": "Land Area Discrepancy"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.26,
+              17.41
+            ],
+            [
+              78.263,
+              17.412
+            ],
+            [
+              78.264,
+              17.409
+            ],
+            [
+              78.26,
+              17.409
+            ],
+            [
+              78.26,
+              17.41
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-SYN-REC-088",
+      "properties": {
+        "survey_number": "SYN-803/C",
+        "owner_name": "Somashekar Rao Movva",
+        "land_area_acres": 4.5,
+        "village": "Mokila",
+        "mandal": "Shankarpally",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "MEDIUM",
+        "conflict_status": "Land Area Discrepancy"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.26,
+              17.41
+            ],
+            [
+              78.263,
+              17.412
+            ],
+            [
+              78.264,
+              17.409
+            ],
+            [
+              78.26,
+              17.409
+            ],
+            [
+              78.26,
+              17.41
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-SYN-REC-089",
+      "properties": {
+        "survey_number": "SYN-804/D",
+        "owner_name": "Radha Kumari Nallapati",
+        "land_area_acres": 3.0,
+        "village": "Narsingi",
+        "mandal": "Gandipet",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "MEDIUM",
+        "conflict_status": "Land Area Discrepancy"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.26,
+              17.41
+            ],
+            [
+              78.263,
+              17.412
+            ],
+            [
+              78.264,
+              17.409
+            ],
+            [
+              78.26,
+              17.409
+            ],
+            [
+              78.26,
+              17.41
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-SYN-REC-090",
+      "properties": {
+        "survey_number": "SYN-805/A",
+        "owner_name": "Girish Varma Sagi",
+        "land_area_acres": 3.4,
+        "village": "Tellapur",
+        "mandal": "Ramachandrapuram",
+        "district": "Sangareddy",
+        "state": "Telangana",
+        "risk_level": "HIGH",
+        "conflict_status": "Cadastral Survey Discrepancy"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.29,
+              17.43
+            ],
+            [
+              78.293,
+              17.432
+            ],
+            [
+              78.294,
+              17.429
+            ],
+            [
+              78.29,
+              17.429
+            ],
+            [
+              78.29,
+              17.43
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-SYN-REC-091",
+      "properties": {
+        "survey_number": "SYN-806/B",
+        "owner_name": "Vijayalakshmi Rao",
+        "land_area_acres": 2.8,
+        "village": "Puppalguda",
+        "mandal": "Gandipet",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "HIGH",
+        "conflict_status": "Cadastral Survey Discrepancy"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.29,
+              17.43
+            ],
+            [
+              78.293,
+              17.432
+            ],
+            [
+              78.294,
+              17.429
+            ],
+            [
+              78.29,
+              17.429
+            ],
+            [
+              78.29,
+              17.43
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-SYN-REC-092",
+      "properties": {
+        "survey_number": "SYN-807/C",
+        "owner_name": "Madhusudhan Raju",
+        "land_area_acres": 4.1,
+        "village": "Manikonda",
+        "mandal": "Gandipet",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "HIGH",
+        "conflict_status": "Cadastral Survey Discrepancy"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.29,
+              17.43
+            ],
+            [
+              78.293,
+              17.432
+            ],
+            [
+              78.294,
+              17.429
+            ],
+            [
+              78.29,
+              17.429
+            ],
+            [
+              78.29,
+              17.43
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-SYN-REC-093",
+      "properties": {
+        "survey_number": "SYN-601/A",
+        "owner_name": "Nitin Varma Sagi",
+        "land_area_acres": 2.75,
+        "village": "Highland Fictional",
+        "mandal": "Chevella",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "HIGH",
+        "conflict_status": "Suspicious Rapid Flipping"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.15,
+              17.3
+            ],
+            [
+              78.152,
+              17.302
+            ],
+            [
+              78.153,
+              17.298
+            ],
+            [
+              78.15,
+              17.298
+            ],
+            [
+              78.15,
+              17.3
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-SYN-REC-094",
+      "properties": {
+        "survey_number": "SYN-602/B",
+        "owner_name": "Kishore Varma Datla",
+        "land_area_acres": 3.5,
+        "village": "Forest View Fictional",
+        "mandal": "Moinabad",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "HIGH",
+        "conflict_status": "Suspicious Rapid Flipping"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.18,
+              17.3
+            ],
+            [
+              78.182,
+              17.302
+            ],
+            [
+              78.183,
+              17.298
+            ],
+            [
+              78.18,
+              17.298
+            ],
+            [
+              78.18,
+              17.3
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-SYN-REC-095",
+      "properties": {
+        "survey_number": "SYN-603/C",
+        "owner_name": "Vijay Bhaskar Alluri",
+        "land_area_acres": 1.9,
+        "village": "Green Acres Fictional",
+        "mandal": "Shankarpally",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "HIGH",
+        "conflict_status": "Suspicious Rapid Flipping"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.21000000000001,
+              17.3
+            ],
+            [
+              78.212,
+              17.302
+            ],
+            [
+              78.21300000000001,
+              17.298
+            ],
+            [
+              78.21000000000001,
+              17.298
+            ],
+            [
+              78.21000000000001,
+              17.3
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-SYN-REC-096",
+      "properties": {
+        "survey_number": "SYN-901/A",
+        "owner_name": "Unspecified",
+        "land_area_acres": 1.75,
+        "village": "Narsingi",
+        "mandal": "Gandipet",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "MEDIUM",
+        "conflict_status": "Incomplete Record Data"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.34,
+              17.37
+            ],
+            [
+              78.342,
+              17.371
+            ],
+            [
+              78.343,
+              17.368
+            ],
+            [
+              78.34,
+              17.368
+            ],
+            [
+              78.34,
+              17.37
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-SYN-REC-097",
+      "properties": {
+        "survey_number": "SYN-902/B",
+        "owner_name": "Sarath Chandra Datla",
+        "land_area_acres": 2.4,
+        "village": "Kokapet",
+        "mandal": "Gandipet",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "MEDIUM",
+        "conflict_status": "Incomplete Record Data"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.34,
+              17.37
+            ],
+            [
+              78.342,
+              17.371
+            ],
+            [
+              78.343,
+              17.368
+            ],
+            [
+              78.34,
+              17.368
+            ],
+            [
+              78.34,
+              17.37
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-SYN-REC-098",
+      "properties": {
+        "survey_number": "SYN-903/C",
+        "owner_name": "Subba Rao Penmetsa",
+        "land_area_acres": 0.0,
+        "village": "Mokila",
+        "mandal": "Shankarpally",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "MEDIUM",
+        "conflict_status": "Incomplete Record Data"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.34,
+              17.37
+            ],
+            [
+              78.342,
+              17.371
+            ],
+            [
+              78.343,
+              17.368
+            ],
+            [
+              78.34,
+              17.368
+            ],
+            [
+              78.34,
+              17.37
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-SYN-REC-099",
+      "properties": {
+        "survey_number": "SYN-904/D",
+        "owner_name": "Dharma Teja Indukuri",
+        "land_area_acres": 3.5,
+        "village": "Shankarpally",
+        "mandal": "Shankarpally",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "MEDIUM",
+        "conflict_status": "Seller Missing from Title Chain"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.19,
+              17.44
+            ],
+            [
+              78.192,
+              17.442
+            ],
+            [
+              78.193,
+              17.439
+            ],
+            [
+              78.19,
+              17.439
+            ],
+            [
+              78.19,
+              17.44
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SYN-PARCEL-SYN-REC-100",
+      "properties": {
+        "survey_number": "SYN-905/E",
+        "owner_name": "Suryanarayana Raju Penmetsa",
+        "land_area_acres": 4.8,
+        "village": "Mokila",
+        "mandal": "Shankarpally",
+        "district": "Ranga Reddy",
+        "state": "Telangana",
+        "risk_level": "MEDIUM",
+        "conflict_status": "Zero Historical Title Chain"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.21,
+              17.41
+            ],
+            [
+              78.213,
+              17.412
+            ],
+            [
+              78.214,
+              17.408
+            ],
+            [
+              78.21,
+              17.408
+            ],
+            [
+              78.21,
+              17.41
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+};

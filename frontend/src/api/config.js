@@ -60,3 +60,13 @@ export async function getOwnershipHistoryApi(documentId) {
   }
   return response.json();
 }
+
+export async function searchRecordsApi(query) {
+  if (!query || !query.trim()) return { count: 0, results: [] };
+  const response = await fetch(`${API_BASE_URL}/documents/search?q=${encodeURIComponent(query.trim())}`);
+  if (!response.ok) {
+    throw new Error("Failed to search records.");
+  }
+  return response.json();
+}
+

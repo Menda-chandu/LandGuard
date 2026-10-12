@@ -57,13 +57,16 @@ class GISSpatialEngine:
             survey_no = props.get("survey_number")
 
             if db and survey_no:
-                rec = db.query(LandRecord).filter(LandRecord.survey_number == survey_no).first()
-                if rec:
-                    props["owner_name"] = rec.owner_name
-                    props["land_area_acres"] = float(rec.land_area_acres)
-                    props["village"] = rec.village
-                    props["mandal"] = rec.mandal
-                    props["district"] = rec.district
+                try:
+                    rec = db.query(LandRecord).filter(LandRecord.survey_number == survey_no).first()
+                    if rec:
+                        props["owner_name"] = rec.owner_name
+                        props["land_area_acres"] = float(rec.land_area_acres)
+                        props["village"] = rec.village
+                        props["mandal"] = rec.mandal
+                        props["district"] = rec.district
+                except Exception as e:
+                    logger.warning(f"Database enrichment error for survey {survey_no}: {e}")
 
             feature_copy = feature.copy()
             feature_copy["properties"] = props
@@ -85,13 +88,16 @@ class GISSpatialEngine:
             if props.get("survey_number") == survey_number:
                 feature_copy = feature.copy()
                 if db:
-                    rec = db.query(LandRecord).filter(LandRecord.survey_number == survey_number).first()
-                    if rec:
-                        feature_copy["properties"]["owner_name"] = rec.owner_name
-                        feature_copy["properties"]["land_area_acres"] = float(rec.land_area_acres)
-                        feature_copy["properties"]["village"] = rec.village
-                        feature_copy["properties"]["mandal"] = rec.mandal
-                        feature_copy["properties"]["district"] = rec.district
+                    try:
+                        rec = db.query(LandRecord).filter(LandRecord.survey_number == survey_number).first()
+                        if rec:
+                            feature_copy["properties"]["owner_name"] = rec.owner_name
+                            feature_copy["properties"]["land_area_acres"] = float(rec.land_area_acres)
+                            feature_copy["properties"]["village"] = rec.village
+                            feature_copy["properties"]["mandal"] = rec.mandal
+                            feature_copy["properties"]["district"] = rec.district
+                    except Exception as e:
+                        logger.warning(f"Database lookup error for survey {survey_number}: {e}")
                 return feature_copy
         return None
 

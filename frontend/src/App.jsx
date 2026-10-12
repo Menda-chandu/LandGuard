@@ -20,6 +20,52 @@ export default function App() {
     setActiveTab('analysis');
   };
 
+  const handleSelectRecord = (record, targetTab = 'analysis') => {
+    const docId = record.document_id || record.id || record.record_id || `REC-${record.survey_number}`;
+    const surveyNo = record.survey_number || record.surveyNumber || "402/B";
+    const owner = record.owner_name || record.ownerName || "Unspecified";
+    const area = parseFloat(record.land_area_acres || record.area) || 2.0;
+    const village = record.village || "Riverside";
+    const mandal = record.mandal || "Ibrahimpatnam";
+    const district = record.district || "Ranga Reddy";
+    const state = record.state || "Telangana";
+    const regDate = record.registration_date || "2023-04-10";
+    const docType = record.document_type || "Sale Deed";
+
+    const docPayload = {
+      document_id: docId,
+      filename: record.filename || record.documentName || `${docId}_${surveyNo.replace(/[\\/\\s]/g, '_')}.pdf`,
+      ocr_status: "COMPLETED",
+      ocr_confidence_score: record.ocr_confidence_score || 96.4,
+      extracted_text: record.extracted_text || `GOVERNMENT OF TELANGANA\nREGISTRATION AND STAMPS DEPARTMENT\n\nRECORD ID: ${docId}\nEXECUTANT (SELLER): ${owner}\nCLAIMED SURVEY NO: ${surveyNo}\nCLAIMED EXTENT: ${area} Acres\nLOCATION: Village ${village}, Mandal ${mandal}, District ${district}\nREGISTRATION DATE: ${regDate}\nINSTRUMENT: ${docType}`,
+      extracted_nlp_fields: {
+        owner_name: owner,
+        survey_number: surveyNo,
+        land_area_acres: area,
+        village: village,
+        mandal: mandal,
+        district: district,
+        state: state,
+        registration_number: record.registration_number || docId,
+        registration_date: regDate,
+        document_type: docType
+      },
+      extracted_fields: {
+        owner_name: owner,
+        survey_number: surveyNo,
+        land_area_acres: area,
+        village: village,
+        mandal: mandal,
+        district: district,
+        state: state
+      }
+    };
+
+    setActiveDocument(docPayload);
+    setVerificationResult(null);
+    setActiveTab(targetTab);
+  };
+
   const renderActivePage = () => {
     switch (activeTab) {
       case 'dashboard':
@@ -56,7 +102,11 @@ export default function App() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
       {/* Top Bar */}
-      <Navbar onUploadClick={() => setActiveTab('upload')} />
+      <Navbar
+        onUploadClick={() => setActiveTab('upload')}
+        onSelectRecord={handleSelectRecord}
+        activeTab={activeTab}
+      />
 
       {/* Persistent Synthetic / Demo Disclaimer Banner */}
       <div className="bg-amber-950/40 border-b border-amber-800/50 px-4 py-2 text-center text-xs text-amber-300/90 flex items-center justify-center gap-2">
