@@ -78,10 +78,29 @@ export default function DocumentAnalysis({ activeDocument, onProceedToResults })
         {/* Right Column: Extracted Entities Table */}
         <div className="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-4">
           <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-            <h3 className="text-sm font-bold text-white">Extracted Text Entities (Rule-Based NLP Engine)</h3>
-            <span className="text-xs text-blue-400 font-semibold">
-              NLP Confidence: {nlpConfidence}%
-            </span>
+            <div>
+              <h3 className="text-sm font-bold text-white">Extracted Text Entities (Universal NLP Engine)</h3>
+              <div className="flex items-center gap-2 mt-1">
+                <span className="text-[11px] font-semibold text-blue-400">
+                  Type: {fields.document_type || nlpData?.document_type || "General Land Record"}
+                </span>
+                {activeDocument?.pages_count > 1 && (
+                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
+                    {activeDocument.pages_count} Pages
+                  </span>
+                )}
+              </div>
+            </div>
+            <div className="text-right">
+              <span className="text-xs text-blue-400 font-semibold block">
+                NLP Confidence: {nlpConfidence}%
+              </span>
+              {(nlpData?.requires_review || activeDocument?.requires_review) && (
+                <span className="text-[10px] text-amber-400 font-medium">
+                  Review Recommended
+                </span>
+              )}
+            </div>
           </div>
 
           {isLoading ? (
@@ -92,8 +111,14 @@ export default function DocumentAnalysis({ activeDocument, onProceedToResults })
             <div className="space-y-3">
               <div className="p-3 bg-slate-950 rounded-lg border border-slate-800 flex justify-between items-center">
                 <div>
-                  <span className="text-[11px] font-semibold text-slate-500 uppercase block">Extracted Owner Name</span>
+                  <span className="text-[11px] font-semibold text-slate-500 uppercase block">Extracted Owner / Executant Name</span>
                   <span className="text-sm font-bold text-white">{fields.owner_name || "Not detected in document"}</span>
+                  {(fields.seller_name || fields.buyer_name) && (
+                    <div className="text-[10px] text-slate-400 mt-0.5">
+                      {fields.seller_name && <span>Vendor: {fields.seller_name} </span>}
+                      {fields.buyer_name && <span>| Vendee: {fields.buyer_name}</span>}
+                    </div>
+                  )}
                 </div>
                 <span className={`text-xs font-semibold px-2 py-0.5 rounded ${
                   fields.owner_name 
@@ -121,9 +146,16 @@ export default function DocumentAnalysis({ activeDocument, onProceedToResults })
               <div className="p-3 bg-slate-950 rounded-lg border border-slate-800 flex justify-between items-center">
                 <div>
                   <span className="text-[11px] font-semibold text-slate-500 uppercase block">Claimed Land Extent</span>
-                  <span className="text-sm font-bold text-white">
-                    {fields.land_area_raw || (fields.land_area_acres ? `${fields.land_area_acres} Acres` : "Not detected in document")}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-bold text-white">
+                      {fields.land_area_raw || (fields.land_area_acres ? `${fields.land_area_acres} Acres` : "Not detected in document")}
+                    </span>
+                    {fields.land_area_raw && fields.land_area_normalized_acres && !fields.land_area_raw.toLowerCase().includes("acre") && (
+                      <span className="text-xs font-mono text-blue-400 bg-blue-950/60 px-1.5 py-0.5 rounded border border-blue-900/50">
+                        {fields.land_area_normalized_acres} Acres normalized
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <span className={`text-xs font-semibold px-2 py-0.5 rounded ${
                   fields.land_area_raw || fields.land_area_acres 
@@ -150,10 +182,15 @@ export default function DocumentAnalysis({ activeDocument, onProceedToResults })
 
               <div className="p-3 bg-slate-950 rounded-lg border border-slate-800 flex justify-between items-center">
                 <div>
-                  <span className="text-[11px] font-semibold text-slate-500 uppercase block">Document Type & Reg. Date</span>
+                  <span className="text-[11px] font-semibold text-slate-500 uppercase block">Document Type & Registration</span>
                   <span className="text-sm font-bold text-slate-300">
                     {fields.document_type || "Instrument"} {fields.registration_date ? `(${fields.registration_date})` : ""}
                   </span>
+                  {fields.encumbrance_status && (
+                    <span className="text-xs text-emerald-400 block font-semibold mt-0.5">
+                      Status: {fields.encumbrance_status}
+                    </span>
+                  )}
                 </div>
                 <span className="text-xs font-semibold px-2 py-0.5 rounded bg-blue-950 text-blue-400 border border-blue-800">
                   {fields.registration_number ? fields.registration_number : 'Instrument Recorded'}

@@ -31,13 +31,15 @@ export default function VerificationResults({ activeDocument, verificationResult
   }, [activeDocument, verificationResult, onVerificationComplete]);
 
   const docId = activeDocument?.document_id || verData?.document_id || "DOC-UNASSIGNED";
-  const verStatus = verData?.verification_status || (activeDocument ? "PENDING" : mockSelectedRecord.status);
+  const verStatus = verData?.verification_status || (activeDocument ? "PENDING" : "UNVERIFIED");
+  const isReferenceNotFound = verStatus === "REFERENCE_NOT_FOUND" || verData?.reference_status === "NO_MATCHING_REFERENCE";
+
   const matchedRec = verData?.matched_land_record || {
-    owner_name: activeDocument ? "Checking registry..." : mockSelectedRecord.extractedFields.govtOwnerName,
-    survey_number: activeDocument?.extracted_nlp_fields?.survey_number || (activeDocument ? "N/A" : mockSelectedRecord.extractedFields.govtSurveyNumber),
-    land_area_acres: activeDocument?.extracted_nlp_fields?.land_area_acres || (activeDocument ? 0.0 : mockSelectedRecord.extractedFields.govtRecordArea),
-    village: activeDocument?.extracted_nlp_fields?.village || (activeDocument ? "N/A" : "Gachibowli"),
-    district: activeDocument?.extracted_nlp_fields?.district || (activeDocument ? "N/A" : "Ranga Reddy")
+    owner_name: activeDocument ? (isReferenceNotFound ? "Unindexed in Demo Layer" : "Checking registry...") : "No Record",
+    survey_number: activeDocument?.extracted_nlp_fields?.survey_number || "N/A",
+    land_area_acres: activeDocument?.extracted_nlp_fields?.land_area_acres || 0.0,
+    village: activeDocument?.extracted_nlp_fields?.village || "N/A",
+    district: activeDocument?.extracted_nlp_fields?.district || "N/A"
   };
 
   const fieldMatches = verData?.field_matches || {
@@ -46,22 +48,7 @@ export default function VerificationResults({ activeDocument, verificationResult
     land_area_match: false
   };
 
-  const detectedAnomalies = verData?.detected_anomalies || (activeDocument ? [] : [
-    {
-      title: "Ownership Identity Mismatch",
-      severity: "High",
-      expected: "Registered Owner (Revenue Registry)",
-      found: "Document Executant",
-      description: "Document claims ownership under an executant that does not match the official Revenue Registry."
-    },
-    {
-      title: "Land Area Inflation Anomaly",
-      severity: "High",
-      expected: "Registered Parcel Boundary",
-      found: "Claimed Document Extent",
-      description: "Document claims land area exceeding the official Cadastral map parcel boundary."
-    }
-  ]);
+  const detectedAnomalies = verData?.detected_anomalies || [];
 
   return (
     <div className="space-y-6">
@@ -87,6 +74,22 @@ export default function VerificationResults({ activeDocument, verificationResult
         </div>
       </div>
 
+      {/* Informational banner when parcel is not in synthetic demonstration registry */}
+      {isReferenceNotFound && (
+        <div className="p-4 rounded-xl bg-blue-950/40 border border-blue-800 text-blue-200 text-xs flex items-start gap-3 shadow-md">
+          <span className="text-lg">ℹ️</span>
+          <div>
+            <strong className="block text-sm text-blue-300 font-bold mb-1">
+              No Matching Reference Record Available in Demo Dataset (Synthetic Registry)
+            </strong>
+            <p className="text-slate-300 leading-relaxed">
+              The survey number extracted from this document is not currently indexed in the synthetic demonstration database.
+              This represents an unindexed parcel in the prototype layer, not fraud, title invalidity, or fake ownership.
+            </p>
+          </div>
+        </div>
+      )}
+
       {isLoading ? (
         <div className="p-12 bg-slate-900 border border-slate-800 rounded-xl text-center text-slate-400 text-sm animate-pulse">
           Cross-matching deed details against land registry database...
@@ -98,9 +101,9 @@ export default function VerificationResults({ activeDocument, verificationResult
             <div className="p-4 bg-slate-900 border border-slate-800 rounded-xl">
               <span className="text-[11px] font-bold uppercase text-slate-500 block">Owner Name Match</span>
               <span className="text-base font-bold text-white mt-1 block">
-                {fieldMatches.owner_match ? "Matched" : "Mismatch"}
+                {isReferenceNotFound ? "Unindexed" : fieldMatches.owner_match ? "Matched" : "Mismatch"}
               </span>
-              <span className={`text-xs font-medium ${fieldMatches.owner_match ? 'text-emerald-400' : 'text-rose-400'}`}>
+              <span className={`text-xs font-medium ${isReferenceNotFound ? 'text-blue-400' : fieldMatches.owner_match ? 'text-emerald-400' : 'text-rose-400'}`}>
                 Govt: {matchedRec.owner_name}
               </span>
             </div>
@@ -108,27 +111,31 @@ export default function VerificationResults({ activeDocument, verificationResult
             <div className="p-4 bg-slate-900 border border-slate-800 rounded-xl">
               <span className="text-[11px] font-bold uppercase text-slate-500 block">Survey Number</span>
               <span className="text-base font-bold text-blue-300 font-mono mt-1 block">
-                {matchedRec.survey_number || "402/B"}
+                {matchedRec.survey_number}
               </span>
-              <span className="text-xs text-emerald-400 font-medium">Cadastral Matched</span>
+              <span className={`text-xs font-medium ${isReferenceNotFound ? 'text-blue-400' : fieldMatches.survey_number_match ? 'text-emerald-400' : 'text-amber-400'}`}>
+                {isReferenceNotFound ? "Not in Demo Layer" : fieldMatches.survey_number_match ? "Cadastral Matched" : "Unmatched"}
+              </span>
             </div>
 
             <div className="p-4 bg-slate-900 border border-slate-800 rounded-xl">
               <span className="text-[11px] font-bold uppercase text-slate-500 block">Registered Land Area</span>
               <span className="text-base font-bold text-white mt-1 block">
-                {matchedRec.land_area_acres} Acres
+                {isReferenceNotFound ? "N/A" : `${matchedRec.land_area_acres} Acres`}
               </span>
-              <span className={`text-xs font-medium ${fieldMatches.land_area_match ? 'text-emerald-400' : 'text-rose-400'}`}>
-                {fieldMatches.land_area_match ? "Area Matched" : "Area Discrepancy"}
+              <span className={`text-xs font-medium ${isReferenceNotFound ? 'text-slate-400' : fieldMatches.land_area_match ? 'text-emerald-400' : 'text-rose-400'}`}>
+                {isReferenceNotFound ? "No baseline" : fieldMatches.land_area_match ? "Area Matched" : "Area Discrepancy"}
               </span>
             </div>
 
             <div className="p-4 bg-slate-900 border border-slate-800 rounded-xl">
               <span className="text-[11px] font-bold uppercase text-slate-500 block">Location & District</span>
               <span className="text-base font-bold text-white mt-1 block truncate">
-                {matchedRec.village}, {matchedRec.district}
+                {matchedRec.village !== "N/A" ? `${matchedRec.village}, ${matchedRec.district}` : "Not Specified"}
               </span>
-              <span className="text-xs text-emerald-400 font-medium">GIS Boundary Verified</span>
+              <span className="text-xs text-slate-400 font-medium">
+                {fieldMatches.spatial_match ? "GIS Boundary Verified" : "Cadastral Layer"}
+              </span>
             </div>
           </div>
 

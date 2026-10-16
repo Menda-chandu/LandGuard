@@ -74,9 +74,10 @@ async def upload_document(
     # 5. Run OCR Text Extraction Pipeline
     ocr_result = process_document_ocr(saved_file_path)
     ocr_text = ocr_result.get("text", "")
+    pages_meta = ocr_result.get("pages", [])
 
     # 6. Run NLP Information Extraction Pipeline
-    nlp_result = nlp_engine.extract_information(ocr_text)
+    nlp_result = nlp_engine.extract_information(ocr_text, pages_metadata=pages_meta)
     fields = nlp_result.get("extracted_fields", {})
 
     # 7. Save Record in PostgreSQL document_records Table
@@ -113,13 +114,18 @@ async def upload_document(
         "file_path": relative_path,
         "file_type": file_type_str,
         "file_size_bytes": file_size,
+        "pages_count": ocr_result.get("pages_count", 1),
+        "document_type": nlp_result.get("document_type", "General Land Record"),
         "ocr_status": ocr_result.get("status", "COMPLETED"),
         "ocr_engine": ocr_result.get("engine", "Tesseract OCR"),
         "ocr_confidence_score": ocr_result.get("confidence", 0.0),
         "nlp_confidence_score": nlp_result.get("nlp_confidence_score", 0.0),
         "extracted_text": ocr_text,
         "extracted_nlp_fields": fields,
-        "location_summary": nlp_result.get("location_summary")
+        "field_metadata": nlp_result.get("field_metadata", {}),
+        "requires_review": nlp_result.get("requires_review", False),
+        "location_summary": nlp_result.get("location_summary"),
+        "disclaimer": "Synthetic demonstration prototype. Not an official government certification."
     }
 
 
@@ -299,7 +305,8 @@ def extract_document_nlp(document_id: str, db: Session = Depends(get_db)):
                 detail=f"Document '{document_id}' not found in database or uploads storage."
             )
 
-    nlp_result = nlp_engine.extract_information(ocr_text)
+    pages_meta = ocr_res.get("pages") if 'ocr_res' in locals() and ocr_res else None
+    nlp_result = nlp_engine.extract_information(ocr_text, pages_metadata=pages_meta)
     fields = nlp_result.get("extracted_fields", {})
 
     if record:
@@ -318,12 +325,16 @@ def extract_document_nlp(document_id: str, db: Session = Depends(get_db)):
     return {
         "status": "SUCCESS",
         "document_id": document_id,
+        "document_type": nlp_result.get("document_type", "General Land Record"),
         "ocr_confidence_score": ocr_confidence,
         "extracted_text": ocr_text,
         "nlp_confidence_score": nlp_result.get("nlp_confidence_score", 0.0),
         "fields_extracted_count": nlp_result.get("fields_extracted_count", 0),
         "location_summary": nlp_result.get("location_summary"),
-        "extracted_attributes": fields
+        "extracted_attributes": fields,
+        "field_metadata": nlp_result.get("field_metadata", {}),
+        "requires_review": nlp_result.get("requires_review", False),
+        "disclaimer": "Synthetic demonstration prototype. Not an official government certification."
     }
 
 

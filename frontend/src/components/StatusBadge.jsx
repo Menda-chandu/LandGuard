@@ -23,6 +23,16 @@ export default function StatusBadge({ status }) {
       badgeClass = "bg-purple-950/80 text-purple-300 border-purple-800/80";
       dotClass = "bg-purple-400";
       break;
+    case 'reference_not_found':
+    case 'reference not found':
+      badgeClass = "bg-blue-950/80 text-blue-300 border-blue-800/80";
+      dotClass = "bg-blue-400";
+      break;
+    case 'unverified':
+    case 'inconclusive':
+      badgeClass = "bg-slate-800 text-slate-300 border-slate-700";
+      dotClass = "bg-slate-400";
+      break;
     default:
       break;
   }

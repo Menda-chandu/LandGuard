@@ -48,7 +48,9 @@ def test_synthetic_pdf_ocr_and_nlp_extraction():
     assert fields.get('survey_number') == 'SY-TEST-104/2'
     assert fields.get('land_area_raw') == '240 square yards'
     assert fields.get('land_area_unit') == 'square yards'
-    assert fields.get('land_area_acres') == 240.0
+    assert fields.get('land_area_numeric') == 240.0
+    assert fields.get('land_area_normalized_acres') == 0.0496
+    assert abs(fields.get('land_area_acres') - 0.0496) < 1e-4
     assert fields.get('village') == 'Green Valley'
     assert fields.get('district') == 'Demo District'
     assert fields.get('registration_number') == 'DOC-TEST-2026-001'

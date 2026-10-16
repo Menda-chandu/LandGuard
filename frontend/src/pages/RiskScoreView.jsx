@@ -5,17 +5,19 @@ import { mockRiskBreakdown } from '../data/mockData';
 
 const ANOMALY_WEIGHTS = {
   OWNER_NAME_MISMATCH: 25,
-  SURVEY_NUMBER_MISMATCH: 25,
-  SURVEY_NOT_FOUND: 25,
+  SURVEY_NUMBER_MISMATCH: 20,
+  SURVEY_NOT_FOUND: 0,
+  REFERENCE_RECORD_NOT_AVAILABLE: 0,
   LAND_AREA_MISMATCH: 20,
   DUPLICATE_REGISTRATION_FLAGGED: 30,
   RAPID_OWNERSHIP_TRANSFER: 15,
   UNFOUND_SELLER_IN_HISTORY: 15,
   MISSING_HISTORICAL_TITLE_CHAIN: 15,
   INCOMPLETE_DOCUMENT_DATA: 10,
+  LOW_OCR_CONFIDENCE: 5,
   SPATIAL_LOCATION_MISMATCH: 20,
-  GIS_PARCEL_NOT_FOUND: 15,
-  DOCUMENT_NOT_FOUND: 30
+  GIS_PARCEL_NOT_FOUND: 0,
+  DOCUMENT_NOT_FOUND: 0
 };
 
 const DEFAULT_FALLBACK_ANOMALIES = [
@@ -158,11 +160,19 @@ export default function RiskScoreView({ activeDocument, verificationResult }) {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-bold text-white">{item.title || item.anomaly_type}</span>
-                      <span className="text-xs font-bold px-2 py-0.5 rounded bg-rose-950 text-rose-400 border border-rose-800">
-                        +{item.points_added} Points Added
-                      </span>
+                      {Number(item.points_added) > 0 ? (
+                        <span className="text-xs font-bold px-2 py-0.5 rounded bg-rose-950 text-rose-400 border border-rose-800">
+                          +{item.points_added} Points Added
+                        </span>
+                      ) : (
+                        <span className="text-xs font-bold px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800">
+                          0 Points (Informational)
+                        </span>
+                      )}
                     </div>
-                    <span className="text-xs text-slate-400 font-mono">{item.severity || 'High'} Severity</span>
+                    <span className="text-xs text-slate-400 font-mono">
+                      {item.severity ? `${item.severity} Severity` : "Info"}
+                    </span>
                   </div>
                   <p className="text-xs text-slate-400 leading-relaxed pt-1">
                     {item.description}

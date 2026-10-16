@@ -6,15 +6,16 @@ from sqlalchemy.orm import Session
 
 from app.models import LandRecord, OwnershipHistory, DocumentRecord, VerificationResult
 from app.nlp.extractor import nlp_engine
+from app.nlp.unit_converter import compare_areas, convert_to_acres
 from app.gis.spatial_engine import gis_spatial_engine
 
 
 class LandVerificationEngine:
     """
-    Rule-Based Land Record Verification & Anomaly Detection Engine.
-    Cross-matches extracted document NLP attributes against baseline PostgreSQL
-    revenue registry land_records, historical ownership_history title chains,
-    and GeoJSON CAD spatial polygon boundaries.
+    Universal Rule-Based Land Record Verification & Anomaly Detection Engine.
+    Cross-matches extracted document NLP attributes against reference land_records,
+    historical ownership_history title chains, and GeoJSON CAD spatial polygon boundaries.
+    Never presents synthetic comparisons as official government verification.
     """
 
     def __init__(self):
@@ -24,8 +25,7 @@ class LandVerificationEngine:
         """
         Main entrypoint to verify a document by document_id.
         Fetches document record, runs NLP extraction if needed, matches against
-        land_records, ownership_history, and GIS spatial engine, computes anomalies,
-        and persists result.
+        reference records, computes anomalies, and persists result.
         """
         doc_record = None
         try:
@@ -36,7 +36,10 @@ class LandVerificationEngine:
             except Exception:
                 pass
 
-        if not doc_record:
+        # 1. Gather Extracted Attributes
+        if doc_record and doc_record.extracted_text:
+            extracted_text = doc_record.extracted_text
+        else:
             import os
             from app.api.documents import UPLOADS_DIR
             from app.ocr.processor import process_document_ocr
@@ -45,46 +48,33 @@ class LandVerificationEngine:
                 file_path = os.path.join(UPLOADS_DIR, matching_files[0])
                 ocr_res = process_document_ocr(file_path)
                 extracted_text = ocr_res.get("text", "")
-                nlp_res = nlp_engine.extract_information(extracted_text)
-                extracted_fields = nlp_res.get("extracted_fields", {})
-                owner_name = extracted_fields.get("owner_name")
-                survey_number = extracted_fields.get("survey_number")
-                land_area = float(extracted_fields.get("land_area_acres") or 0.0)
-                village = extracted_fields.get("village")
-                mandal = extracted_fields.get("mandal")
-                district = extracted_fields.get("district")
-                return self.verify_extracted_attributes(
-                    owner_name=owner_name,
-                    survey_number=survey_number,
-                    land_area=land_area,
-                    doc_village=village,
-                    doc_mandal=mandal,
-                    doc_district=district,
-                    document_id=document_id,
-                    db=db
-                )
-            return self._build_not_found_response(document_id)
+            else:
+                return self._build_not_found_response(document_id)
 
-        # 1. Gather Extracted Attributes
-        extracted_text = doc_record.extracted_text or ""
         nlp_res = nlp_engine.extract_information(extracted_text)
         extracted_fields = nlp_res.get("extracted_fields", {})
 
-        owner_name = doc_record.extracted_owner_name or extracted_fields.get("owner_name")
-        survey_number = doc_record.extracted_survey_number or extracted_fields.get("survey_number")
-        land_area = float(doc_record.extracted_land_area or extracted_fields.get("land_area_acres") or 0.0)
+        owner_name = (doc_record.extracted_owner_name if doc_record else None) or extracted_fields.get("owner_name")
+        survey_number = (doc_record.extracted_survey_number if doc_record else None) or extracted_fields.get("survey_number")
+        land_area_raw = extracted_fields.get("land_area_raw")
+        land_area_unit = extracted_fields.get("land_area_unit") or "Acres"
+        land_area_numeric = float(extracted_fields.get("land_area_numeric") or doc_record.extracted_land_area if doc_record and doc_record.extracted_land_area else 0.0)
         village = extracted_fields.get("village")
         mandal = extracted_fields.get("mandal")
         district = extracted_fields.get("district")
+        doc_type = extracted_fields.get("document_type", "General Land Record")
 
         # 2. Run Verification Logic
         verification_payload = self.verify_extracted_attributes(
             owner_name=owner_name,
             survey_number=survey_number,
-            land_area=land_area,
+            land_area=land_area_numeric,
+            land_area_unit=land_area_unit,
+            land_area_raw=land_area_raw,
             doc_village=village,
             doc_mandal=mandal,
             doc_district=district,
+            document_type=doc_type,
             document_id=document_id,
             db=db
         )
@@ -109,7 +99,10 @@ class LandVerificationEngine:
             db.add(ver_result_db)
             db.commit()
         except Exception as err:
-            db.rollback()
+            try:
+                db.rollback()
+            except Exception:
+                pass
             print(f"Notice: Verification result DB persistence note: {err}")
 
         verification_payload["verification_id"] = ver_id
@@ -120,60 +113,78 @@ class LandVerificationEngine:
         owner_name: Optional[str],
         survey_number: Optional[str],
         land_area: float,
+        land_area_unit: str = "Acres",
+        land_area_raw: Optional[str] = None,
         doc_village: Optional[str] = None,
         doc_mandal: Optional[str] = None,
         doc_district: Optional[str] = None,
+        document_type: str = "General Land Record",
         document_id: str = "DOC-DEFAULT",
         db: Optional[Session] = None
     ) -> Dict[str, Any]:
         """
-        Pure rule-based verification matrix matching document attributes against DB records & GIS polygons.
+        Pure rule-based verification matrix matching document attributes against reference records & GIS polygons.
+        Outcomes:
+        - VERIFIED_MATCH: Document matches reference record across primary fields.
+        - PARTIAL_MATCH: Survey found with minor differences.
+        - MISMATCH: Confirmed conflict with registered record (e.g. different owner or area inflation).
+        - REFERENCE_NOT_FOUND: Survey is not indexed in the synthetic reference dataset (NOT fraud).
+        - INCONCLUSIVE: Missing required fields to attempt verification.
         """
         anomalies: List[Dict[str, Any]] = []
+        data_quality_warnings: List[Dict[str, Any]] = []
+
         field_matches = {
             "owner_match": False,
             "survey_number_match": False,
             "land_area_match": False,
-            "spatial_match": False
+            "spatial_match": False,
+            "reference_record_found": False
         }
 
         # Check 1: Incomplete Information Check
         if not survey_number:
-            anomalies.append({
+            data_quality_warnings.append({
                 "type": "INCOMPLETE_DOCUMENT_DATA",
-                "severity": "High",
+                "category": "Data Quality Warning",
+                "severity": "Medium",
                 "title": "Missing Survey Number",
-                "expected": "Valid Cadastral Survey Number (e.g. 101/A, 402/B)",
+                "expected": "Valid Cadastral Survey Number (e.g. 101/A, 402/B, SY-TEST-104/2)",
                 "found": "No survey number extracted from document",
-                "description": "The uploaded document lacks a recognizable survey parcel number required for database verification."
+                "description": "The uploaded document lacks a recognizable survey parcel number required for reference cross-matching."
             })
             return {
                 "document_id": document_id,
                 "verification_status": "UNVERIFIED",
+                "reference_status": "MISSING_KEY",
                 "matched_record_id": None,
                 "matched_land_record": None,
                 "field_matches": field_matches,
-                "detected_anomalies": anomalies,
-                "anomalies_count": len(anomalies)
+                "detected_anomalies": data_quality_warnings,
+                "data_quality_warnings": data_quality_warnings,
+                "anomalies_count": len(data_quality_warnings),
+                "disclaimer": "Synthetic demonstration prototype. Not an official government certification."
             }
 
         if not owner_name:
-            anomalies.append({
+            data_quality_warnings.append({
                 "type": "INCOMPLETE_DOCUMENT_DATA",
+                "category": "Data Quality Warning",
                 "severity": "Medium",
                 "title": "Missing Owner / Executant Name",
                 "expected": "Valid title holder / executant name",
                 "found": "Empty or unreadable owner name",
-                "description": "The executant or owner name could not be identified from the document text."
+                "description": "The executant or owner name could not be identified with high confidence from the document text."
             })
 
         if land_area <= 0.0:
-            anomalies.append({
+            data_quality_warnings.append({
                 "type": "INCOMPLETE_DOCUMENT_DATA",
+                "category": "Data Quality Warning",
                 "severity": "Medium",
-                "title": "Zero or Invalid Land Area",
-                "expected": "Positive land area extent (greater than 0.00 Acres)",
-                "found": f"{land_area} Acres",
+                "title": "Zero or Unspecified Land Area",
+                "expected": "Positive land area extent",
+                "found": land_area_raw or "0.0",
                 "description": "Document specifies zero or invalid land area extent."
             })
 
@@ -189,42 +200,75 @@ class LandVerificationEngine:
         if spatial_res.get("spatial_match"):
             field_matches["spatial_match"] = True
         else:
-            anomalies.extend(spatial_res.get("anomalies", []))
+            # Check if parcel polygon was simply missing in demo layer vs actual spatial mismatch
+            if not spatial_res.get("parcel_found"):
+                data_quality_warnings.append({
+                    "type": "GIS_PARCEL_NOT_FOUND",
+                    "category": "Data Quality Warning",
+                    "severity": "Low",
+                    "title": "Cadastral Boundary Not Mapped in Demo Layer",
+                    "expected": f"Mapped GeoJSON polygon for Survey '{survey_number}'",
+                    "found": "No GeoJSON parcel boundary in demo dataset",
+                    "description": f"Survey parcel '{survey_number}' does not have a mapped Cadastral boundary in the synthetic demo GIS layer."
+                })
+            else:
+                # Actual location mismatch against mapped polygon
+                anomalies.extend(spatial_res.get("anomalies", []))
 
-        # Check 3: Match against land_records table
+        # Check 3: Reference Database Match (land_records table)
         matched_record = None
         if db:
-            matched_record = db.query(LandRecord).filter(LandRecord.survey_number == survey_number).first()
-            if not matched_record:
-                base_survey = survey_number.split('/')[0] if '/' in survey_number else survey_number
-                matched_record = db.query(LandRecord).filter(LandRecord.survey_number.like(f"{base_survey}%")).first()
+            try:
+                matched_record = db.query(LandRecord).filter(LandRecord.survey_number == survey_number).first()
+                if not matched_record:
+                    base_survey = survey_number.split('/')[0] if '/' in survey_number else survey_number
+                    matched_record = db.query(LandRecord).filter(LandRecord.survey_number.like(f"{base_survey}%")).first()
+            except Exception as e:
+                logger.warning(f"Database lookup error during verification: {e}")
 
+        # If survey is NOT in reference database -> REFERENCE_NOT_FOUND (NOT FRAUD!)
         if not matched_record:
+            data_quality_warnings.append({
+                "type": "REFERENCE_RECORD_NOT_AVAILABLE",
+                "category": "Reference Status",
+                "severity": "Low",
+                "title": "No Matching Reference Record in Demo Database",
+                "expected": f"Survey parcel '{survey_number}' indexed in synthetic reference database",
+                "found": f"No reference entry found for Survey '{survey_number}'",
+                "description": f"Survey number '{survey_number}' does not exist in the current synthetic test dataset. This indicates an unindexed parcel, not fraud or title invalidity."
+            })
             anomalies.append({
                 "type": "SURVEY_NOT_FOUND",
-                "severity": "High",
-                "title": "Unregistered Survey Parcel Number",
-                "expected": f"Survey parcel '{survey_number}' registered in government revenue database",
-                "found": f"No registry entry found for Survey '{survey_number}'",
-                "description": f"Survey number '{survey_number}' does not exist in the official government land records database."
+                "category": "Reference Status",
+                "severity": "Low",
+                "title": "Survey Parcel Not Found in Synthetic Registry",
+                "expected": f"Registered Land Record for Survey '{survey_number}'",
+                "found": f"No record matching Survey '{survey_number}'",
+                "description": f"Survey number '{survey_number}' does not match any registered land record in the synthetic database."
             })
+            all_issues = anomalies + data_quality_warnings
             return {
                 "document_id": document_id,
-                "verification_status": "SUSPICIOUS",
+                "verification_status": "REFERENCE_NOT_FOUND",
+                "reference_status": "NO_MATCHING_REFERENCE",
                 "matched_record_id": None,
                 "matched_land_record": None,
                 "field_matches": field_matches,
-                "detected_anomalies": anomalies,
-                "anomalies_count": len(anomalies)
+                "detected_anomalies": all_issues,
+                "record_inconsistencies": anomalies,
+                "data_quality_warnings": data_quality_warnings,
+                "anomalies_count": len(all_issues),
+                "disclaimer": "Synthetic demonstration prototype. Not an official government certification."
             }
 
-        # Matched record details
+        field_matches["reference_record_found"] = True
         matched_record_id = matched_record.record_id
+        ref_area_acres = float(matched_record.land_area_acres)
         matched_land_dict = {
             "record_id": matched_record.record_id,
             "owner_name": matched_record.owner_name,
             "survey_number": matched_record.survey_number,
-            "land_area_acres": float(matched_record.land_area_acres),
+            "land_area_acres": ref_area_acres,
             "village": matched_record.village,
             "mandal": matched_record.mandal,
             "district": matched_record.district,
@@ -238,11 +282,12 @@ class LandVerificationEngine:
         else:
             anomalies.append({
                 "type": "SURVEY_NUMBER_MISMATCH",
+                "category": "Record Inconsistency",
                 "severity": "High",
                 "title": "Survey Sub-division Mismatch",
                 "expected": f"Exact Survey Parcel '{matched_record.survey_number}'",
                 "found": f"Document Claims Survey '{survey_number}'",
-                "description": f"Document claims Survey '{survey_number}', but government record is registered under Survey '{matched_record.survey_number}'."
+                "description": f"Document claims Survey '{survey_number}', but government reference is registered under Survey '{matched_record.survey_number}'."
             })
 
         # Check 5: Owner Name Match
@@ -252,111 +297,138 @@ class LandVerificationEngine:
             else:
                 anomalies.append({
                     "type": "OWNER_NAME_MISMATCH",
+                    "category": "Record Inconsistency",
                     "severity": "High",
                     "title": "Ownership Name Mismatch Anomaly",
                     "expected": f"Registered Title Owner: '{matched_record.owner_name}'",
                     "found": f"Document Executant Name: '{owner_name}'",
-                    "description": f"Document owner name '{owner_name}' does not match official registered owner '{matched_record.owner_name}'."
+                    "description": f"Document owner name '{owner_name}' differs from official registered owner '{matched_record.owner_name}'."
                 })
 
-        # Check 6: Land Area Match (Tolerance +/- 0.05 Acres)
-        registered_area = float(matched_record.land_area_acres)
-        if land_area > 0.0 and registered_area > 0.0:
-            area_diff = round(abs(land_area - registered_area), 2)
-            if area_diff <= 0.05:
-                field_matches["land_area_match"] = True
-            else:
-                severity = "High" if area_diff > 0.25 else "Medium"
-                anomalies.append({
-                    "type": "LAND_AREA_MISMATCH",
-                    "severity": severity,
-                    "title": "Land Area Discrepancy",
-                    "expected": f"Registered Parcel Area: {registered_area} Acres",
-                    "found": f"Claimed Document Extent: {land_area} Acres",
-                    "description": f"Document claims {land_area} Acres, which differs from official registered area of {registered_area} Acres by {area_diff} Acres."
-                })
-
-        # Check 7: Duplicate Registration Check
-        if db:
-            duplicate_records = db.query(LandRecord).filter(
-                LandRecord.survey_number == survey_number,
-                LandRecord.record_id != matched_record_id
-            ).all()
-
-            if duplicate_records:
-                dup_owners = [r.owner_name for r in duplicate_records if r.owner_name]
-                anomalies.append({
-                    "type": "DUPLICATE_REGISTRATION_FLAGGED",
-                    "severity": "Critical",
-                    "title": "Duplicate Registration / Double Selling Alert",
-                    "expected": f"Single clear title registration for Survey {survey_number}",
-                    "found": f"Multiple active registrations under sellers: {', '.join(dup_owners)}",
-                    "description": f"Survey parcel {survey_number} is registered under multiple records ({matched_record_id} and {duplicate_records[0].record_id}), indicating potential double registration fraud."
-                })
-
-        # Check 8: Ownership History & Rapid Transfer Checks
-        if db:
-            history_records = db.query(OwnershipHistory).filter(
-                OwnershipHistory.survey_number == survey_number
-            ).order_by(OwnershipHistory.transfer_date.desc()).all()
-
-            if history_records:
-                dates = [h.transfer_date for h in history_records if h.transfer_date]
-                if len(dates) >= 3:
-                    dates_sorted = sorted(dates, reverse=True)
-                    days_span = (dates_sorted[0] - dates_sorted[-1]).days
-                    if days_span <= 60:
-                        anomalies.append({
-                            "type": "RAPID_OWNERSHIP_TRANSFER",
-                            "severity": "High",
-                            "title": "Suspicious Rapid Ownership Transfer Anomaly",
-                            "expected": "Normal title transfer intervals over years",
-                            "found": f"{len(dates)} ownership transfers within {days_span} days",
-                            "description": f"Parcel {survey_number} underwent {len(dates)} rapid transfers between {dates_sorted[-1]} and {dates_sorted[0]}, triggering suspicious flipping risk."
-                        })
-
-                if owner_name:
-                    hist_owners = [h.owner_name.lower() for h in history_records if h.owner_name]
-                    if not any(self._compare_names(owner_name, ho) for ho in hist_owners):
-                        anomalies.append({
-                            "type": "UNFOUND_SELLER_IN_HISTORY",
-                            "severity": "Medium",
-                            "title": "Title Chain Continuity Break",
-                            "expected": f"Executant '{owner_name}' present in historical ownership chain",
-                            "found": f"Executant missing from title chain records: {', '.join([h.owner_name for h in history_records[:3]])}",
-                            "description": f"Owner name '{owner_name}' has no registered historical grant or mutation transfer record for Survey {survey_number}."
-                        })
-            elif matched_record and owner_name:
-                anomalies.append({
-                    "type": "MISSING_HISTORICAL_TITLE_CHAIN",
-                    "severity": "Medium",
-                    "title": "Missing Prior Ownership History",
-                    "expected": "Registered historical transfer chain",
-                    "found": "No prior transfer records in ownership history database",
-                    "description": f"Survey parcel {survey_number} lacks prior transfer history records in database."
-                })
-
-        # Determine Final Verification Status
-        high_critical_anomalies = [a for a in anomalies if a["severity"] in ["High", "Critical"]]
-
-        if not anomalies:
-            status_str = "VERIFIED"
-        elif high_critical_anomalies:
-            status_str = "SUSPICIOUS"
+        # Check 6: Normalized Land Area Match (Tested unit conversion comparison)
+        area_cmp = compare_areas(land_area, land_area_unit, ref_area_acres, "Acres", tolerance_pct=5.0)
+        if area_cmp["match"]:
+            field_matches["land_area_match"] = True
         else:
-            status_str = "REVIEW_NEEDED"
+            doc_normalized = area_cmp["doc_acres"]
+            severity = "High" if area_cmp["discrepancy_pct"] > 20.0 else "Medium"
+            anomalies.append({
+                "type": "LAND_AREA_MISMATCH",
+                "category": "Record Inconsistency",
+                "severity": severity,
+                "title": "Land Area Extent Discrepancy",
+                "expected": f"Registered Area: {ref_area_acres} Acres",
+                "found": f"Document Claims: {land_area_raw or f'{land_area} {land_area_unit}'} ({doc_normalized} Acres normalized)",
+                "description": f"Document claims {doc_normalized} Acres, differing from registered extent of {ref_area_acres} Acres by {area_cmp['discrepancy_pct']}%."
+            })
+
+        # Check 7: Ownership History & Chain Continuity
+        if db and matched_record.survey_number:
+            try:
+                histories = db.query(OwnershipHistory).filter(
+                    OwnershipHistory.survey_number == matched_record.survey_number
+                ).order_by(OwnershipHistory.transfer_date.desc()).all()
+
+                if histories:
+                    # Check for rapid transfers (< 180 days between successive deeds)
+                    for i in range(len(histories) - 1):
+                        d1 = histories[i].transfer_date
+                        d2 = histories[i + 1].transfer_date
+                        if d1 and d2:
+                            diff_days = abs((d1 - d2).days)
+                            if diff_days < 180:
+                                anomalies.append({
+                                    "type": "RAPID_OWNERSHIP_TRANSFER",
+                                    "category": "Record Inconsistency",
+                                    "severity": "Medium",
+                                    "title": "Rapid Successive Ownership Transfer",
+                                    "expected": "Standard holding period (> 180 days between transfers)",
+                                    "found": f"Transferred in {diff_days} days between {histories[i+1].owner_name} and {histories[i].owner_name}",
+                                    "description": f"Property changed ownership within {diff_days} days, characteristic of speculative deed flipping."
+                                })
+                                break
+
+                    # Check if seller exists in prior title chain
+                    if owner_name:
+                        prior_owners = [h.owner_name.lower() for h in histories]
+                        has_prior = any(self._compare_names(owner_name, p) for p in prior_owners)
+                        if not has_prior:
+                            anomalies.append({
+                                "type": "UNFOUND_SELLER_IN_HISTORY",
+                                "category": "Record Inconsistency",
+                                "severity": "High",
+                                "title": "Missing Prior Chain of Title",
+                                "expected": "Executant present in historical ownership transfers",
+                                "found": f"Executant '{owner_name}' absent from recorded chain",
+                                "description": f"Executant '{owner_name}' does not appear anywhere in historical title transfers for Survey '{matched_record.survey_number}'."
+                            })
+                elif matched_record and owner_name:
+                    anomalies.append({
+                        "type": "MISSING_HISTORICAL_TITLE_CHAIN",
+                        "category": "Record Inconsistency",
+                        "severity": "Medium",
+                        "title": "Missing Prior Ownership History",
+                        "expected": "Registered historical transfer chain",
+                        "found": "No prior transfer records in ownership history database",
+                        "description": f"Survey parcel '{matched_record.survey_number}' lacks prior transfer history records in database."
+                    })
+            except Exception as e:
+                logger.warning(f"History chain verification notice: {e}")
+
+        # Check 8: Duplicate Registration Flag / Double Selling
+        if db:
+            try:
+                query_filter = (LandRecord.survey_number == matched_record.survey_number)
+                if matched_record.registration_number:
+                    query_filter = query_filter | (LandRecord.registration_number == matched_record.registration_number)
+
+                dups = db.query(LandRecord).filter(
+                    query_filter,
+                    LandRecord.record_id != matched_record.record_id
+                ).all()
+                if dups:
+                    dup_owners = [r.owner_name for r in dups if r.owner_name]
+                    anomalies.append({
+                        "type": "DUPLICATE_REGISTRATION_FLAGGED",
+                        "category": "Record Inconsistency",
+                        "severity": "Critical",
+                        "title": "Duplicate Registration / Double Selling Alert",
+                        "expected": f"Single unique registration for Survey '{matched_record.survey_number}'",
+                        "found": f"Multiple active registrations under sellers: {', '.join(dup_owners)}",
+                        "description": f"Survey parcel '{matched_record.survey_number}' is registered under multiple records ({matched_record.record_id} and {dups[0].record_id}), indicating potential duplicate registration or double selling."
+                    })
+            except Exception as e:
+                logger.warning(f"Duplicate registration check notice: {e}")
+
+        # Determine Final Status
+        all_issues = anomalies + data_quality_warnings
+        if len(anomalies) == 0:
+            status = "VERIFIED"
+            outcome = "VERIFIED_MATCH"
+        elif any(a.get("severity") in ["High", "Critical"] for a in anomalies):
+            status = "SUSPICIOUS"
+            outcome = "MISMATCH"
+        else:
+            status = "SUSPICIOUS"
+            outcome = "PARTIAL_MATCH"
 
         return {
             "document_id": document_id,
-            "verification_status": status_str,
+            "verification_status": status,
+            "verification_outcome": outcome,
+            "reference_status": "MATCHED",
             "matched_record_id": matched_record_id,
             "matched_land_record": matched_land_dict,
             "field_matches": field_matches,
-            "detected_anomalies": anomalies,
-            "anomalies_count": len(anomalies)
+            "detected_anomalies": all_issues,
+            "record_inconsistencies": anomalies,
+            "data_quality_warnings": data_quality_warnings,
+            "anomalies_count": len(all_issues),
+            "disclaimer": "Synthetic demonstration prototype. Not an official government certification."
         }
 
     def _compare_names(self, name1: str, name2: str) -> bool:
+        """Fuzzy comparison of Indian names accounting for initials, titles, and spacing."""
         if not name1 or not name2:
             return False
         n1 = re.sub(r"[^\w\s]", "", name1.lower()).strip()
@@ -369,7 +441,7 @@ class LandVerificationEngine:
         tokens2 = set(n2.split())
 
         common = tokens1.intersection(tokens2)
-        if len(common) >= 2:
+        if len(common) >= 2 or (len(tokens1) == 1 and len(tokens2) == 1 and common):
             return True
 
         return False
@@ -377,24 +449,38 @@ class LandVerificationEngine:
     def _build_not_found_response(self, document_id: str) -> Dict[str, Any]:
         return {
             "document_id": document_id,
-            "verification_status": "UNVERIFIED",
+            "verification_status": "INCONCLUSIVE",
+            "reference_status": "DOCUMENT_NOT_FOUND",
             "matched_record_id": None,
             "matched_land_record": None,
             "field_matches": {
                 "owner_match": False,
                 "survey_number_match": False,
                 "land_area_match": False,
-                "spatial_match": False
+                "spatial_match": False,
+                "reference_record_found": False
             },
             "detected_anomalies": [{
                 "type": "DOCUMENT_NOT_FOUND",
-                "severity": "High",
+                "category": "Data Quality Warning",
+                "severity": "Medium",
+                "title": "Document Record Not Found in Uploads",
+                "expected": f"Document '{document_id}' present in uploads storage or database",
+                "found": "Document ID not found",
+                "description": f"No document entry or upload file found for ID '{document_id}'."
+            }],
+            "record_inconsistencies": [],
+            "data_quality_warnings": [{
+                "type": "DOCUMENT_NOT_FOUND",
+                "category": "Data Quality Warning",
+                "severity": "Medium",
                 "title": "Document Record Not Found",
-                "expected": f"Document '{document_id}' present in system database",
+                "expected": f"Document '{document_id}' present in system",
                 "found": "Document ID not found",
                 "description": f"No document entry found for ID '{document_id}'."
             }],
-            "anomalies_count": 1
+            "anomalies_count": 1,
+            "disclaimer": "Synthetic demonstration prototype. Not an official government certification."
         }
 
 

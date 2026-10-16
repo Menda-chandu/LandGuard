@@ -5,7 +5,8 @@ import re
 import zlib
 import base64
 import logging
-from PIL import Image, ImageEnhance, ImageFilter
+from typing import Dict, Any, List, Tuple
+from PIL import Image
 
 try:
     import pytesseract
@@ -21,6 +22,8 @@ try:
     from pdf2image import convert_from_path
 except ImportError:
     convert_from_path = None
+
+from app.ocr.preprocessor import enhance_document_image
 
 logger = logging.getLogger("landguard.ocr")
 
@@ -63,25 +66,6 @@ def configure_tesseract_path() -> str | None:
 configure_tesseract_path()
 
 
-def preprocess_image(image: Image.Image) -> Image.Image:
-    """
-    Enhance scan quality for poor or faint document images.
-    Converts to grayscale, boosts contrast, and applies mild sharpening.
-    """
-    try:
-        # Convert to Grayscale
-        gray = image.convert('L')
-        # Enhance Contrast
-        enhancer = ImageEnhance.Contrast(gray)
-        enhanced = enhancer.enhance(1.8)
-        # Apply Sharpening Filter
-        sharpened = enhanced.filter(ImageFilter.SHARPEN)
-        return sharpened
-    except Exception as e:
-        logger.warning(f"Image preprocessing warning: {e}. Using original image.")
-        return image
-
-
 def _is_tesseract_in_path() -> bool:
     if not pytesseract:
         return False
@@ -92,7 +76,7 @@ def _is_tesseract_in_path() -> bool:
         return False
 
 
-def _ocr_pil_image(image: Image.Image) -> tuple[str, float]:
+def _ocr_pil_image(image: Image.Image, apply_enhancement: bool = True) -> Tuple[str, float]:
     """
     Run Tesseract OCR on a PIL Image and calculate word-level confidence score.
     Returns (extracted_text, confidence_score).
@@ -101,8 +85,12 @@ def _ocr_pil_image(image: Image.Image) -> tuple[str, float]:
     if not pytesseract or not _is_tesseract_in_path():
         return "", 0.0
 
-    processed_img = preprocess_image(image)
-    extracted_text = pytesseract.image_to_string(processed_img).strip()
+    processed_img = enhance_document_image(image) if apply_enhancement else image
+    try:
+        extracted_text = pytesseract.image_to_string(processed_img).strip()
+    except Exception as e:
+        logger.warning(f"Tesseract image_to_string notice: {e}")
+        extracted_text = ""
 
     confidence = 0.0
     if extracted_text:
@@ -119,16 +107,19 @@ def _ocr_pil_image(image: Image.Image) -> tuple[str, float]:
     return extracted_text, confidence
 
 
-def extract_text_from_image(image_path: str) -> dict:
+def extract_text_from_image(image_path: str) -> Dict[str, Any]:
     """
-    Extract text and confidence score from an image file using Tesseract OCR.
+    Extract text and confidence score from an image file (PNG, JPG, TIFF, BMP)
+    using enhanced computer-vision preprocessing and Tesseract OCR.
     """
     if not os.path.exists(image_path):
         return {
             "status": "FAILED",
             "text": "",
             "confidence": 0.0,
-            "error": "Image file not found"
+            "error": "Image file not found",
+            "pages_count": 0,
+            "pages": []
         }
 
     configure_tesseract_path()
@@ -139,26 +130,56 @@ def extract_text_from_image(image_path: str) -> dict:
             "text": "[OCR Engine Unavailable: Tesseract OCR binary not detected on system.]",
             "confidence": 0.0,
             "engine": "Unavailable",
-            "error": "Tesseract OCR binary not detected on system."
+            "error": "Tesseract OCR binary not detected on system.",
+            "pages_count": 0,
+            "pages": []
         }
 
     try:
         with Image.open(image_path) as img:
-            extracted_text, confidence = _ocr_pil_image(img)
+            # Check for empty / corrupt zero-size image
+            if img.width <= 10 or img.height <= 10:
+                return {
+                    "status": "UNREADABLE",
+                    "text": "[Unreadable Image: Image dimensions too small or corrupted.]",
+                    "confidence": 0.0,
+                    "engine": "Document Reader",
+                    "error": "Image dimensions too small or corrupted.",
+                    "pages_count": 1,
+                    "pages": []
+                }
+
+            extracted_text, confidence = _ocr_pil_image(img, apply_enhancement=True)
 
             if not extracted_text:
                 return {
                     "status": "WARNING",
                     "text": "[Blank or low-contrast scan. No readable text extracted by OCR engine.]",
                     "confidence": 0.0,
-                    "engine": "Tesseract OCR"
+                    "engine": "Tesseract OCR",
+                    "pages_count": 1,
+                    "pages": [{
+                        "page_number": 1,
+                        "text": "",
+                        "confidence": 0.0,
+                        "char_count": 0
+                    }]
                 }
+
+            page_info = {
+                "page_number": 1,
+                "text": extracted_text,
+                "confidence": confidence,
+                "char_count": len(extracted_text)
+            }
 
             return {
                 "status": "COMPLETED",
                 "text": extracted_text,
                 "confidence": confidence,
-                "engine": "Tesseract OCR"
+                "engine": "Tesseract OCR (Enhanced Scan)",
+                "pages_count": 1,
+                "pages": [page_info]
             }
     except Exception as e:
         logger.error(f"OCR Processing Error on {image_path}: {e}")
@@ -167,7 +188,9 @@ def extract_text_from_image(image_path: str) -> dict:
             "text": f"[OCR Processing Error: {str(e)}]",
             "confidence": 0.0,
             "engine": "Tesseract OCR",
-            "error": str(e)
+            "error": str(e),
+            "pages_count": 0,
+            "pages": []
         }
 
 
@@ -224,11 +247,11 @@ def _extract_text_pure_python_streams(pdf_path: str) -> str:
         return ""
 
 
-def extract_text_from_pdf(pdf_path: str) -> dict:
+def extract_text_from_pdf(pdf_path: str) -> Dict[str, Any]:
     """
-    Multi-tier extraction engine for PDF documents:
-    1. Direct digital text extraction via pypdf.
-    2. Embedded image extraction via pypdf + Tesseract OCR.
+    Universal multi-tier extraction engine for PDF documents:
+    1. Direct digital text extraction via pypdf with per-page tracking.
+    2. Embedded page image extraction via pypdf + Tesseract OCR with quality enhancement.
     3. Raster page rendering via pdf2image + Tesseract OCR (if poppler is available).
     4. Pure-Python stream extraction fallback.
     Never returns fabricated mock deed values.
@@ -238,60 +261,135 @@ def extract_text_from_pdf(pdf_path: str) -> dict:
             "status": "FAILED",
             "text": "",
             "confidence": 0.0,
-            "error": "PDF file not found"
+            "error": "PDF file not found",
+            "pages_count": 0,
+            "pages": []
+        }
+
+    # Check for empty file
+    file_size = os.path.getsize(pdf_path)
+    if file_size < 32:
+        return {
+            "status": "UNREADABLE",
+            "text": "[Unreadable Document: File is empty or zero bytes.]",
+            "confidence": 0.0,
+            "engine": "Document Reader",
+            "error": "File size too small (empty file).",
+            "pages_count": 0,
+            "pages": []
         }
 
     # --- Tier 1: Direct digital text extraction via pypdf ---
     if pypdf:
         try:
             reader = pypdf.PdfReader(pdf_path)
-            extracted_pages = []
-            for page in reader.pages:
-                page_text = page.extract_text()
-                if page_text and page_text.strip():
-                    extracted_pages.append(page_text.strip())
-
-            if extracted_pages:
-                full_text = "\n\n".join(extracted_pages).strip()
-                if len(full_text) >= 20:
-                    # Dynamic realistic confidence score based on text length and completeness
-                    confidence = round(min(98.5, max(89.0, 92.0 + len(full_text) / 500)), 2)
+            # Check encryption
+            if reader.is_encrypted:
+                try:
+                    # Attempt empty password decrypt
+                    reader.decrypt("")
+                except Exception:
                     return {
-                        "status": "COMPLETED",
-                        "text": full_text,
-                        "confidence": confidence,
-                        "engine": "LandGuard Digital PDF Engine"
+                        "status": "ENCRYPTED",
+                        "text": "[Encrypted Document: PDF file is password protected.]",
+                        "confidence": 0.0,
+                        "engine": "Document Reader",
+                        "error": "PDF file is encrypted or password-protected.",
+                        "pages_count": 0,
+                        "pages": []
                     }
+
+            extracted_pages = []
+            total_chars = 0
+            num_pages = len(reader.pages)
+
+            for idx, page in enumerate(reader.pages, start=1):
+                page_text = page.extract_text() or ""
+                page_text_clean = page_text.strip()
+                extracted_pages.append({
+                    "page_number": idx,
+                    "text": page_text_clean,
+                    "confidence": 95.0 if page_text_clean else 0.0,
+                    "char_count": len(page_text_clean)
+                })
+                total_chars += len(page_text_clean)
+
+            # If meaningful digital text was found across pages
+            if total_chars >= 20:
+                combined_text_parts = []
+                for p in extracted_pages:
+                    if p["text"]:
+                        if num_pages > 1:
+                            combined_text_parts.append(f"--- Page {p['page_number']} ---\n{p['text']}")
+                        else:
+                            combined_text_parts.append(p["text"])
+
+                full_text = "\n\n".join(combined_text_parts).strip()
+                confidence = round(min(98.5, max(89.0, 92.0 + total_chars / 500)), 2)
+
+                return {
+                    "status": "COMPLETED",
+                    "text": full_text,
+                    "confidence": confidence,
+                    "engine": "LandGuard Digital PDF Engine",
+                    "pages_count": num_pages,
+                    "pages": extracted_pages
+                }
+
         except Exception as e:
             logger.info(f"pypdf direct text extraction notice: {e}")
 
-    # --- Tier 2: Extract embedded images via pypdf and run Tesseract OCR ---
+    # --- Tier 2: Extract embedded page images via pypdf and run Tesseract OCR ---
     if pypdf and pytesseract and _is_tesseract_in_path():
         try:
             reader = pypdf.PdfReader(pdf_path)
-            image_texts = []
+            num_pages = len(reader.pages)
+            image_pages = []
             total_conf = 0.0
             image_count = 0
 
-            for page in reader.pages:
+            for idx, page in enumerate(reader.pages, start=1):
+                page_texts = []
+                page_confs = []
                 for img_file in page.images:
                     try:
                         pil_img = Image.open(io.BytesIO(img_file.data))
-                        txt, conf = _ocr_pil_image(pil_img)
+                        txt, conf = _ocr_pil_image(pil_img, apply_enhancement=True)
                         if txt:
-                            image_texts.append(txt)
+                            page_texts.append(txt)
+                            page_confs.append(conf)
                             total_conf += conf
                             image_count += 1
                     except Exception as img_err:
                         logger.debug(f"Page image OCR notice: {img_err}")
 
-            if image_texts:
+                combined_page_txt = "\n".join(page_texts).strip()
+                avg_page_conf = round(sum(page_confs) / max(len(page_confs), 1), 2) if page_confs else 0.0
+                image_pages.append({
+                    "page_number": idx,
+                    "text": combined_page_txt,
+                    "confidence": avg_page_conf,
+                    "char_count": len(combined_page_txt)
+                })
+
+            valid_texts = [p for p in image_pages if p["text"]]
+            if valid_texts:
                 avg_conf = round(total_conf / max(image_count, 1), 2)
+                combined_text_parts = []
+                for p in image_pages:
+                    if p["text"]:
+                        if num_pages > 1:
+                            combined_text_parts.append(f"--- Page {p['page_number']} ---\n{p['text']}")
+                        else:
+                            combined_text_parts.append(p["text"])
+
                 return {
                     "status": "COMPLETED",
-                    "text": "\n\n".join(image_texts),
+                    "text": "\n\n".join(combined_text_parts),
                     "confidence": avg_conf,
-                    "engine": "Tesseract OCR (Embedded Image Scan)"
+                    "engine": "Tesseract OCR (Embedded Image Scan)",
+                    "pages_count": num_pages,
+                    "pages": image_pages
                 }
         except Exception as e:
             logger.info(f"pypdf embedded image extraction notice: {e}")
@@ -299,23 +397,34 @@ def extract_text_from_pdf(pdf_path: str) -> dict:
     # --- Tier 3: Render pages to images via pdf2image (if poppler is installed) ---
     if convert_from_path and pytesseract and _is_tesseract_in_path():
         try:
-            images = convert_from_path(pdf_path, first_page=1, last_page=3)
-            full_text = []
+            images = convert_from_path(pdf_path, first_page=1, last_page=5)
+            rendered_pages = []
             total_conf = 0.0
 
-            for idx, img in enumerate(images):
-                txt, conf = _ocr_pil_image(img)
-                if txt:
-                    full_text.append(txt)
-                    total_conf += conf
+            for idx, img in enumerate(images, start=1):
+                txt, conf = _ocr_pil_image(img, apply_enhancement=True)
+                total_conf += conf
+                rendered_pages.append({
+                    "page_number": idx,
+                    "text": txt,
+                    "confidence": conf,
+                    "char_count": len(txt)
+                })
 
-            if full_text:
+            valid_rendered = [p for p in rendered_pages if p["text"]]
+            if valid_rendered:
                 avg_conf = round(total_conf / max(len(images), 1), 2)
+                combined_text_parts = [
+                    f"--- Page {p['page_number']} ---\n{p['text']}" if len(images) > 1 else p['text']
+                    for p in rendered_pages if p["text"]
+                ]
                 return {
                     "status": "COMPLETED",
-                    "text": "\n\n--- Page Break ---\n\n".join(full_text),
+                    "text": "\n\n".join(combined_text_parts),
                     "confidence": avg_conf,
-                    "engine": "Tesseract OCR (PDF Render)"
+                    "engine": "Tesseract OCR (PDF Render)",
+                    "pages_count": len(images),
+                    "pages": rendered_pages
                 }
         except Exception as e:
             logger.info(f"Poppler PDF conversion notice: {e}")
@@ -328,7 +437,14 @@ def extract_text_from_pdf(pdf_path: str) -> dict:
             "status": "COMPLETED",
             "text": stream_text,
             "confidence": confidence,
-            "engine": "LandGuard Stream Reader"
+            "engine": "LandGuard Stream Reader",
+            "pages_count": 1,
+            "pages": [{
+                "page_number": 1,
+                "text": stream_text,
+                "confidence": confidence,
+                "char_count": len(stream_text)
+            }]
         }
 
     # --- Tier 5: Honest unreadable result (No fake text fabricated) ---
@@ -337,20 +453,25 @@ def extract_text_from_pdf(pdf_path: str) -> dict:
         "text": "[Unreadable Document: No readable text or images could be extracted from the PDF.]",
         "confidence": 0.0,
         "engine": "Document Reader",
-        "error": "No readable digital text or OCR images detected in document."
+        "error": "No readable digital text or OCR images detected in document.",
+        "pages_count": 0,
+        "pages": []
     }
 
 
-def process_document_ocr(file_path: str) -> dict:
+def process_document_ocr(file_path: str) -> Dict[str, Any]:
     """
-    Main entrypoint for processing any uploaded document file (PDF, PNG, JPG, TIFF, BMP).
+    Main universal entrypoint for processing any uploaded document file
+    (PDF, PNG, JPG, JPEG, TIFF, BMP).
     """
     if not os.path.exists(file_path):
         return {
             "status": "FAILED",
             "text": "",
             "confidence": 0.0,
-            "error": "File not found at path"
+            "error": "File not found at path",
+            "pages_count": 0,
+            "pages": []
         }
 
     ext = os.path.splitext(file_path)[1].lower()
@@ -364,5 +485,7 @@ def process_document_ocr(file_path: str) -> dict:
             "status": "FAILED",
             "text": "",
             "confidence": 0.0,
-            "error": f"Unsupported file extension: {ext}"
+            "error": f"Unsupported file extension: {ext}",
+            "pages_count": 0,
+            "pages": []
         }
