@@ -5,7 +5,8 @@ import re
 import zlib
 import base64
 import logging
-from PIL import Image, ImageEnhance, ImageFilter
+from PIL import Image, ImageOps
+import shutil
 
 try:
     import pytesseract
@@ -48,6 +49,8 @@ def configure_tesseract_path() -> str | None:
         os.path.expanduser(r"~\AppData\Local\Programs\Tesseract-OCR\tesseract.exe"),
         "/usr/bin/tesseract",
         "/usr/local/bin/tesseract",
+        "/opt/homebrew/bin/tesseract",
+        shutil.which("tesseract"),
     ]
 
     for path in possible_paths:
@@ -69,14 +72,13 @@ def preprocess_image(image: Image.Image) -> Image.Image:
     Converts to grayscale, boosts contrast, and applies mild sharpening.
     """
     try:
-        # Convert to Grayscale
-        gray = image.convert('L')
-        # Enhance Contrast
-        enhancer = ImageEnhance.Contrast(gray)
-        enhanced = enhancer.enhance(1.8)
-        # Apply Sharpening Filter
-        sharpened = enhanced.filter(ImageFilter.SHARPEN)
-        return sharpened
+        gray = ImageOps.exif_transpose(image).convert('L')
+        # Small scan glyphs lose strokes when sharpened at their original size.
+        # Upscale before recognition rather than guessing corrected identifiers.
+        if max(gray.size) < 1600:
+            factor = min(4, max(2, 1600 // max(gray.size)))
+            gray = gray.resize((gray.width * factor, gray.height * factor), Image.Resampling.LANCZOS)
+        return ImageOps.autocontrast(gray)
     except Exception as e:
         logger.warning(f"Image preprocessing warning: {e}. Using original image.")
         return image
@@ -102,13 +104,14 @@ def _ocr_pil_image(image: Image.Image) -> tuple[str, float]:
         return "", 0.0
 
     processed_img = preprocess_image(image)
-    extracted_text = pytesseract.image_to_string(processed_img).strip()
+    languages = os.getenv("OCR_LANGUAGES", "eng")
+    extracted_text = pytesseract.image_to_string(processed_img, lang=languages).strip()
 
     confidence = 0.0
     if extracted_text:
         try:
-            data = pytesseract.image_to_data(processed_img, output_type=pytesseract.Output.DICT)
-            conf_values = [int(c) for c in data.get('conf', []) if c != '-1' and str(c).isdigit()]
+            data = pytesseract.image_to_data(processed_img, lang=languages, output_type=pytesseract.Output.DICT)
+            conf_values = [float(c) for c in data.get('conf', []) if float(c) >= 0]
             if conf_values:
                 confidence = round(sum(conf_values) / len(conf_values), 2)
             else:

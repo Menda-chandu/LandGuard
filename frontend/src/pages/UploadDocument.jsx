@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { uploadDocumentApi } from '../api/config';
+import React, { useEffect, useState } from 'react';
+import { uploadDocumentApi, getSampleDocumentsApi, getSampleDocumentApi } from '../api/config';
 
 export default function UploadDocument({ onUploadSuccess }) {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -8,11 +8,16 @@ export default function UploadDocument({ onUploadSuccess }) {
   const [isUploading, setIsUploading] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
 
-  const sampleDeeds = [
-    { name: "LandGuard_Synthetic_Test_Land_Record.pdf", size: "28 KB", type: "Sale Deed", status: "Synthetic Test PDF" },
-    { name: "Sale_Deed_Plot_402B.pdf", size: "2.4 MB", type: "Sale Deed", status: "Suspicious Sample" },
-    { name: "7_12_Extract_Survey_118.pdf", size: "1.8 MB", type: "7/12 Extract", status: "Verified Sample" }
-  ];
+  const [sampleDeeds, setSampleDeeds] = useState([]);
+  const [isLoadingSample, setIsLoadingSample] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    getSampleDocumentsApi()
+      .then(data => { if (!cancelled) setSampleDeeds(data.samples); })
+      .catch(error => { if (!cancelled) setErrorMessage(error.message); });
+    return () => { cancelled = true; };
+  }, []);
 
   const handleFileDrop = (e) => {
     e.preventDefault();
@@ -30,15 +35,17 @@ export default function UploadDocument({ onUploadSuccess }) {
     }
   };
 
-  const handleSelectSample = (sample) => {
+  const handleSelectSample = async (sample) => {
     setErrorMessage(null);
-    const textContent = sample.name.includes("LandGuard_Synthetic_Test")
-      ? "SYNTHETIC SAMPLE — LAND RECORD TEST DOCUMENT\nRecord ID: LG-TEST-0001\nOwner name: Arun Kumar\nSurvey number: SY-TEST-104/2\nLand area: 240 square yards\nVillage / locality: Green Valley\nDistrict: Demo District\nDocument number: DOC-TEST-2026-001\nDocument date: 15 September 2026\nBoundary - North: Demo Plot SY-TEST-103\nBoundary - South: Demo Road\nBoundary - East: Demo Plot SY-TEST-105\nBoundary - West: Demo Drain"
-      : "GOVERNMENT OF TELANGANA\nREGISTRATION AND STAMPS DEPARTMENT\n\nDEED TITLE: REGISTERED SALE DEED FOR AGRICULTURAL LAND\nEXECUTANT / OWNER NAME: Rajesh Kumar Sharma\nCLAIMED SURVEY NO: 402/B\nCLAIMED EXTENT: 2.45 Acres\nLOCATION: Village Gachibowli, Mandal Serilingampally, District Ranga Reddy\nREGISTRATION DATE: 14-May-2023";
-    const sampleBlob = new Blob([textContent], { type: "application/pdf" });
-    const file = new File([sampleBlob], sample.name, { type: "application/pdf" });
-    setSelectedFile(file);
-    setDocumentType(sample.type);
+    setIsLoadingSample(true);
+    try {
+      setSelectedFile(await getSampleDocumentApi(sample.name));
+      setDocumentType(sample.name.startsWith('pahani') ? 'Pahani' : 'Sale Deed');
+    } catch (error) {
+      setErrorMessage(error.message);
+    } finally {
+      setIsLoadingSample(false);
+    }
   };
 
   const handleStartAnalysis = async () => {
@@ -65,7 +72,7 @@ export default function UploadDocument({ onUploadSuccess }) {
       <div>
         <h2 className="text-2xl font-extrabold text-white tracking-tight">Upload Land Document</h2>
         <p className="text-sm text-slate-400 mt-1">
-          Upload land title deeds, 7/12 extracts, patta passbooks, or survey maps (PDF, PNG, JPG, JPEG, TIFF, BMP) for automated OCR and fraud analysis.
+          Upload land deeds or labelled Pahani / Adangal records (PDF, PNG, JPG, JPEG, TIFF, BMP) for OCR and verification.
         </p>
       </div>
 
@@ -73,7 +80,7 @@ export default function UploadDocument({ onUploadSuccess }) {
       <div className="p-3 rounded-xl bg-amber-950/30 border border-amber-800/40 text-amber-200/90 text-xs flex items-center gap-2.5">
         <span>⚠️</span>
         <span>
-          <strong>Demo Notice:</strong> Uploaded documents are cross-referenced against the synthetic land records test database. Results are simulated for validation and do not constitute official government verification.
+          <strong>Demo Notice:</strong> Results are computed against imported synthetic land records and do not constitute official government verification.
         </span>
       </div>
 
@@ -155,6 +162,7 @@ export default function UploadDocument({ onUploadSuccess }) {
             <button
               key={idx}
               onClick={() => handleSelectSample(sample)}
+              disabled={isLoadingSample || isUploading}
               className={`p-3 rounded-lg border text-left flex flex-col justify-between transition-all ${
                 selectedFile?.name === sample.name
                   ? 'border-blue-500 bg-blue-950/40 text-blue-200'
@@ -163,10 +171,10 @@ export default function UploadDocument({ onUploadSuccess }) {
             >
               <div>
                 <div className="text-xs font-bold text-white truncate">{sample.name}</div>
-                <div className="text-[11px] text-slate-400">{sample.type} • {sample.size}</div>
+                <div className="text-[11px] text-slate-400">{sample.description} • {(sample.size_bytes / 1024).toFixed(1)} KB</div>
               </div>
               <span className="text-[10px] font-semibold mt-2 px-2 py-0.5 rounded bg-slate-800 text-slate-300 w-fit">
-                {sample.status}
+                Dataset file
               </span>
             </button>
           ))}
@@ -183,6 +191,7 @@ export default function UploadDocument({ onUploadSuccess }) {
             className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500"
           >
             <option value="Sale Deed">Registered Sale Deed</option>
+            <option value="Pahani">Pahani / Adangal</option>
             <option value="7/12 Extract">7/12 Revenue Extract / RoR</option>
             <option value="Patta Passbook">Patta Passbook / Title Certificate</option>
             <option value="Gift Deed">Gift / Partition Deed</option>
@@ -190,7 +199,7 @@ export default function UploadDocument({ onUploadSuccess }) {
         </div>
 
         <button
-          disabled={!selectedFile || isUploading}
+          disabled={!selectedFile || isUploading || isLoadingSample}
           onClick={handleStartAnalysis}
           className={`w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-bold text-sm transition-all shadow-lg ${
             !selectedFile || isUploading

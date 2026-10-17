@@ -1,89 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import RiskScoreBadge from '../components/RiskScoreBadge';
 import { getRiskAssessmentApi } from '../api/config';
-import { mockRiskBreakdown } from '../data/mockData';
 
-const ANOMALY_WEIGHTS = {
-  OWNER_NAME_MISMATCH: 25,
-  SURVEY_NUMBER_MISMATCH: 25,
-  SURVEY_NOT_FOUND: 25,
-  LAND_AREA_MISMATCH: 20,
-  DUPLICATE_REGISTRATION_FLAGGED: 30,
-  RAPID_OWNERSHIP_TRANSFER: 15,
-  UNFOUND_SELLER_IN_HISTORY: 15,
-  MISSING_HISTORICAL_TITLE_CHAIN: 15,
-  INCOMPLETE_DOCUMENT_DATA: 10,
-  SPATIAL_LOCATION_MISMATCH: 20,
-  GIS_PARCEL_NOT_FOUND: 15,
-  DOCUMENT_NOT_FOUND: 30
-};
-
-const DEFAULT_FALLBACK_ANOMALIES = [
-  {
-    anomaly_type: "OWNER_NAME_MISMATCH",
-    title: "Ownership Identity Mismatch",
-    severity: "High",
-    points_added: 25,
-    description: "Document claims ownership under an executant differing from official Revenue Registry."
-  },
-  {
-    anomaly_type: "LAND_AREA_MISMATCH",
-    title: "Land Area Inflation Anomaly",
-    severity: "High",
-    points_added: 20,
-    description: "Document claims land extent exceeding the official Cadastral map parcel boundary."
-  }
-];
-
-export default function RiskScoreView({ activeDocument, verificationResult }) {
+export default function RiskScoreView({ activeDocument }) {
   const [riskData, setRiskData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  const [error, setError] = useState(null);
   useEffect(() => {
-    const docId = activeDocument?.document_id || "DOC-2026-8901";
+    let cancelled = false;
+    setRiskData(null);
+    setError(null);
     setIsLoading(true);
-    getRiskAssessmentApi(docId)
-      .then((data) => {
-        setRiskData(data);
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        console.warn("Risk API notice:", err.message);
-        setIsLoading(false);
-      });
+    getRiskAssessmentApi(activeDocument.document_id)
+      .then(data => { if (!cancelled) { setRiskData(data); setIsLoading(false); } })
+      .catch(err => { if (!cancelled) { setError(err.message); setIsLoading(false); } });
+    return () => { cancelled = true; };
   }, [activeDocument]);
-
-  const docId = activeDocument?.document_id || riskData?.document_id || "DOC-UNASSIGNED";
-
-  // Derive breakdown from live risk data, shared verification result, or aligned fallback
-  const breakdown = (riskData?.scoring_breakdown && riskData.scoring_breakdown.length > 0)
-    ? riskData.scoring_breakdown
-    : (verificationResult?.detected_anomalies && verificationResult.detected_anomalies.length > 0)
-    ? verificationResult.detected_anomalies.map((a) => ({
-        anomaly_type: a.type || a.title || "ANOMALY",
-        title: a.title || a.type,
-        severity: a.severity || "High",
-        points_added: ANOMALY_WEIGHTS[a.type] || (a.severity === "Critical" ? 30 : a.severity === "High" ? 25 : 15),
-        description: a.description || ""
-      }))
-    : activeDocument
-    ? []
-    : DEFAULT_FALLBACK_ANOMALIES;
-
-  // Calculate score dynamically from breakdown weights instead of a disconnected static number
-  const computedPointsSum = breakdown.reduce((sum, item) => sum + (Number(item.points_added) || 0), 0);
-  const score = riskData?.risk_score != null ? riskData.risk_score : Math.min(computedPointsSum, 100);
-
-  // Normalize risk level category for consistent UI threshold highlights
-  const rawLevel = riskData?.risk_level || (score >= 80 ? 'CRITICAL' : score >= 60 ? 'HIGH' : score >= 30 ? 'MEDIUM' : 'LOW');
-  const normalizedLevel = (rawLevel || '').toUpperCase().replace(' RISK', '').trim();
-
-  const recommendation = riskData?.recommendation || (
-    normalizedLevel === 'LOW' ? "No major inconsistency detected" :
-    normalizedLevel === 'MEDIUM' ? "Manual review recommended" :
-    normalizedLevel === 'HIGH' ? "Further verification required" :
-    "Immediate detailed verification required"
-  );
+  if (error) return <div role="alert" className="p-6 rounded-xl bg-rose-950 text-rose-200">{error}</div>;
+  const docId = activeDocument.document_id;
+  const breakdown = riskData?.scoring_breakdown || [];
+  const score = riskData?.risk_score;
+  const normalizedLevel = riskData?.risk_level;
+  const recommendation = riskData?.recommendation;
 
   return (
     <div className="space-y-6">
@@ -95,12 +34,21 @@ export default function RiskScoreView({ activeDocument, verificationResult }) {
         </p>
       </div>
 
-      {isLoading ? (
+      {isLoading || !riskData ? (
         <div className="p-12 bg-slate-900 border border-slate-800 rounded-xl text-center text-slate-400 text-sm animate-pulse">
           Computing explainable risk assessment score...
         </div>
       ) : (
         <>
+          <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 text-sm text-slate-300 space-y-2">
+            <h3 className="font-bold text-white">AI anomaly assessment</h3>
+            {riskData.ml_assessment?.status === 'ASSESSED' ? <>
+              <p>Isolation Forest trained on {riskData.ml_assessment.training_records} imported reference records. Outlier percentile: {riskData.ml_assessment.outlier_percentile}. Added risk points: {riskData.ml_assessment.risk_points}.</p>
+              {riskData.ml_assessment.explanation?.map(item => <p className="text-xs" key={item.feature}>{item.feature}: {item.document_value} (reference median {item.reference_median})</p>)}
+              <p className="text-xs text-amber-200">{riskData.ml_assessment.limitation}</p>
+            </> : <p>Insufficient reference data for the AI model. The displayed score uses explainable verification rules.</p>}
+            <p className="text-xs text-slate-400">This score reflects available evidence. Review Verification Results for unchecked fields.</p>
+          </div>
           {/* Visual Risk Gauge & Status Banner */}
           <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
             <div className="md:col-span-5">

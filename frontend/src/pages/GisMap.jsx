@@ -1,9 +1,8 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
-import { MapContainer, TileLayer, GeoJSON, Polygon, ScaleControl, Tooltip, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, GeoJSON, ScaleControl, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { getGisParcelsApi } from '../api/config';
-import { mockGisParcelData } from '../data/mockData';
+import { getGisParcelsApi, getDocumentApi } from '../api/config';
 import { fallbackGeoJson } from '../data/parcelsGeoJson';
 import {
   MapPin,
@@ -19,6 +18,8 @@ import {
   WifiOff,
   Crosshair
 } from 'lucide-react';
+
+const isDisputedParcel = properties => Boolean(properties.conflict_status && !/^clean\b/i.test(properties.conflict_status));
 
 // Subcomponent to handle programmatic map pan/zoom animations
 function MapController({ targetBounds, resetKey, defaultCenter, defaultZoom }) {
@@ -47,7 +48,7 @@ function MapController({ targetBounds, resetKey, defaultCenter, defaultZoom }) {
   return null;
 }
 
-export default function GisMap({ activeDocument }) {
+export default function GisMap({ activeDocument, surveyNumber }) {
   // Use fallback bundled synthetic GeoJSON as instant baseline data
   const [geoData, setGeoData] = useState(fallbackGeoJson);
   const [selectedParcel, setSelectedParcel] = useState(null);
@@ -58,6 +59,7 @@ export default function GisMap({ activeDocument }) {
   const [resetKey, setResetKey] = useState(0);
   const [apiSource, setApiSource] = useState('local'); // 'live' | 'local'
   const [isLoading, setIsLoading] = useState(false);
+  const [claimedGeometry, setClaimedGeometry] = useState(null);
 
   const geoJsonRef = useRef(null);
 
@@ -89,24 +91,28 @@ export default function GisMap({ activeDocument }) {
 
   // Features list
   const allFeatures = useMemo(() => geoData?.features || [], [geoData]);
+  const requestedSurvey = surveyNumber || activeDocument?.extracted_nlp_fields?.survey_number ||
+    activeDocument?.extracted_fields?.survey_number || activeDocument?.extracted_survey_number || activeDocument?.survey_number;
+
+  useEffect(() => {
+    let cancelled = false;
+    setClaimedGeometry(null);
+    if (activeDocument?.document_id) {
+      getDocumentApi(activeDocument.document_id)
+        .then(data => { if (!cancelled) setClaimedGeometry(data?.claimed_geometry || null); })
+        .catch(() => { if (!cancelled) setClaimedGeometry(null); });
+    }
+    return () => { cancelled = true; };
+  }, [activeDocument?.document_id]);
 
   // Initial selection on mount or when activeDocument changes
   useEffect(() => {
-    if (allFeatures.length > 0 && !selectedParcel) {
-      let initialFeat = allFeatures[0];
-      if (activeDocument) {
-        const docSurvey = activeDocument.extracted_fields?.survey_number ||
-                          activeDocument.extracted_survey_number ||
-                          activeDocument.survey_number;
-        if (docSurvey) {
-          const match = allFeatures.find(f => f.properties?.survey_number === docSurvey);
-          if (match) initialFeat = match;
-        }
-      }
-      setSelectedParcel(initialFeat.properties);
-      setSelectedFeature(initialFeat);
-    }
-  }, [allFeatures, activeDocument, selectedParcel]);
+    const initialFeat = requestedSurvey
+      ? allFeatures.find(feature => feature.properties?.survey_number === requestedSurvey)
+      : allFeatures[0];
+    setSelectedParcel(initialFeat?.properties || null);
+    setSelectedFeature(initialFeat || null);
+  }, [allFeatures, requestedSurvey]);
 
   // Dynamic search and filter logic
   const filteredFeatures = useMemo(() => {
@@ -119,7 +125,7 @@ export default function GisMap({ activeDocument }) {
       // 1. Risk Tier Filter
       let matchesRisk = true;
       if (riskFilter === 'DISPUTED') {
-        matchesRisk = p.conflict_status && p.conflict_status !== 'Clean';
+        matchesRisk = isDisputedParcel(p);
       } else if (riskFilter !== 'ALL') {
         matchesRisk = (p.risk_level || 'LOW').toUpperCase() === riskFilter;
       }
@@ -213,7 +219,7 @@ export default function GisMap({ activeDocument }) {
       (selectedParcel.survey_number === p.survey_number && selectedParcel.owner_name === p.owner_name) ||
       (selectedParcel.survey_number === p.survey_number)
     );
-    const isDisputed = p.conflict_status && p.conflict_status !== 'Clean';
+    const isDisputed = isDisputedParcel(p);
     const risk = getRiskColor(p.risk_level);
 
     if (activeLayer === 'encumbrance') {
@@ -303,21 +309,16 @@ export default function GisMap({ activeDocument }) {
   };
 
   const parcel = selectedParcel || {
-    survey_number: "402/B",
-    owner_name: "Kiran Mazumdar",
-    land_area_acres: 2.00,
-    village: "Riverside",
-    mandal: "Ibrahimpatnam",
-    district: "Ranga Reddy",
-    state: "Telangana",
-    risk_level: "HIGH",
-    conflict_status: "0.65 Acre Overlap Anomaly"
+    survey_number: requestedSurvey || 'None selected', owner_name: 'Not mapped',
+    village: 'Not mapped', mandal: 'Not mapped', district: 'Not mapped', state: 'Not mapped',
+    risk_level: 'UNAVAILABLE', conflict_status: 'No parcel selected'
   };
 
   const selectedRisk = getRiskColor(parcel.risk_level);
 
   return (
     <div className="space-y-6">
+      {!isLoading && requestedSurvey && !selectedParcel && <div role="status" className="p-4 rounded-xl bg-amber-950 text-amber-200">No mapped parcel found for survey {requestedSurvey}. Select another parcel to explore the map.</div>}
       {/* Top Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
@@ -340,7 +341,7 @@ export default function GisMap({ activeDocument }) {
             </span>
           </div>
           <p className="text-sm text-slate-400 mt-1">
-            Real-time interactive Cadastral polygon boundaries mapped to Ranga Reddy district, Telangana revenue registries.
+            Imported synthetic parcel polygons. OpenStreetMap provides the base map; parcel tiers are dataset labels.
           </p>
         </div>
 
@@ -396,9 +397,9 @@ export default function GisMap({ activeDocument }) {
         <div className="bg-amber-950/40 border border-amber-800/60 rounded-xl p-3 text-xs text-amber-200 flex items-start gap-2.5 shadow-sm">
           <AlertTriangle className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
           <div>
-            <strong>Disputed Overlaps Mode:</strong> Filtering and highlighting synthetic boundary disputes (Survey 501/A duplicate sale, Survey 402/B 0.65-acre encroachment, Survey 601/A rapid flipping, Survey 201/A identity mismatch).
+            <strong>Boundary comparison mode:</strong> Reference parcels are shown with an attached document claim in red when one is available.
             <span className="block text-amber-300/80 mt-0.5">
-              Notice: The overlapping red dashed polygon visualizes claimed vs. registered deed coordinates for flagged parcels. Automated geometric polygonal intersection calculation requires PostGIS geometry extensions.
+              Attach a claimed GeoJSON boundary in Verification Results to calculate differences and overlaps. Without a claim, geometry is not checked.
             </span>
           </div>
         </div>
@@ -492,7 +493,7 @@ export default function GisMap({ activeDocument }) {
                   (selectedParcel.survey_number === p.survey_number)
                 );
                 const risk = getRiskColor(p.risk_level);
-                const hasConflict = p.conflict_status && p.conflict_status !== 'Clean';
+                const hasConflict = isDisputedParcel(p);
 
                 return (
                   <button
@@ -606,26 +607,19 @@ export default function GisMap({ activeDocument }) {
                   />
                 )}
 
-                {/* Disputed Overlap Visualizer: Render Claimed Boundary for Survey 402/B when in disputed mode */}
-                {activeLayer === 'encumbrance' && (
-                  <Polygon
-                    positions={mockGisParcelData.claimedBoundary}
-                    pathOptions={{
+                {claimedGeometry && selectedParcel?.survey_number === requestedSurvey && (
+                  <GeoJSON
+                    key={`claim_${activeDocument?.document_id}_${JSON.stringify(claimedGeometry)}`}
+                    data={claimedGeometry}
+                    style={{
                       color: '#ef4444',
                       fillColor: '#f87171',
                       fillOpacity: 0.55,
                       dashArray: '6, 6',
                       weight: 2.5
                     }}
-                  >
-                    <Tooltip sticky>
-                      <div className="text-xs font-sans">
-                        <strong className="text-rose-400">Claimed Deed Boundary</strong>
-                        <div>Survey 402/B Claim: 2.45 Acres</div>
-                        <div className="text-amber-300">0.65 Acre Spatial Encroachment vs Registered 1.80 Acres</div>
-                      </div>
-                    </Tooltip>
-                  </Polygon>
+                    onEachFeature={(_, layer) => layer.bindTooltip('Uploaded claimed parcel boundary')}
+                  />
                 )}
               </MapContainer>
             )}
@@ -633,8 +627,8 @@ export default function GisMap({ activeDocument }) {
             {/* Embedded Floating Map Legend */}
             <div className="absolute bottom-3 right-3 bg-slate-900/95 backdrop-blur border border-slate-700/80 p-2.5 rounded-xl shadow-xl z-[400] text-[11px] space-y-1.5 max-w-[170px]">
               <div className="font-bold text-white border-b border-slate-800 pb-1 flex items-center justify-between">
-                <span>Risk Legend</span>
-                <span className="text-[9px] text-slate-400">CAD Tiers</span>
+                <span>Dataset tiers</span>
+                <span className="text-[9px] text-slate-400">Synthetic</span>
               </div>
               <div className="grid grid-cols-2 gap-x-2 gap-y-1">
                 <div className="flex items-center gap-1.5">
@@ -693,7 +687,7 @@ export default function GisMap({ activeDocument }) {
 
               <div className="p-2.5 rounded-lg bg-slate-950 border border-slate-800 flex justify-between items-center">
                 <span className="text-xs text-slate-400 font-semibold">Parcel Acreage</span>
-                <span className="text-xs font-bold text-white">{parcel.land_area_acres} Acres</span>
+                <span className="text-xs font-bold text-white">{parcel.land_area_acres == null ? 'Not mapped' : `${parcel.land_area_acres} Acres`}</span>
               </div>
 
               <div className="p-2.5 rounded-lg bg-slate-950 border border-slate-800 flex justify-between items-center">
@@ -718,7 +712,7 @@ export default function GisMap({ activeDocument }) {
               {/* Conflict / Mismatch Status */}
               <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
                 <span className="text-[11px] font-bold text-slate-400 block">Anomaly / Conflict Status</span>
-                {parcel.conflict_status && parcel.conflict_status !== 'Clean' ? (
+                {isDisputedParcel(parcel) ? (
                   <div className="flex items-start gap-1.5 text-xs text-rose-300 font-semibold">
                     <AlertTriangle className="w-3.5 h-3.5 text-rose-400 mt-0.5 shrink-0" />
                     <span>{parcel.conflict_status}</span>
@@ -726,7 +720,7 @@ export default function GisMap({ activeDocument }) {
                 ) : (
                   <div className="flex items-center gap-1.5 text-xs text-emerald-400 font-semibold">
                     <CheckCircle2 className="w-3.5 h-3.5" />
-                    <span>Clean Cadastral Title</span>
+                    <span>Dataset label: {parcel.conflict_status || 'No conflict label'}</span>
                   </div>
                 )}
               </div>

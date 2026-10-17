@@ -13,6 +13,7 @@ from app.ocr.processor import process_document_ocr
 from app.nlp.extractor import nlp_engine
 import asyncio
 import io
+import pytest
 from fastapi import UploadFile
 from app.api.documents import upload_document, get_document_details
 
@@ -48,7 +49,7 @@ def test_synthetic_pdf_ocr_and_nlp_extraction():
     assert fields.get('survey_number') == 'SY-TEST-104/2'
     assert fields.get('land_area_raw') == '240 square yards'
     assert fields.get('land_area_unit') == 'square yards'
-    assert fields.get('land_area_acres') == 240.0
+    assert fields.get('land_area_acres') == pytest.approx(240 / 4840, abs=0.000001)
     assert fields.get('village') == 'Green Valley'
     assert fields.get('district') == 'Demo District'
     assert fields.get('registration_number') == 'DOC-TEST-2026-001'

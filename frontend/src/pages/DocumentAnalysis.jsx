@@ -4,28 +4,36 @@ import { getDocumentNlpApi } from '../api/config';
 export default function DocumentAnalysis({ activeDocument, onProceedToResults }) {
   const [nlpData, setNlpData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
+    let cancelled = false;
+    setNlpData(null);
+    setError(null);
     if (activeDocument && activeDocument.document_id) {
       setIsLoading(true);
       getDocumentNlpApi(activeDocument.document_id)
         .then((data) => {
+          if (cancelled) return;
           setNlpData(data);
           setIsLoading(false);
         })
         .catch((err) => {
-          console.warn("NLP API notice:", err.message);
+          if (cancelled) return;
+          setError(err.message);
           setIsLoading(false);
         });
     }
+    return () => { cancelled = true; };
   }, [activeDocument]);
+  if (error) return <div role="alert" className="p-6 rounded-xl bg-rose-950 text-rose-200">{error}</div>;
 
   const docId = activeDocument?.document_id || "DOC-UNASSIGNED";
   const ocrText = activeDocument?.extracted_text || nlpData?.extracted_text || "[No OCR text available. Please upload a document to run extraction.]";
-  const ocrConfidence = activeDocument?.ocr_confidence_score ?? 0.0;
+  const ocrConfidence = nlpData?.ocr_confidence_score ?? activeDocument?.ocr_confidence_score ?? 0.0;
 
   const fields = nlpData?.extracted_attributes || activeDocument?.extracted_nlp_fields || {};
-  const nlpConfidence = nlpData?.nlp_confidence_score ?? activeDocument?.nlp_confidence_score ?? (fields.owner_name ? 85.0 : 0.0);
+  const nlpConfidence = nlpData?.nlp_confidence_score ?? activeDocument?.nlp_confidence_score ?? 0.0;
   const locationText = nlpData?.location_summary || activeDocument?.location_summary || ([fields.village, fields.mandal, fields.district, fields.state].filter(Boolean).join(", ") || "Not detected in document");
 
   return (
@@ -90,6 +98,7 @@ export default function DocumentAnalysis({ activeDocument, onProceedToResults })
             </div>
           ) : (
             <div className="space-y-3">
+              {fields.land_area_raw && fields.land_area_acres != null && <p className="text-xs text-blue-300">Normalized area: {fields.land_area_acres} acres</p>}
               <div className="p-3 bg-slate-950 rounded-lg border border-slate-800 flex justify-between items-center">
                 <div>
                   <span className="text-[11px] font-semibold text-slate-500 uppercase block">Extracted Owner Name</span>

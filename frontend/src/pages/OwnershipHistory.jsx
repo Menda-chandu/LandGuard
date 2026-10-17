@@ -1,25 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import StatusBadge from '../components/StatusBadge';
 import { getOwnershipHistoryApi } from '../api/config';
-import { mockOwnershipTimeline } from '../data/mockData';
 
 export default function OwnershipHistory({ activeDocument }) {
   const [historyData, setHistoryData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  const [error, setError] = useState(null);
   useEffect(() => {
-    const docId = activeDocument?.document_id || "DOC-2026-8901";
+    let cancelled = false;
+    setHistoryData(null);
+    setError(null);
     setIsLoading(true);
-    getOwnershipHistoryApi(docId)
-      .then((data) => {
-        setHistoryData(data);
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        console.warn("History API notice:", err.message);
-        setIsLoading(false);
-      });
+    getOwnershipHistoryApi(activeDocument.document_id)
+      .then(data => { if (!cancelled) { setHistoryData(data); setIsLoading(false); } })
+      .catch(err => { if (!cancelled) { setError(err.message); setIsLoading(false); } });
+    return () => { cancelled = true; };
   }, [activeDocument]);
+  if (error) return <div role="alert" className="p-6 rounded-xl bg-rose-950 text-rose-200">{error}</div>;
 
   const surveyNo = historyData?.survey_number || activeDocument?.extracted_nlp_fields?.survey_number || "Unspecified";
 
@@ -33,11 +31,11 @@ export default function OwnershipHistory({ activeDocument }) {
         surveyNo: h.survey_number,
         area: "Registered Parcel",
         documentRef: h.history_id,
-        status: h.transfer_type.includes("Duplicate") || h.transfer_type.includes("Rapid") ? "Flagged Suspicious" : "Verified"
+        status: h.transfer_type.includes("Duplicate") || h.transfer_type.includes("Rapid") ? "Flagged Suspicious" : "Recorded"
       }))
     : activeDocument
     ? []
-    : mockOwnershipTimeline;
+    : [];
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
@@ -50,7 +48,7 @@ export default function OwnershipHistory({ activeDocument }) {
           </span>
         </div>
         <p className="text-sm text-slate-400 mt-1">
-          Historical title chain timeline tracking land transfers, mutations, encumbrances, and grants from PostgreSQL ownership_history.
+          Historical title chain timeline tracking land transfers, mutations, encumbrances, and grants from the imported ownership history records.
         </p>
       </div>
 

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Numeric, Date, DateTime, Boolean, Integer, Text, ForeignKey, BigInteger
+from sqlalchemy import Column, String, Numeric, Date, DateTime, Boolean, Integer, Text, ForeignKey, BigInteger, LargeBinary
 from sqlalchemy.sql import func
 from app.database import Base
 
@@ -44,9 +44,22 @@ class DocumentRecord(Base):
     extracted_text = Column(Text)
     extracted_owner_name = Column(String(150))
     extracted_survey_number = Column(String(50))
-    extracted_land_area = Column(Numeric(10, 2))
+    extracted_land_area = Column(Numeric(14, 6))
     extracted_location = Column(String(255))
     ocr_confidence_score = Column(Numeric(5, 2))
+    content_sha256 = Column(String(64), index=True)
+    text_sha256 = Column(String(64), index=True)
+    claimed_geometry = Column(Text)
+
+
+class DocumentFile(Base):
+    """Original upload bytes kept separately so document queries stay small."""
+    __tablename__ = "document_files"
+
+    document_id = Column(String(50), ForeignKey("document_records.document_id", ondelete="CASCADE"), primary_key=True)
+    content = Column(LargeBinary, nullable=False)
+    media_type = Column(String(100), nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 
 class VerificationResult(Base):

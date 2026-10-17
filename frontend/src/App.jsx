@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import Dashboard from './pages/Dashboard';
@@ -8,68 +8,68 @@ import VerificationResults from './pages/VerificationResults';
 import RiskScoreView from './pages/RiskScoreView';
 import OwnershipHistory from './pages/OwnershipHistory';
 import GisMap from './pages/GisMap';
+import RegistryRecord from './pages/RegistryRecord';
+import DocumentRequired from './components/DocumentRequired';
+import { getDocumentApi, getDocumentNlpApi, getRegistryRecordApi } from './api/config';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [activeDocument, setActiveDocument] = useState(null);
   const [verificationResult, setVerificationResult] = useState(null);
+  const [registryRecord, setRegistryRecord] = useState(null);
+  const [selectionError, setSelectionError] = useState(null);
+  const selectionRequest = useRef(0);
 
   const handleUploadSuccess = (uploadedDocPayload) => {
-    setActiveDocument(uploadedDocPayload);
+    const fields = uploadedDocPayload.extracted_nlp_fields || {};
+    setActiveDocument({ ...uploadedDocPayload, extracted_fields: fields });
+    setRegistryRecord(null);
     setVerificationResult(null);
     setActiveTab('analysis');
   };
 
-  const handleSelectRecord = (record, targetTab = 'analysis') => {
-    const docId = record.document_id || record.id || record.record_id || `REC-${record.survey_number}`;
-    const surveyNo = record.survey_number || record.surveyNumber || "402/B";
-    const owner = record.owner_name || record.ownerName || "Unspecified";
-    const area = parseFloat(record.land_area_acres || record.area) || 2.0;
-    const village = record.village || "Riverside";
-    const mandal = record.mandal || "Ibrahimpatnam";
-    const district = record.district || "Ranga Reddy";
-    const state = record.state || "Telangana";
-    const regDate = record.registration_date || "2023-04-10";
-    const docType = record.document_type || "Sale Deed";
-
-    const docPayload = {
-      document_id: docId,
-      filename: record.filename || record.documentName || `${docId}_${surveyNo.replace(/[\\/\\s]/g, '_')}.pdf`,
-      ocr_status: "COMPLETED",
-      ocr_confidence_score: record.ocr_confidence_score || 96.4,
-      extracted_text: record.extracted_text || `GOVERNMENT OF TELANGANA\nREGISTRATION AND STAMPS DEPARTMENT\n\nRECORD ID: ${docId}\nEXECUTANT (SELLER): ${owner}\nCLAIMED SURVEY NO: ${surveyNo}\nCLAIMED EXTENT: ${area} Acres\nLOCATION: Village ${village}, Mandal ${mandal}, District ${district}\nREGISTRATION DATE: ${regDate}\nINSTRUMENT: ${docType}`,
-      extracted_nlp_fields: {
-        owner_name: owner,
-        survey_number: surveyNo,
-        land_area_acres: area,
-        village: village,
-        mandal: mandal,
-        district: district,
-        state: state,
-        registration_number: record.registration_number || docId,
-        registration_date: regDate,
-        document_type: docType
-      },
-      extracted_fields: {
-        owner_name: owner,
-        survey_number: surveyNo,
-        land_area_acres: area,
-        village: village,
-        mandal: mandal,
-        district: district,
-        state: state
-      }
-    };
-
-    setActiveDocument(docPayload);
+  const handleOpenDocument = (document) => {
+    setActiveDocument(document);
+    setRegistryRecord(null);
     setVerificationResult(null);
-    setActiveTab(targetTab);
+    setActiveTab('verification');
+  };
+
+  const handleSelectRecord = async (record) => {
+    const request = ++selectionRequest.current;
+    setSelectionError(null);
+    try {
+      if (record.type === 'document_record' || record.document_id) {
+        const id = record.document_id || record.id;
+        const [doc, nlp] = await Promise.all([getDocumentApi(id), getDocumentNlpApi(id)]);
+        if (request !== selectionRequest.current) return;
+        setActiveDocument({ ...doc, extracted_nlp_fields: nlp.extracted_attributes,
+          extracted_fields: nlp.extracted_attributes, nlp_confidence_score: nlp.nlp_confidence_score });
+        setRegistryRecord(null);
+        setVerificationResult(null);
+        setActiveTab('analysis');
+      } else {
+        const registry = await getRegistryRecordApi(record.record_id || record.id);
+        if (request !== selectionRequest.current) return;
+        setRegistryRecord(registry);
+        setActiveDocument(null);
+        setVerificationResult(null);
+        setActiveTab('registry');
+      }
+    } catch (error) {
+      if (request === selectionRequest.current) setSelectionError(error.message);
+    }
   };
 
   const renderActivePage = () => {
+    if (['analysis', 'verification', 'risk', 'history'].includes(activeTab) && !activeDocument?.document_id) {
+      return <DocumentRequired onUpload={() => setActiveTab('upload')} />;
+    }
     switch (activeTab) {
+      case 'registry':
+        return registryRecord ? <RegistryRecord record={registryRecord} onViewMap={() => setActiveTab('gis')} onUpload={() => setActiveTab('upload')} /> : null;
       case 'dashboard':
-        return <Dashboard onNavigate={(tab) => setActiveTab(tab)} />;
+        return <Dashboard onNavigate={(tab) => setActiveTab(tab)} onSelectDocument={handleOpenDocument} />;
       case 'upload':
         return <UploadDocument onUploadSuccess={handleUploadSuccess} />;
       case 'analysis':
@@ -93,9 +93,9 @@ export default function App() {
       case 'history':
         return <OwnershipHistory activeDocument={activeDocument} />;
       case 'gis':
-        return <GisMap activeDocument={activeDocument} />;
+        return <GisMap activeDocument={activeDocument} surveyNumber={registryRecord?.survey_number} />;
       default:
-        return <Dashboard onNavigate={(tab) => setActiveTab(tab)} />;
+        return <Dashboard onNavigate={(tab) => setActiveTab(tab)} onSelectDocument={handleOpenDocument} />;
     }
   };
 
@@ -146,6 +146,7 @@ export default function App() {
 
         {/* Dynamic Page Content */}
         <main className="flex-1 overflow-y-auto p-4 md:p-8 pb-20 lg:pb-8">
+          {selectionError && <div role="alert" className="p-4 mb-4 bg-rose-950 text-rose-200 rounded-xl">{selectionError}</div>}
           {renderActivePage()}
         </main>
       </div>

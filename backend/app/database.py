@@ -42,6 +42,6 @@ def check_db_connection() -> dict:
                 tables = [r[0] for r in res.fetchall()]
             except Exception:
                 tables = []
-        return {"status": "connected", "database": settings.POSTGRES_DB, "tables": tables}
+        return {"status": "connected", "database": engine.url.database, "engine": engine.dialect.name, "tables": tables}
     except Exception as e:
         return {"status": "disconnected", "error": str(e)}

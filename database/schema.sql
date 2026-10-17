@@ -51,12 +51,25 @@ CREATE TABLE IF NOT EXISTS document_records (
     extracted_text TEXT,
     extracted_owner_name VARCHAR(150),
     extracted_survey_number VARCHAR(50),
-    extracted_land_area NUMERIC(10, 2),
+    extracted_land_area NUMERIC(14, 6),
     extracted_location VARCHAR(255),
-    ocr_confidence_score NUMERIC(5, 2)
+    ocr_confidence_score NUMERIC(5, 2),
+    content_sha256 VARCHAR(64),
+    text_sha256 VARCHAR(64),
+    claimed_geometry TEXT
 );
 
 CREATE INDEX IF NOT EXISTS idx_document_records_status ON document_records(ocr_status);
+CREATE INDEX IF NOT EXISTS ix_document_records_content_sha256 ON document_records(content_sha256);
+CREATE INDEX IF NOT EXISTS ix_document_records_text_sha256 ON document_records(text_sha256);
+
+-- Original uploads survive application redeploys without a local disk.
+CREATE TABLE IF NOT EXISTS document_files (
+    document_id VARCHAR(50) PRIMARY KEY REFERENCES document_records(document_id) ON DELETE CASCADE,
+    content BYTEA NOT NULL,
+    media_type VARCHAR(100) NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
 
 
 -- 4. Verification Results Table (Attribute Matching Matrix)

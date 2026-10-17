@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.models import RiskAssessment, VerificationResult, DocumentRecord
 from app.verification.engine import verification_engine
+from app.risk_scoring.ml import assess_reference_outlier
 
 
 class ExplainableRiskScoringEngine:
@@ -27,7 +28,15 @@ class ExplainableRiskScoringEngine:
             "UNFOUNDED_SELLER_IN_HISTORY": 15,
             "MISSING_HISTORICAL_TITLE_CHAIN": 15,
             "INCOMPLETE_DOCUMENT_DATA": 10,
-            "DOCUMENT_NOT_FOUND": 30
+            "DOCUMENT_NOT_FOUND": 30,
+            "SPATIAL_LOCATION_MISMATCH": 20,
+            "GIS_PARCEL_NOT_FOUND": 15,
+            "REGISTRATION_NUMBER_MISMATCH": 25,
+            "REGISTRATION_DATE_MISMATCH": 15,
+            "DUPLICATE_DOCUMENT": 10,
+            "BOUNDARY_DESCRIPTION_MISMATCH": 20,
+            "BOUNDARY_GEOMETRY_MISMATCH": 25,
+            "PARCEL_ENCROACHMENT": 25,
         }
 
     def compute_risk_assessment(self, document_id: str, db: Session) -> Dict[str, Any]:
@@ -59,6 +68,15 @@ class ExplainableRiskScoringEngine:
                 "description": anomaly.get("description", "")
             })
 
+        from app.models import DocumentRecord
+        document = db.query(DocumentRecord).filter_by(document_id=document_id).first()
+        ml_assessment = assess_reference_outlier(db, verification_payload.get("matched_land_record"), document.extracted_land_area if document else None)
+        if ml_assessment["risk_points"]:
+            raw_score += ml_assessment["risk_points"]
+            scoring_breakdown.append({"anomaly_type": "ML_REFERENCE_OUTLIER", "title": "Unusual Parcel Compared With Reference Data", "severity": "Medium",
+                                      "points_added": ml_assessment["risk_points"],
+                                      "description": f"Isolation Forest ranks this parcel at outlier percentile {ml_assessment['outlier_percentile']}. This is an advisory statistical signal, not a fraud finding."})
+
         # Cap score at 100
         final_risk_score = min(raw_score, 100)
 
@@ -67,6 +85,8 @@ class ExplainableRiskScoringEngine:
 
         # 4. Generate Recommendation
         recommendation = self.generate_recommendation(risk_level)
+        if risk_level == "LOW" and detected_anomalies:
+            recommendation = "Manual review recommended for flagged inconsistencies"
 
         # 5. Persist Assessment in PostgreSQL risk_assessments Table
         assessment_id = f"RSK-{datetime.now().strftime('%Y%m%d')}-{uuid.uuid4().hex[:6].upper()}"
@@ -93,7 +113,7 @@ class ExplainableRiskScoringEngine:
                 db.rollback()
             except Exception:
                 pass
-            print(f"Notice: Risk assessment DB persistence note: {err}")
+            raise RuntimeError("Database could not persist the risk assessment") from err
 
         return {
             "assessment_id": assessment_id,
@@ -101,8 +121,11 @@ class ExplainableRiskScoringEngine:
             "verification_id": verification_id,
             "risk_score": final_risk_score,
             "risk_level": risk_level,
+            "verification_status": verification_payload.get("verification_status"),
+            "ml_assessment": ml_assessment,
+            "evidence_checks": verification_payload.get("evidence_checks", {}),
             "recommendation": recommendation,
-            "total_anomalies_count": len(detected_anomalies),
+            "total_anomalies_count": len(scoring_breakdown),
             "scoring_breakdown": scoring_breakdown,
             "matched_land_record": verification_payload.get("matched_land_record")
         }

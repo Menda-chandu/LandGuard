@@ -100,7 +100,7 @@ export default function Sidebar({ activeTab, setActiveTab }) {
           System Status: Online
         </div>
         <p className="text-[11px] text-slate-500">
-          OCR & Land Registry sync active. Running in mock evaluation mode.
+          Verification uses imported synthetic registry and ownership records.
         </p>
       </div>
     </aside>

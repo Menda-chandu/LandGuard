@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Search, X, User, MapPin, ChevronRight, Loader2 } from 'lucide-react';
-import { allSearchableRecords } from '../data/allLandRecords';
 import { searchRecordsApi } from '../api/config';
 
 export default function Navbar({ onUploadClick, onSelectRecord, activeTab }) {
@@ -8,6 +7,7 @@ export default function Navbar({ onUploadClick, onSelectRecord, activeTab }) {
   const [isOpen, setIsOpen] = useState(false);
   const [apiResults, setApiResults] = useState([]);
   const [isSearchingApi, setIsSearchingApi] = useState(false);
+  const [searchError, setSearchError] = useState(null);
   const searchContainerRef = useRef(null);
 
   // Close dropdown when clicking outside
@@ -35,7 +35,10 @@ export default function Navbar({ onUploadClick, onSelectRecord, activeTab }) {
   // Background API search when query changes
   useEffect(() => {
     const raw = query.trim();
+    setSearchError(null);
+    setApiResults([]);
     if (raw.length < 2) {
+      setIsSearchingApi(false);
       setApiResults([]);
       return;
     }
@@ -52,7 +55,10 @@ export default function Navbar({ onUploadClick, onSelectRecord, activeTab }) {
           if (isSubscribed) setIsSearchingApi(false);
         })
         .catch(() => {
-          if (isSubscribed) setIsSearchingApi(false);
+          if (isSubscribed) {
+            setSearchError('Search is unavailable. Check the backend connection.');
+            setIsSearchingApi(false);
+          }
         });
     }, 200);
 
@@ -62,65 +68,7 @@ export default function Navbar({ onUploadClick, onSelectRecord, activeTab }) {
     };
   }, [query]);
 
-  // Fast In-Memory Smart Search across all 126 synthetic records
-  const searchResults = useMemo(() => {
-    const rawQuery = query.trim().toLowerCase();
-    if (!rawQuery) return [];
-
-    const qClean = rawQuery.replace(/[\\/\-\s]/g, '');
-
-    // In-memory filter on allSearchableRecords
-    const localMatches = allSearchableRecords.filter((r) => {
-      const survey = String(r.survey_number || r.surveyNumber || '').toLowerCase();
-      const surveyClean = survey.replace(/[\\/\-\s]/g, '');
-      const owner = String(r.owner_name || r.ownerName || '').toLowerCase();
-      const recId = String(r.record_id || r.id || r.document_id || '').toLowerCase();
-      const recIdClean = recId.replace(/[\\/\-\s]/g, '');
-      const village = String(r.village || '').toLowerCase();
-      const mandal = String(r.mandal || '').toLowerCase();
-      const district = String(r.district || '').toLowerCase();
-      const locationFull = `${village} ${mandal} ${district}`.toLowerCase();
-      const locationClean = locationFull.replace(/[\\/\-\s]/g, '');
-      const docName = String(r.filename || r.documentName || '').toLowerCase();
-
-      // Substring match
-      if (
-        survey.includes(rawQuery) ||
-        owner.includes(rawQuery) ||
-        recId.includes(rawQuery) ||
-        village.includes(rawQuery) ||
-        mandal.includes(rawQuery) ||
-        district.includes(rawQuery) ||
-        locationFull.includes(rawQuery) ||
-        docName.includes(rawQuery)
-      ) {
-        return true;
-      }
-
-      // Normalized match (e.g. 402B matches 402/B, green valley matches Greenvalley)
-      if (qClean.length >= 2) {
-        if (surveyClean.includes(qClean) || recIdClean.includes(qClean) || locationClean.includes(qClean)) {
-          return true;
-        }
-      }
-
-      return false;
-    });
-
-    // Merge with any apiResults that aren't already included
-    const seenIds = new Set(localMatches.map((r) => r.record_id || r.id || r.document_id));
-    const merged = [...localMatches];
-
-    apiResults.forEach((ar) => {
-      const id = ar.record_id || ar.id || ar.document_id;
-      if (id && !seenIds.has(id)) {
-        seenIds.add(id);
-        merged.push(ar);
-      }
-    });
-
-    return merged.slice(0, 12);
-  }, [query, apiResults]);
+  const searchResults = apiResults.slice(0, 12);
 
   const handleSelect = (record) => {
     if (onSelectRecord) {
@@ -136,7 +84,7 @@ export default function Navbar({ onUploadClick, onSelectRecord, activeTab }) {
   };
 
   return (
-    <header className="h-16 bg-slate-900 border-b border-slate-800 px-4 md:px-6 flex items-center justify-between sticky top-0 z-30">
+    <header className="min-h-16 py-3 md:py-0 bg-slate-900 border-b border-slate-800 px-4 md:px-6 flex flex-wrap md:flex-nowrap gap-3 items-center justify-between sticky top-0 z-30">
       {/* Brand & Logo */}
       <div className="flex items-center gap-3">
         <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center text-white shadow-lg shadow-blue-900/30 shrink-0">
@@ -156,10 +104,10 @@ export default function Navbar({ onUploadClick, onSelectRecord, activeTab }) {
       </div>
 
       {/* Global Search Bar & Upload Button Container */}
-      <div className="flex items-center gap-3 md:gap-4">
+      <div className="w-full md:w-auto flex items-center gap-3 md:gap-4">
         {/* Global Search Container */}
-        <div ref={searchContainerRef} className="relative">
-          <div className="flex items-center bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-slate-300 w-44 sm:w-60 md:w-80 lg:w-96 focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500 transition-all">
+        <div ref={searchContainerRef} className="relative min-w-0 flex-1">
+          <div className="flex items-center bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-slate-300 w-full md:w-80 lg:w-96 focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500 transition-all">
             <Search className="w-4 h-4 text-slate-400 mr-2 shrink-0" />
             <input
               type="text"
@@ -192,7 +140,7 @@ export default function Navbar({ onUploadClick, onSelectRecord, activeTab }) {
 
           {/* Search Results Dropdown */}
           {isOpen && query.trim().length > 0 && (
-            <div className="absolute top-full mt-2 w-72 sm:w-80 md:w-96 right-0 md:left-0 bg-slate-900 border border-slate-700/90 rounded-2xl shadow-2xl overflow-hidden z-50 backdrop-blur-xl animate-in fade-in slide-in-from-top-2 duration-150">
+            <div className="absolute top-full mt-2 w-[min(24rem,calc(100vw-2rem))] right-0 md:left-0 bg-slate-900 border border-slate-700/90 rounded-2xl shadow-2xl overflow-hidden z-50 backdrop-blur-xl animate-in fade-in slide-in-from-top-2 duration-150">
               <div className="px-3.5 py-2.5 bg-slate-950/80 border-b border-slate-800 flex items-center justify-between text-[11px]">
                 <span className="font-semibold text-slate-300">
                   {searchResults.length > 0 ? (
@@ -210,7 +158,7 @@ export default function Navbar({ onUploadClick, onSelectRecord, activeTab }) {
                     <div className="w-9 h-9 rounded-full bg-slate-800 mx-auto flex items-center justify-center text-slate-400">
                       <Search className="w-4 h-4" />
                     </div>
-                    <div className="text-xs font-bold text-slate-200">No matching records found</div>
+                    <div className="text-xs font-bold text-slate-200">{searchError || (isSearchingApi ? 'Searching…' : query.trim().length < 2 ? 'Enter at least two characters' : 'No matching records found')}</div>
                     <p className="text-[11px] text-slate-400 leading-relaxed max-w-[240px] mx-auto">
                       No records match <span className="text-blue-300 font-mono font-semibold">"{query}"</span>. Try searching by survey number (e.g. <em>402/B</em>), owner name (e.g. <em>Kiran</em>), or record ID.
                     </p>

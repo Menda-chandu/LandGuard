@@ -1,10 +1,5 @@
 export const API_BASE_URL =
-  import.meta.env.VITE_API_URL ||
-  (typeof window !== "undefined" &&
-  (window.location.hostname === "localhost" ||
-    window.location.hostname === "127.0.0.1")
-    ? "http://localhost:8000/api"
-    : "https://landguard-1-a465.onrender.com/api");
+  import.meta.env.VITE_API_URL || "/api";
 
 export async function uploadDocumentApi(file) {
   const formData = new FormData();
@@ -20,6 +15,57 @@ export async function uploadDocumentApi(file) {
     throw new Error(errorData.detail || "Failed to upload document.");
   }
 
+  return response.json();
+}
+
+export async function getDashboardApi() {
+  const response = await fetch(`${API_BASE_URL}/dashboard`);
+  if (!response.ok) throw new Error('Could not load database records. Check that the backend is running.');
+  return response.json();
+}
+
+export async function getSampleDocumentsApi() {
+  const response = await fetch(`${API_BASE_URL}/documents/samples`);
+  if (!response.ok) throw new Error('Could not load the dataset sample files.');
+  return response.json();
+}
+
+export async function getSampleDocumentApi(filename) {
+  const response = await fetch(`${API_BASE_URL}/documents/samples/${encodeURIComponent(filename)}`);
+  if (!response.ok) throw new Error('Could not download the sample document.');
+  const blob = await response.blob();
+  return new File([blob], filename, { type: blob.type });
+}
+
+export async function getDocumentApi(documentId) {
+  const response = await fetch(`${API_BASE_URL}/documents/${encodeURIComponent(documentId)}`);
+  if (!response.ok) throw new Error('Could not load the uploaded document.');
+  return response.json();
+}
+
+export async function setDocumentBoundaryApi(documentId, geometry) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 20000);
+  try {
+    const response = await fetch(`${API_BASE_URL}/documents/${encodeURIComponent(documentId)}/boundary`, {
+      method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(geometry), signal: controller.signal,
+    });
+    if (!response.ok) {
+      const data = await response.json().catch(() => ({}));
+      throw new Error(typeof data.detail === 'string' ? data.detail : 'Could not validate the claimed boundary.');
+    }
+    return response.json();
+  } catch (error) {
+    if (error.name === 'AbortError') throw new Error('Boundary comparison timed out. Check the API connection and retry.');
+    throw error;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+export async function getRegistryRecordApi(recordId) {
+  const response = await fetch(`${API_BASE_URL}/registry/${encodeURIComponent(recordId)}`);
+  if (!response.ok) throw new Error('Could not load the registry record.');
   return response.json();
 }
 

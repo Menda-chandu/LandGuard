@@ -4,9 +4,11 @@ from datetime import datetime, timedelta
 from typing import Dict, List, Any, Optional
 from sqlalchemy.orm import Session
 
-from app.models import LandRecord, OwnershipHistory, DocumentRecord, VerificationResult
+from app.models import LandRecord, OwnershipHistory, DocumentRecord, VerificationResult, RiskAssessment
 from app.nlp.extractor import nlp_engine
 from app.gis.spatial_engine import gis_spatial_engine
+from app.verification.evidence import evaluate_evidence
+from app.document_processing.fingerprints import text_fingerprint
 
 
 class LandVerificationEngine:
@@ -77,6 +79,10 @@ class LandVerificationEngine:
         mandal = extracted_fields.get("mandal")
         district = extracted_fields.get("district")
 
+        if not doc_record.text_sha256:
+            doc_record.text_sha256 = text_fingerprint(extracted_text)
+            db.flush()
+
         # 2. Run Verification Logic
         verification_payload = self.verify_extracted_attributes(
             owner_name=owner_name,
@@ -86,7 +92,9 @@ class LandVerificationEngine:
             doc_mandal=mandal,
             doc_district=district,
             document_id=document_id,
-            db=db
+            db=db,
+            extracted_fields=extracted_fields,
+            document_record=doc_record,
         )
 
         # 3. Store Result in PostgreSQL verification_results Table
@@ -105,12 +113,17 @@ class LandVerificationEngine:
         )
 
         try:
+            previous_ids = [row[0] for row in db.query(VerificationResult.verification_id).filter(
+                VerificationResult.document_id == document_id
+            ).all()]
+            if previous_ids:
+                db.query(RiskAssessment).filter(RiskAssessment.verification_id.in_(previous_ids)).delete(synchronize_session=False)
             db.query(VerificationResult).filter(VerificationResult.document_id == document_id).delete()
             db.add(ver_result_db)
             db.commit()
         except Exception as err:
             db.rollback()
-            print(f"Notice: Verification result DB persistence note: {err}")
+            raise RuntimeError("Database could not persist the verification result") from err
 
         verification_payload["verification_id"] = ver_id
         return verification_payload
@@ -124,7 +137,9 @@ class LandVerificationEngine:
         doc_mandal: Optional[str] = None,
         doc_district: Optional[str] = None,
         document_id: str = "DOC-DEFAULT",
-        db: Optional[Session] = None
+        db: Optional[Session] = None,
+        extracted_fields: Optional[Dict[str, Any]] = None,
+        document_record: Optional[DocumentRecord] = None,
     ) -> Dict[str, Any]:
         """
         Pure rule-based verification matrix matching document attributes against DB records & GIS polygons.
@@ -218,6 +233,19 @@ class LandVerificationEngine:
                 "anomalies_count": len(anomalies)
             }
 
+        # Prefer the claimed registration among same-survey candidates. All
+        # duplicate registry entries are still flagged below.
+        if db and extracted_fields and extracted_fields.get("registration_number"):
+            candidates = db.query(LandRecord).filter(LandRecord.survey_number == survey_number).all()
+            normalize_id = lambda v: re.sub(r"\W+", "", (v or "").casefold())
+            matched_record = next((r for r in candidates if normalize_id(r.registration_number) == normalize_id(extracted_fields["registration_number"])), matched_record)
+
+        evidence_checks, evidence_anomalies = evaluate_evidence(matched_record, extracted_fields, document_record, db)
+        anomalies.extend(evidence_anomalies)
+        field_matches["registration_number_match"] = self._check_match(evidence_checks["registration_number"]["status"])
+        field_matches["registration_date_match"] = self._check_match(evidence_checks["registration_date"]["status"])
+        field_matches["boundary_match"] = evidence_checks["boundary_geometry"].get("boundary_match")
+
         # Matched record details
         matched_record_id = matched_record.record_id
         matched_land_dict = {
@@ -229,6 +257,7 @@ class LandVerificationEngine:
             "mandal": matched_record.mandal,
             "district": matched_record.district,
             "registration_number": matched_record.registration_number,
+            "registration_date": matched_record.registration_date.isoformat() if matched_record.registration_date else None,
             "document_type": matched_record.document_type
         }
 
@@ -304,15 +333,17 @@ class LandVerificationEngine:
                 dates = [h.transfer_date for h in history_records if h.transfer_date]
                 if len(dates) >= 3:
                     dates_sorted = sorted(dates, reverse=True)
-                    days_span = (dates_sorted[0] - dates_sorted[-1]).days
-                    if days_span <= 60:
+                    rapid_window = next((dates_sorted[i:i + 3] for i in range(len(dates_sorted) - 2)
+                                         if (dates_sorted[i] - dates_sorted[i + 2]).days <= 60), None)
+                    if rapid_window:
+                        days_span = (rapid_window[0] - rapid_window[-1]).days
                         anomalies.append({
                             "type": "RAPID_OWNERSHIP_TRANSFER",
                             "severity": "High",
                             "title": "Suspicious Rapid Ownership Transfer Anomaly",
                             "expected": "Normal title transfer intervals over years",
-                            "found": f"{len(dates)} ownership transfers within {days_span} days",
-                            "description": f"Parcel {survey_number} underwent {len(dates)} rapid transfers between {dates_sorted[-1]} and {dates_sorted[0]}, triggering suspicious flipping risk."
+                            "found": f"3 ownership transfers within {days_span} days",
+                            "description": f"Parcel {survey_number} underwent 3 rapid transfers between {rapid_window[-1]} and {rapid_window[0]}, triggering suspicious flipping risk."
                         })
 
                 if owner_name:
@@ -349,6 +380,8 @@ class LandVerificationEngine:
         return {
             "document_id": document_id,
             "verification_status": status_str,
+            "evidence_checks": evidence_checks,
+            "verification_scope": "Checks apply to available imported reference data. NOT_PROVIDED, REFERENCE_UNAVAILABLE and NOT_CHECKED items are not verified.",
             "matched_record_id": matched_record_id,
             "matched_land_record": matched_land_dict,
             "field_matches": field_matches,
@@ -356,23 +389,16 @@ class LandVerificationEngine:
             "anomalies_count": len(anomalies)
         }
 
+    @staticmethod
+    def _check_match(status):
+        return True if status == "MATCH" else False if status in ("MISMATCH", "UNREADABLE") else None
+
     def _compare_names(self, name1: str, name2: str) -> bool:
         if not name1 or not name2:
             return False
-        n1 = re.sub(r"[^\w\s]", "", name1.lower()).strip()
-        n2 = re.sub(r"[^\w\s]", "", name2.lower()).strip()
-
-        if n1 == n2:
-            return True
-
-        tokens1 = set(n1.split())
-        tokens2 = set(n2.split())
-
-        common = tokens1.intersection(tokens2)
-        if len(common) >= 2:
-            return True
-
-        return False
+        n1 = " ".join(re.sub(r"[^\w\s]", " ", name1.casefold()).split())
+        n2 = " ".join(re.sub(r"[^\w\s]", " ", name2.casefold()).split())
+        return bool(n1) and n1 == n2
 
     def _build_not_found_response(self, document_id: str) -> Dict[str, Any]:
         return {

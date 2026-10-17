@@ -1,16 +1,23 @@
 import os
-import shutil
+import mimetypes
 import uuid
+import json
 from datetime import datetime
-from fastapi import APIRouter, UploadFile, File, HTTPException, Depends, status
+from fastapi import APIRouter, UploadFile, File, HTTPException, Depends, status, Query, Body
+from fastapi.responses import FileResponse, Response
+from urllib.parse import quote
+from pathlib import Path
 from sqlalchemy.orm import Session
 from typing import Optional
 
 from app.database import get_db
-from app.models import DocumentRecord, OwnershipHistory, LandRecord
+from app.models import DocumentRecord, DocumentFile, OwnershipHistory, LandRecord
 from app.ocr.processor import process_document_ocr
 from app.nlp.extractor import nlp_engine
-from sqlalchemy import or_
+from app.config import settings
+from app.document_processing.fingerprints import file_fingerprint, text_fingerprint
+from app.gis.boundaries import validate_geometry
+from sqlalchemy import or_, func
 import logging
 
 logger = logging.getLogger("landguard.documents")
@@ -22,6 +29,34 @@ PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..
 UPLOADS_DIR = os.path.join(PROJECT_ROOT, "uploads")
 ALLOWED_EXTENSIONS = {".pdf", ".png", ".jpg", ".jpeg", ".tiff", ".bmp"}
 MAX_FILE_SIZE_BYTES = 25 * 1024 * 1024  # 25 MB limit
+SAMPLE_FILES = {
+    "LandGuard_Synthetic_Test_Land_Record.pdf": "Digital test deed",
+    "ocr_test_synthetic_deed.png": "Scanned synthetic deed",
+    "ocr_test_synthetic_deed.jpg": "Scanned synthetic deed (JPEG)",
+    "sample_deed.png": "Sample deed scan",
+    "test_synth_deed.png": "Additional test scan",
+    "pahani_demo.pdf": "Synthetic English Pahani record",
+    "pahani_demo.png": "Synthetic English Pahani scan",
+}
+
+
+@router.get("/samples")
+def list_sample_documents():
+    return {"samples": [
+        {"name": name, "description": description, "size_bytes": path.stat().st_size}
+        for name, description in SAMPLE_FILES.items()
+        if (path := settings.DATASET_DIR / name).is_file()
+    ]}
+
+
+@router.get("/samples/{filename}")
+def get_sample_document(filename: str):
+    if filename not in SAMPLE_FILES:
+        raise HTTPException(status_code=404, detail="Sample document not found.")
+    path = settings.DATASET_DIR / filename
+    if not path.is_file():
+        raise HTTPException(status_code=404, detail="Sample document not found.")
+    return FileResponse(path, filename=filename)
 
 
 @router.post("/upload", status_code=status.HTTP_201_CREATED)
@@ -50,23 +85,21 @@ async def upload_document(
 
     # 3. Generate Unique Document ID and Filepath
     doc_id = f"DOC-{datetime.now().strftime('%Y%m%d')}-{uuid.uuid4().hex[:6].upper()}"
-    safe_filename = f"{doc_id}_{file.filename.replace(' ', '_')}"
+    original_name = os.path.basename(file.filename.replace("\\", "/"))
+    safe_filename = f"{doc_id}_{original_name.replace(' ', '_')}"
     saved_file_path = os.path.join(UPLOADS_DIR, safe_filename)
 
     # 4. Save File to Disk
     file_size = 0
     try:
         with open(saved_file_path, "wb") as buffer:
-            shutil.copyfileobj(file.file, buffer)
-        file_size = os.path.getsize(saved_file_path)
-
-        if file_size > MAX_FILE_SIZE_BYTES:
-            os.remove(saved_file_path)
-            raise HTTPException(
-                status_code=400,
-                detail=f"File size ({round(file_size/(1024*1024), 2)}MB) exceeds maximum limit of 25MB."
-            )
+            while chunk := file.file.read(1024 * 1024):
+                file_size += len(chunk)
+                if file_size > MAX_FILE_SIZE_BYTES:
+                    raise HTTPException(status_code=413, detail="File exceeds the maximum size of 25 MB.")
+                buffer.write(chunk)
     except HTTPException:
+        os.remove(saved_file_path)
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to save uploaded file: {str(e)}")
@@ -95,16 +128,30 @@ async def upload_document(
         extracted_survey_number=fields.get("survey_number"),
         extracted_land_area=fields.get("land_area_acres"),
         extracted_location=nlp_result.get("location_summary"),
-        ocr_confidence_score=ocr_result.get("confidence", 0.0)
+        ocr_confidence_score=ocr_result.get("confidence", 0.0),
+        content_sha256=file_fingerprint(saved_file_path),
+        text_sha256=text_fingerprint(ocr_text) if ocr_result.get("status") == "COMPLETED" else None,
     )
 
     try:
         db.add(doc_record)
+        db.flush()
+        db.add(DocumentFile(document_id=doc_id, content=Path(saved_file_path).read_bytes(),
+                            media_type=mimetypes.guess_type(original_name)[0] or "application/octet-stream"))
         db.commit()
         db.refresh(doc_record)
     except Exception as db_err:
         db.rollback()
-        print(f"Notice: PostgreSQL persistence note: {db_err}")
+        os.remove(saved_file_path)
+        logger.exception("Document could not be saved")
+        raise HTTPException(status_code=503, detail="Database could not save the document. Please retry when the database is available.") from db_err
+
+    duplicate_filters = [DocumentRecord.content_sha256 == doc_record.content_sha256]
+    if doc_record.text_sha256:
+        duplicate_filters.append(DocumentRecord.text_sha256 == doc_record.text_sha256)
+    duplicates = db.query(DocumentRecord).filter(DocumentRecord.document_id != doc_id, or_(*duplicate_filters)).all()
+    if not settings.KEEP_LOCAL_UPLOADS:
+        os.remove(saved_file_path)
 
     return {
         "message": "Document uploaded, OCR processed, and NLP entities extracted successfully.",
@@ -119,14 +166,15 @@ async def upload_document(
         "nlp_confidence_score": nlp_result.get("nlp_confidence_score", 0.0),
         "extracted_text": ocr_text,
         "extracted_nlp_fields": fields,
-        "location_summary": nlp_result.get("location_summary")
+        "location_summary": nlp_result.get("location_summary"),
+        "duplicate_documents": [{"document_id": d.document_id, "evidence": "IDENTICAL_FILE" if d.content_sha256 == doc_record.content_sha256 else "IDENTICAL_NORMALIZED_TEXT"} for d in duplicates],
     }
 
 
 @router.get("/search")
 def search_records(
     q: Optional[str] = None,
-    limit: int = 15,
+    limit: int = Query(15, ge=1, le=100),
     db: Session = Depends(get_db)
 ):
     """
@@ -137,6 +185,9 @@ def search_records(
         return {"query": "", "count": 0, "results": []}
 
     query_str = f"%{q.strip().lower()}%"
+    compact_query = q.strip().lower().replace("/", "").replace("-", "").replace(" ", "")
+    def compact(column):
+        return func.replace(func.replace(func.replace(func.lower(column), "/", ""), "-", ""), " ", "")
     results = []
 
     try:
@@ -149,7 +200,9 @@ def search_records(
                 LandRecord.village.ilike(query_str),
                 LandRecord.mandal.ilike(query_str),
                 LandRecord.district.ilike(query_str),
-                LandRecord.registration_number.ilike(query_str)
+                LandRecord.registration_number.ilike(query_str),
+                compact(LandRecord.survey_number).contains(compact_query),
+                compact(LandRecord.record_id).contains(compact_query)
             )
         ).limit(limit).all()
 
@@ -177,7 +230,9 @@ def search_records(
                 DocumentRecord.filename.ilike(query_str),
                 DocumentRecord.extracted_owner_name.ilike(query_str),
                 DocumentRecord.extracted_survey_number.ilike(query_str),
-                DocumentRecord.extracted_location.ilike(query_str)
+                DocumentRecord.extracted_location.ilike(query_str),
+                compact(DocumentRecord.document_id).contains(compact_query),
+                compact(DocumentRecord.extracted_survey_number).contains(compact_query)
             )
         ).limit(limit).all()
 
@@ -258,8 +313,41 @@ def get_document_details(document_id: str, db: Session = Depends(get_db)):
         "extracted_survey_number": record.extracted_survey_number,
         "extracted_land_area": float(record.extracted_land_area) if record.extracted_land_area else 0.0,
         "extracted_location": record.extracted_location,
-        "extracted_text": record.extracted_text
+        "extracted_text": record.extracted_text,
+        "extracted_nlp_fields": nlp_engine.extract_information(record.extracted_text or "").get("extracted_fields", {}),
+        "claimed_geometry": json.loads(record.claimed_geometry) if record.claimed_geometry else None,
     }
+
+
+@router.put("/{document_id}/boundary")
+def set_document_boundary(document_id: str, geometry: dict = Body(...), db: Session = Depends(get_db)):
+    """Attach a surveyed WGS84 GeoJSON claim and immediately recheck the document."""
+    record = db.query(DocumentRecord).filter_by(document_id=document_id).first()
+    if not record:
+        raise HTTPException(status_code=404, detail="Upload a document before attaching its boundary.")
+    try:
+        validated = validate_geometry(geometry)
+    except (ValueError, TypeError, KeyError) as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
+    record.claimed_geometry = json.dumps(validated)
+    db.commit()
+    from app.verification.engine import verification_engine
+    return verification_engine.verify_document(document_id, db)
+
+
+@router.get("/{document_id}/file")
+def download_document_file(document_id: str, db: Session = Depends(get_db)):
+    record = db.get(DocumentRecord, document_id)
+    if not record:
+        raise HTTPException(status_code=404, detail="Document not found.")
+    stored = db.get(DocumentFile, document_id)
+    if stored:
+        return Response(content=stored.content, media_type=stored.media_type,
+                        headers={"Content-Disposition": f"attachment; filename*=UTF-8''{quote(record.filename, safe='')}"})
+    path = (Path(PROJECT_ROOT) / record.file_path).resolve()
+    if path.is_relative_to(Path(UPLOADS_DIR).resolve()) and path.is_file():
+        return FileResponse(path, filename=record.filename)
+    raise HTTPException(status_code=404, detail="Original file is unavailable for this older upload.")
 
 
 @router.get("/{document_id}/nlp")

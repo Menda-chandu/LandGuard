@@ -1,67 +1,39 @@
 import React, { useEffect, useState } from 'react';
 import StatusBadge from '../components/StatusBadge';
-import RiskScoreBadge from '../components/RiskScoreBadge';
+import EvidenceChecks from '../components/EvidenceChecks';
 import { getVerificationApi } from '../api/config';
-import { mockSelectedRecord } from '../data/mockData';
 
 export default function VerificationResults({ activeDocument, verificationResult, onVerificationComplete, onNavigate }) {
   const [verData, setVerData] = useState(verificationResult);
   const [isLoading, setIsLoading] = useState(false);
 
+  const [error, setError] = useState(null);
   useEffect(() => {
-    if (verificationResult) {
+    let cancelled = false;
+    setError(null);
+    if (verificationResult?.document_id === activeDocument?.document_id) {
       setVerData(verificationResult);
       return;
     }
-
-    const docId = activeDocument?.document_id || "DOC-2026-8901";
+    setVerData(null);
     setIsLoading(true);
-    getVerificationApi(docId)
-      .then((data) => {
+    getVerificationApi(activeDocument.document_id)
+      .then(data => {
+        if (cancelled) return;
         setVerData(data);
-        if (onVerificationComplete) {
-          onVerificationComplete(data);
-        }
+        onVerificationComplete?.(data);
         setIsLoading(false);
       })
-      .catch((err) => {
-        console.warn("Verification API notice:", err.message);
-        setIsLoading(false);
-      });
+      .catch(err => { if (!cancelled) { setError(err.message); setIsLoading(false); } });
+    return () => { cancelled = true; };
   }, [activeDocument, verificationResult, onVerificationComplete]);
 
-  const docId = activeDocument?.document_id || verData?.document_id || "DOC-UNASSIGNED";
-  const verStatus = verData?.verification_status || (activeDocument ? "PENDING" : mockSelectedRecord.status);
-  const matchedRec = verData?.matched_land_record || {
-    owner_name: activeDocument ? "Checking registry..." : mockSelectedRecord.extractedFields.govtOwnerName,
-    survey_number: activeDocument?.extracted_nlp_fields?.survey_number || (activeDocument ? "N/A" : mockSelectedRecord.extractedFields.govtSurveyNumber),
-    land_area_acres: activeDocument?.extracted_nlp_fields?.land_area_acres || (activeDocument ? 0.0 : mockSelectedRecord.extractedFields.govtRecordArea),
-    village: activeDocument?.extracted_nlp_fields?.village || (activeDocument ? "N/A" : "Gachibowli"),
-    district: activeDocument?.extracted_nlp_fields?.district || (activeDocument ? "N/A" : "Ranga Reddy")
-  };
-
-  const fieldMatches = verData?.field_matches || {
-    owner_match: false,
-    survey_number_match: false,
-    land_area_match: false
-  };
-
-  const detectedAnomalies = verData?.detected_anomalies || (activeDocument ? [] : [
-    {
-      title: "Ownership Identity Mismatch",
-      severity: "High",
-      expected: "Registered Owner (Revenue Registry)",
-      found: "Document Executant",
-      description: "Document claims ownership under an executant that does not match the official Revenue Registry."
-    },
-    {
-      title: "Land Area Inflation Anomaly",
-      severity: "High",
-      expected: "Registered Parcel Boundary",
-      found: "Claimed Document Extent",
-      description: "Document claims land area exceeding the official Cadastral map parcel boundary."
-    }
-  ]);
+  if (error) return <div role="alert" className="p-6 rounded-xl bg-rose-950 text-rose-200">{error}</div>;
+  const docId = activeDocument.document_id;
+  const verStatus = verData?.verification_status || 'PENDING';
+  const matchedRec = verData?.matched_land_record || {};
+  const fieldMatches = verData?.field_matches || {};
+  const detectedAnomalies = verData?.detected_anomalies || [];
 
   return (
     <div className="space-y-6">
@@ -73,7 +45,7 @@ export default function VerificationResults({ activeDocument, verificationResult
             <StatusBadge status={verStatus} />
           </div>
           <p className="text-sm text-slate-400 mt-1">
-            Automated cross-matching of deed attributes against official Government Land Revenue Registry databases ({docId}).
+            Automated cross-matching of deed attributes against the imported synthetic land registry ({docId}).
           </p>
         </div>
 
@@ -93,6 +65,7 @@ export default function VerificationResults({ activeDocument, verificationResult
         </div>
       ) : (
         <>
+          <EvidenceChecks documentId={docId} checks={verData?.evidence_checks} onVerified={result => { setVerData(result); onVerificationComplete?.(result); }} />
           {/* Key Attributes Summary Bar */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="p-4 bg-slate-900 border border-slate-800 rounded-xl">
@@ -101,22 +74,22 @@ export default function VerificationResults({ activeDocument, verificationResult
                 {fieldMatches.owner_match ? "Matched" : "Mismatch"}
               </span>
               <span className={`text-xs font-medium ${fieldMatches.owner_match ? 'text-emerald-400' : 'text-rose-400'}`}>
-                Govt: {matchedRec.owner_name}
+                Registry: {matchedRec.owner_name || 'No matching record'}
               </span>
             </div>
 
             <div className="p-4 bg-slate-900 border border-slate-800 rounded-xl">
               <span className="text-[11px] font-bold uppercase text-slate-500 block">Survey Number</span>
               <span className="text-base font-bold text-blue-300 font-mono mt-1 block">
-                {matchedRec.survey_number || "402/B"}
+                {matchedRec.survey_number || 'Not matched'}
               </span>
-              <span className="text-xs text-emerald-400 font-medium">Cadastral Matched</span>
+              <span className="text-xs text-slate-400 font-medium">{fieldMatches.survey_number_match ? "Survey matched" : "Survey not matched"}</span>
             </div>
 
             <div className="p-4 bg-slate-900 border border-slate-800 rounded-xl">
               <span className="text-[11px] font-bold uppercase text-slate-500 block">Registered Land Area</span>
               <span className="text-base font-bold text-white mt-1 block">
-                {matchedRec.land_area_acres} Acres
+                {matchedRec.land_area_acres == null ? 'Not matched' : `${matchedRec.land_area_acres} Acres`}
               </span>
               <span className={`text-xs font-medium ${fieldMatches.land_area_match ? 'text-emerald-400' : 'text-rose-400'}`}>
                 {fieldMatches.land_area_match ? "Area Matched" : "Area Discrepancy"}
@@ -126,9 +99,9 @@ export default function VerificationResults({ activeDocument, verificationResult
             <div className="p-4 bg-slate-900 border border-slate-800 rounded-xl">
               <span className="text-[11px] font-bold uppercase text-slate-500 block">Location & District</span>
               <span className="text-base font-bold text-white mt-1 block truncate">
-                {matchedRec.village}, {matchedRec.district}
+                {matchedRec.village || 'Not matched'}{matchedRec.district ? `, ${matchedRec.district}` : ''}
               </span>
-              <span className="text-xs text-emerald-400 font-medium">GIS Boundary Verified</span>
+              <span className="text-xs text-slate-400 font-medium">{fieldMatches.spatial_match ? "Parcel location matched" : "Parcel location not matched"}</span>
             </div>
           </div>
 

@@ -5,13 +5,14 @@ from typing import Dict, List, Any, Optional
 from sqlalchemy.orm import Session
 
 from app.models import LandRecord, DocumentRecord
+from app.config import settings
 
 logger = logging.getLogger("landguard.gis")
 
 # Path to sample GeoJSON file
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
-GEOJSON_FILE_PATH = os.path.join(PROJECT_ROOT, "sample_data", "parcels.geojson")
-SYNTHETIC_GEOJSON_FILE_PATH = os.path.join(PROJECT_ROOT, "sample_data", "parcels_synthetic_100.geojson")
+GEOJSON_FILE_PATH = settings.DATASET_DIR / "parcels.geojson"
+SYNTHETIC_GEOJSON_FILE_PATH = settings.DATASET_DIR / "parcels_synthetic_100.geojson"
 
 
 class GISSpatialEngine:
@@ -86,7 +87,7 @@ class GISSpatialEngine:
         for feature in features:
             props = feature.get("properties", {})
             if props.get("survey_number") == survey_number:
-                feature_copy = feature.copy()
+                feature_copy = {**feature, "properties": props.copy()}
                 if db:
                     try:
                         rec = db.query(LandRecord).filter(LandRecord.survey_number == survey_number).first()
@@ -127,7 +128,9 @@ class GISSpatialEngine:
             return {"spatial_match": False, "anomalies": anomalies}
 
         # 1. Lookup Parcel Geometry
-        parcel_feature = self.get_parcel_by_survey(survey_number, db)
+        # Validate the document against the original parcel metadata, rather
+        # than replacing that independent evidence with registry attributes.
+        parcel_feature = self.get_parcel_by_survey(survey_number)
 
         if not parcel_feature:
             anomalies.append({
@@ -149,8 +152,18 @@ class GISSpatialEngine:
         gis_mandal = props.get("mandal", "")
         gis_district = props.get("district", "")
 
+        normalize = lambda value: " ".join(value.casefold().split())
+        if doc_mandal and gis_mandal and normalize(doc_mandal) != normalize(gis_mandal):
+            anomalies.append({
+                "type": "SPATIAL_LOCATION_MISMATCH", "severity": "High",
+                "title": "Mandal Jurisdiction Mismatch",
+                "expected": f"GIS Parcel Mandal: '{gis_mandal}'",
+                "found": f"Document Claimed Mandal: '{doc_mandal}'",
+                "description": f"Document mandal '{doc_mandal}' differs from parcel mandal '{gis_mandal}'."
+            })
+
         # 2. Location Mismatch Check
-        if doc_village and gis_village and doc_village.lower() != gis_village.lower():
+        if doc_village and gis_village and normalize(doc_village) != normalize(gis_village):
             anomalies.append({
                 "type": "SPATIAL_LOCATION_MISMATCH",
                 "severity": "High",
@@ -160,7 +173,7 @@ class GISSpatialEngine:
                 "description": f"Document claims parcel location in Village '{doc_village}', but GIS boundary coordinates place Survey {survey_number} in Village '{gis_village}'."
             })
 
-        if doc_district and gis_district and doc_district.lower() != gis_district.lower():
+        if doc_district and gis_district and normalize(doc_district) != normalize(gis_district):
             anomalies.append({
                 "type": "SPATIAL_LOCATION_MISMATCH",
                 "severity": "High",

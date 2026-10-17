@@ -14,6 +14,7 @@ class NLPInformationExtractor:
     def __init__(self):
         # 1. Document Type Patterns
         self.doc_type_patterns = [
+            (r"\b(?:PAHANI|ADANGAL)\b|పహాణి|అడంగల్", "Pahani / Adangal"),
             (r"\bSALE\s+DEED\b", "Sale Deed"),
             (r"\bGIFT\s+DEED\b", "Gift Deed"),
             (r"\bPARTITION\s+DEED\b", "Partition Deed"),
@@ -36,7 +37,7 @@ class NLPInformationExtractor:
                 r"(?:SURVEY|PLOT)\s*[\:\-\.]*\s*(?:\n\s*)?([A-Za-z0-9\-]+\/[0-9A-Za-z]+|[0-9]{1,4}\/[0-9A-Z]+|[0-9]{1,4})"
             ],
             "land_area": [
-                r"(?:CLAIMED\s+EXTENT|LAND\s+AREA|TOTAL\s+AREA|EXTENT)\s*[\:\-\.]*\s*(?:\n\s*)?([0-9]+(?:\.[0-9]+)?)\s*([A-Za-z\s\.]+)?(?=\n|$)",
+                r"(?:CLAIMED\s+EXTENT|LAND\s+AREA|TOTAL\s+AREA|EXTENT)[ \t]*[\:\-\.]*[ \t]*(?:\n[ \t]*)?([0-9]+(?:\.[0-9]+)?)[ \t]*([A-Za-z. \t]+)?(?=\n|$)",
                 r"([0-9]+(?:\.[0-9]+)?)\s*(ACRES|ACRE|AC|SQUARE\s+YARDS|SQ\s+YARDS|SQ\.\s+YARDS|SQ\s+YDS|HECTARES|HA|GUNTAS)"
             ],
             "village": [
@@ -70,6 +71,20 @@ class NLPInformationExtractor:
             "west": r"(?:BOUNDARY\s*[\:\-]?\s*WEST|WEST(?:ERN\s+BOUNDARY)?)\s*[\:\-]*\s*(?:\n\s*)?([^\n\.\;]+)"
         }
 
+        # Labelled English and Telugu Pahani/Adangal records. These aliases
+        # preserve Unicode names; unlabelled multi-row tables require review.
+        aliases = {
+            "owner_name": r"PATTADAR(?:\s+NAME)?|PATTADHAR(?:\s+NAME)?|పట్టాదారు\s*పేరు|పట్టాదారు",
+            "survey_number": r"SURVEY\s*(?:NO\.?|NUMBER)|సర్వే\s*(?:నంబరు|నెంబర్|సంఖ్య)",
+            "village": r"REVENUE\s+VILLAGE|గ్రామం",
+            "mandal": r"మండలం", "district": r"జిల్లా",
+        }
+        for field, labels in aliases.items():
+            self.rules[field].insert(0, rf"(?:{labels})[ \t]*[:\-][ \t]*([^\n]+)")
+        self.rules["land_area"].insert(0, r"(?:విస్తీర్ణం|EXTENT\s*\(ACRES\))[ \t]*[:\-][ \t]*([0-9]+(?:\.[0-9]+)?)[ \t]*([^\n]*)")
+        self.rules["khata_number"] = [r"(?:KHATA\s*(?:NO\.?|NUMBER)|ఖాతా\s*నంబరు)[ \t]*[:\-][ \t]*([A-Za-z0-9/\-]+)"]
+        self.rules["crop_year"] = [r"(?:CROP\s+YEAR|AGRICULTURAL\s+YEAR|పంట\s*సంవత్సరం)[ \t]*[:\-][ \t]*([0-9]{4}(?:[\-/][0-9]{2,4})?)"]
+
     def extract_information(self, ocr_text: str) -> dict:
         """
         Extracts structured fields from raw OCR text using regex rule engine.
@@ -81,9 +96,16 @@ class NLPInformationExtractor:
         clean_text = self._clean_ocr_text(ocr_text)
 
         # 1. Document Type Extraction
-        extracted_doc_type = "Sale Deed"  # Default fallback
+        extracted_doc_type = "Unknown"
+        # A labelled document/record type takes precedence over incidental text
+        # such as a disclaimer saying that this is not an official title deed.
+        type_label = re.search(
+            r"(?:DEED TITLE|DOCUMENT TYPE|RECORD TYPE|INSTRUMENT)[ \t]*[:\-]?[ \t]*\n?[ \t]*([^\n]+)",
+            clean_text, re.IGNORECASE,
+        )
+        type_text = type_label.group(1) if type_label else clean_text
         for pattern, label in self.doc_type_patterns:
-            if re.search(pattern, clean_text, re.IGNORECASE):
+            if re.search(pattern, type_text, re.IGNORECASE):
                 extracted_doc_type = label
                 break
 
@@ -100,7 +122,9 @@ class NLPInformationExtractor:
             "district": None,
             "state": None,
             "registration_number": None,
-            "registration_date": None
+            "registration_date": None,
+            "khata_number": None,
+            "crop_year": None,
         }
 
         fields_found_count = 0
@@ -115,7 +139,17 @@ class NLPInformationExtractor:
                         raw_unit_clean = re.sub(r"[,\.]+$", "", raw_unit).strip() or "Acres"
                         try:
                             num_val = float(num_str)
-                            extracted_data["land_area_acres"] = num_val
+                            unit = re.sub(r"[^a-z]", "", raw_unit_clean.lower())
+                            factors = {
+                                "acres": 1, "acre": 1, "ac": 1,
+                                "squareyards": 1 / 4840, "sqyards": 1 / 4840, "sqyds": 1 / 4840,
+                                "squarefeet": 1 / 43560, "sqfeet": 1 / 43560, "sqft": 1 / 43560,
+                                "hectares": 2.4710538147, "hectare": 2.4710538147, "ha": 2.4710538147,
+                                "guntas": 0.025, "gunta": 0.025,
+                                "squaremeters": 1 / 4046.8564224, "squaremetres": 1 / 4046.8564224,
+                                "sqm": 1 / 4046.8564224,
+                            }
+                            extracted_data["land_area_acres"] = round(num_val * factors[unit], 6) if unit in factors else None
                             extracted_data["land_area_raw"] = f"{num_str} {raw_unit_clean}"
                             extracted_data["land_area_unit"] = raw_unit_clean
                             fields_found_count += 1
@@ -129,10 +163,8 @@ class NLPInformationExtractor:
 
                         if field_name == "owner_name":
                             val = re.sub(r"\s+", " ", val).title()
-                            val = re.sub(r"\bRajosh\b", "Rajesh", val)
                         elif field_name == "survey_number":
                             val = val.upper()
-                            val = re.sub(r"/8$", "/B", val)
                         elif field_name in ["village", "mandal", "district", "state"]:
                             val = val.strip(",. ").title()
 
