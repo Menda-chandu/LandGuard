@@ -3,6 +3,7 @@ import sys
 from datetime import date
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import StaticPool
 
 # Add backend directory to sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -64,7 +65,7 @@ def test_synthetic_pdf_ocr_and_nlp_extraction():
 
 def test_upload_api_and_isolation():
     # Setup isolated test database for API
-    engine = create_engine('sqlite:///:memory:')
+    engine = create_engine('sqlite://', connect_args={'check_same_thread': False}, poolclass=StaticPool)
     Base.metadata.create_all(bind=engine)
     TestingSession = sessionmaker(bind=engine)
     db = TestingSession()

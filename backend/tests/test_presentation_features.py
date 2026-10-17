@@ -9,6 +9,8 @@ from pathlib import Path
 import sys
 from datetime import date
 import uuid
+from concurrent.futures import ThreadPoolExecutor
+from threading import Event
 
 import pytest
 from fastapi import FastAPI
@@ -183,6 +185,34 @@ def test_demo_seeding_is_repeatable_and_preserves_existing_registry_edits():
         assert seed_demo_registry(session, ROOT / "sample_data") is False
         assert session.get(LandRecord, "SYN-REC-001").owner_name == "Updated demo owner"
     engine.dispose()
+
+
+def test_health_remains_responsive_while_document_ocr_is_running(db, monkeypatch, tmp_path):
+    from app.api import health
+    started, release = Event(), Event()
+
+    def slow_ocr(_):
+        started.set()
+        assert release.wait(timeout=10), "Test did not release OCR"
+        return {"status": "COMPLETED", "text": deed_text(), "confidence": 99}
+
+    monkeypatch.setattr(documents, "UPLOADS_DIR", str(tmp_path))
+    monkeypatch.setattr(documents, "process_document_ocr", slow_ocr)
+    monkeypatch.setattr(health, "check_db_connection", lambda: {"status": "connected"})
+    app = FastAPI()
+    app.include_router(documents.router, prefix="/api/documents")
+    app.include_router(health.router, prefix="/api")
+    app.dependency_overrides[get_db] = lambda: db
+    with TestClient(app) as client, ThreadPoolExecutor(max_workers=2) as requests:
+        upload = requests.submit(client.post, "/api/documents/upload", files={"file": ("scan.png", b"scan", "image/png")})
+        try:
+            assert started.wait(timeout=5)
+            response = requests.submit(client.get, "/api/health").result(timeout=2)
+            assert response.status_code == 200
+            assert not upload.done()
+        finally:
+            release.set()
+        assert upload.result(timeout=5).status_code == 201
 
 
 def test_health_check_returns_unhealthy_status_when_database_is_disconnected(monkeypatch):

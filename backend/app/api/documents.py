@@ -5,6 +5,7 @@ import json
 from datetime import datetime
 from fastapi import APIRouter, UploadFile, File, HTTPException, Depends, status, Query, Body
 from fastapi.responses import FileResponse, Response
+from starlette.concurrency import run_in_threadpool
 from urllib.parse import quote
 from pathlib import Path
 from sqlalchemy.orm import Session
@@ -64,6 +65,12 @@ async def upload_document(
     file: UploadFile = File(...),
     db: Session = Depends(get_db)
 ):
+    # OCR, file I/O and this SQLAlchemy session are synchronous. Keep them off
+    # the event loop so readiness checks remain responsive during long scans.
+    return await run_in_threadpool(_process_upload, file, db)
+
+
+def _process_upload(file: UploadFile, db: Session):
     """
     Upload a land document (PDF, PNG, JPG, TIFF), save to uploads folder,
     run Tesseract OCR pipeline, trigger NLP information extraction,
