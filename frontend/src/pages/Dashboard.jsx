@@ -41,7 +41,7 @@ export default function Dashboard({ onNavigate, onSelectDocument }) {
           <span className="text-xs font-semibold text-blue-300">Imported synthetic dataset</span>
           <h2 className="text-2xl md:text-3xl font-extrabold text-white mt-2">LandGuard Portal</h2>
           <p className="text-sm text-slate-300 mt-2 max-w-2xl">Browse the loaded land records and parcel boundaries, then upload a deed to compare its details with the registry.</p>
-          <p className="text-xs text-slate-400 mt-3">{data ? 'Connected to the local database' : loading ? 'Connecting to the database…' : 'Database unavailable'}</p>
+          <p className="text-xs text-slate-400 mt-3">{data ? (data.database_engine === 'postgresql' ? 'Connected to PostgreSQL' : 'Connected to the database') : loading ? 'Connecting to the database…' : 'Database unavailable'}</p>
         </div>
         <div className="flex items-center gap-3 shrink-0">
           <button onClick={load} disabled={loading} aria-label="Refresh dashboard" className="p-3 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 disabled:opacity-50"><RefreshCw size={18} className={loading ? 'animate-spin' : ''} /></button>
